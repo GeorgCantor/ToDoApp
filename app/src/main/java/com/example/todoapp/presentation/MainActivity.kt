@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.ApiClient
 import com.example.todoapp.data.repository.NewsRepositoryImpl
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
-import com.example.todoapp.presentation.screens.NewsListScreen
+import com.example.todoapp.presentation.navigation.MainNavigation
 import com.example.todoapp.presentation.theme.YourAppTheme
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             YourAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    NewsListScreen(viewModel = viewModel)
+                    MainNavigation(viewModel = viewModel)
                 }
             }
         }

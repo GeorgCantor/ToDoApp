@@ -21,12 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.todoapp.domain.model.NewsArticle
+import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
 @Composable
-fun NewsListScreen(viewModel: NewsViewModel) {
+fun NewsListScreen(
+    navController: NavController,
+    viewModel: NewsViewModel
+) {
     val news = viewModel.news
     val isLoading = viewModel.isLoading
     val error = viewModel.error
@@ -50,7 +55,11 @@ fun NewsListScreen(viewModel: NewsViewModel) {
         } else {
             LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
                 items(news) { article ->
-                    NewsArticleItem(article = article)
+                    NewsArticleItem(
+                        article = article,
+                        onClick = {
+                            navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
+                        })
                 }
             }
         }
@@ -58,8 +67,12 @@ fun NewsListScreen(viewModel: NewsViewModel) {
 }
 
 @Composable
-fun NewsArticleItem(article: NewsArticle) {
+fun NewsArticleItem(
+    article: NewsArticle,
+    onClick: () -> Unit
+) {
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
@@ -101,16 +114,3 @@ fun NewsArticleItem(article: NewsArticle) {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun NewsArticleItemPreview() {
-//    val sampleArticle = NewsArticle(
-//        title = "Sample News Title",
-//        description = "This is a sample description for the news article.",
-//        url = "",
-//        urlToImage = "https://example.com/sample-image.jpg",
-//        publishedAt = "2025-07-14 13:03"
-//    )
-//    NewsArticleItem(article = sampleArticle)
-//}

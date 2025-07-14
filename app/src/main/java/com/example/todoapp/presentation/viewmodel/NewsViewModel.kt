@@ -2,10 +2,13 @@ package com.example.todoapp.presentation.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewModel() {
@@ -35,5 +38,9 @@ class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewMod
                 _isLoading.value = false
             }
         }
+    }
+
+    fun getNewsById(id: Int): Flow<NewsArticle?> {
+        return snapshotFlow { _news.toList() }.map { it.find { it.id == id } }
     }
 }
