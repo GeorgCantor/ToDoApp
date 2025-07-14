@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.utils.toFormattedDate
 
 @Composable
 fun NewsListScreen(
@@ -106,7 +107,7 @@ fun NewsArticleItem(
             }
 
             Text(
-                text = "Опубликовано: ${article.publishedAt}",
+                text = article.publishedAt.toFormattedDate(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
