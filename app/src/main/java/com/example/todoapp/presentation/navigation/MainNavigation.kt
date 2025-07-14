@@ -30,7 +30,6 @@ fun MainNavigation(viewModel: NewsViewModel) {
             arguments = listOf(
                 navArgument(NavRoutes.NewsDetail.ARG_NEWS_ID) {
                     type = NavType.IntType
-                    nullable = true
                 }
             )
         ) { backStackEntry ->

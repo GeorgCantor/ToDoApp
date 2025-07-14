@@ -16,6 +16,7 @@ data class ArticleDto(
     val publishedAt: String
 ) {
     fun toNewsArticle() = NewsArticle(
+        id = url.hashCode(),
         title = title,
         description = description,
         url = url,
