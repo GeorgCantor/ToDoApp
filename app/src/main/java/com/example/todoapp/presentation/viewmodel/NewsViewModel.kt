@@ -22,7 +22,7 @@ class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewMod
         loadNews()
     }
 
-    private fun loadNews() {
+    fun loadNews() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
