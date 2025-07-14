@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.todoapp.domain.model.NewsArticle
@@ -103,15 +102,15 @@ fun NewsArticleItem(article: NewsArticle) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun NewsArticleItemPreview() {
-    val sampleArticle = NewsArticle(
-        title = "Sample News Title",
-        description = "This is a sample description for the news article.",
-        url = "",
-        urlToImage = "https://example.com/sample-image.jpg",
-        publishedAt = "2025-07-14 13:03"
-    )
-    NewsArticleItem(article = sampleArticle)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun NewsArticleItemPreview() {
+//    val sampleArticle = NewsArticle(
+//        title = "Sample News Title",
+//        description = "This is a sample description for the news article.",
+//        url = "",
+//        urlToImage = "https://example.com/sample-image.jpg",
+//        publishedAt = "2025-07-14 13:03"
+//    )
+//    NewsArticleItem(article = sampleArticle)
+//}
