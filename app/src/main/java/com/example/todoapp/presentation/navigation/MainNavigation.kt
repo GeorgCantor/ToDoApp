@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.NewsListScreen
+import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
@@ -58,6 +59,24 @@ fun MainNavigation(viewModel: NewsViewModel) {
                 navController = navController,
                 viewModel = viewModel
             )
+        }
+
+        composable(
+            route = NavRoutes.Search.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 1000 },
+                    animationSpec = tween(300)
+                ) + fadeIn(tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { 1000 },
+                    animationSpec = tween(300)
+                ) + fadeOut(tween(300))
+            }
+        ) {
+            SearchNewsScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(
