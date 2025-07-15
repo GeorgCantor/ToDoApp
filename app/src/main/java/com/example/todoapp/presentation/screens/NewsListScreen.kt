@@ -50,7 +50,7 @@ fun NewsListScreen(
                 Text(error, color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = { viewModel.loadNews() }) {
-                    Text("Повторить")
+                    Text("Retry")
                 }
             }
         } else {

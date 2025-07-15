@@ -33,7 +33,7 @@ class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewMod
                 _news.clear()
                 _news.addAll(getTopUseCase())
             } catch (e: Exception) {
-                _error.value = "Ошибка загрузки: ${e.localizedMessage}"
+                _error.value = e.localizedMessage
             } finally {
                 _isLoading.value = false
             }

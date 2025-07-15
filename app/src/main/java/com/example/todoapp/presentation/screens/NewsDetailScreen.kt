@@ -15,10 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -33,8 +36,10 @@ fun NewsDetailScreen(
     navController: NavController
 ) {
     val newsItem by viewModel.getNewsById(newsId).collectAsState(initial = null)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = {
@@ -48,18 +53,18 @@ fun NewsDetailScreen(
                     IconButton(onClick = {
                         navController.popBackStack()
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
-        val scrollState = rememberScrollState()
         newsItem?.let { item ->
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .verticalScroll(scrollState)
+                    .verticalScroll(rememberScrollState())
             ) {
                 AsyncImage(
                     model = item.urlToImage,
@@ -73,7 +78,10 @@ fun NewsDetailScreen(
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.headlineMedium
                 )
-                Text(item.description.orEmpty(), modifier = Modifier.padding(16.dp))
+                Text(
+                    text = "${item.description} ${item.description} ${item.description} ${item.description}",
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }
