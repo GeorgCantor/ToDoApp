@@ -79,7 +79,7 @@ fun NewsDetailScreen(
                     style = MaterialTheme.typography.headlineMedium
                 )
                 Text(
-                    text = "${item.description} ${item.description} ${item.description} ${item.description}",
+                    text = item.description.orEmpty(),
                     modifier = Modifier.padding(16.dp)
                 )
             }
