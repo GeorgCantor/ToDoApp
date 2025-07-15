@@ -97,7 +97,7 @@ fun NewsArticleItem(
             Text(
                 text = article.title,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 10.dp)
             )
 
             article.description?.let { description ->

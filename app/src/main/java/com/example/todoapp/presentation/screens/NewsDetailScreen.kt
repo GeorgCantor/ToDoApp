@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,9 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,6 +41,7 @@ fun NewsDetailScreen(
 ) {
     val newsItem by viewModel.getNewsById(newsId).collectAsState(initial = null)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    var showZoomedImage by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -72,6 +77,7 @@ fun NewsDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
+                        .clickable { showZoomedImage = true }
                 )
                 Text(
                     text = item.title,
@@ -81,6 +87,13 @@ fun NewsDetailScreen(
                 Text(
                     text = item.description.orEmpty(),
                     modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            if (showZoomedImage) {
+                ZoomableImage(
+                    imageUrl = item.urlToImage.orEmpty(),
+                    onClose = { showZoomedImage = false }
                 )
             }
         }
