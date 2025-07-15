@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +36,7 @@ fun NewsListScreen(
     viewModel: NewsViewModel
 ) {
     val news = viewModel.news
-    val isLoading = viewModel.isLoading
+    val isLoading by viewModel.isLoading
     val error = viewModel.error
 
     Box(modifier = Modifier.fillMaxSize()) {

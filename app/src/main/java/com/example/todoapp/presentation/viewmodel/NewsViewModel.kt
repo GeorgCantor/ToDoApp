@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.viewmodel
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
@@ -16,7 +17,7 @@ class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewMod
     val news: List<NewsArticle> get() = _news
 
     private val _isLoading = mutableStateOf(false)
-    val isLoading: Boolean get() = _isLoading.value
+    val isLoading: State<Boolean> get() = _isLoading
 
     private val _error = mutableStateOf<String?>(null)
     val error: String? get() = _error.value
