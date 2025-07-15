@@ -1,5 +1,8 @@
 package com.example.todoapp.presentation.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,7 +21,17 @@ fun MainNavigation(viewModel: NewsViewModel) {
         navController = navController,
         startDestination = NavRoutes.NewsList.route
     ) {
-        composable(NavRoutes.NewsList.route) {
+        composable(
+            route = NavRoutes.NewsList.route,
+            exitTransition = {
+                if (targetState.destination.route?.startsWith(NavRoutes.NewsDetail.route) == true) {
+                    slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300))
+                } else null
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300))
+            }
+        ) {
             NewsListScreen(
                 navController = navController,
                 viewModel = viewModel
@@ -28,14 +41,18 @@ fun MainNavigation(viewModel: NewsViewModel) {
         composable(
             route = "${NavRoutes.NewsDetail.route}/{${NavRoutes.NewsDetail.ARG_NEWS_ID}}",
             arguments = listOf(
-                navArgument(NavRoutes.NewsDetail.ARG_NEWS_ID) {
-                    type = NavType.IntType
-                }
-            )
+                navArgument(NavRoutes.NewsDetail.ARG_NEWS_ID) { type = NavType.IntType }
+            ),
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300))
+            }
         ) { backStackEntry ->
-            val newsId = backStackEntry.arguments?.getInt(NavRoutes.NewsDetail.ARG_NEWS_ID)
+            val newsId = backStackEntry.arguments?.getInt(NavRoutes.NewsDetail.ARG_NEWS_ID) ?: 0
             NewsDetailScreen(
-                newsId = newsId ?: 0,
+                newsId = newsId,
                 viewModel = viewModel,
                 navController = navController
             )
