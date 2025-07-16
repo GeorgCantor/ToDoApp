@@ -12,8 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
-import com.example.todoapp.presentation.screens.NewsListScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -38,27 +38,16 @@ fun MainNavigation(viewModel: NewsViewModel) {
             )
         }
 
-        composable(
-            route = NavRoutes.NewsList.route,
-            exitTransition = {
-                if (targetState.destination.route?.startsWith(NavRoutes.NewsDetail.route) == true) {
-                    slideOutHorizontally(
-                        targetOffsetX = { -1000 },
-                        animationSpec = tween(300)
-                    ) + fadeOut(tween(300))
-                } else null
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -1000 },
-                    animationSpec = tween(300)
-                ) + fadeIn(tween(300))
-            }
-        ) {
-            NewsListScreen(
-                navController = navController,
-                viewModel = viewModel
-            )
+        composable(NavRoutes.NewsList.route) {
+            MainScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable(NavRoutes.Favorites.route) {
+            MainScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable(NavRoutes.Profile.route) {
+            MainScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(
