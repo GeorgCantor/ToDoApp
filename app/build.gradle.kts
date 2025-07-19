@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
 
     debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)

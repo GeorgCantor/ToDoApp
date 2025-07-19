@@ -50,6 +50,10 @@ fun MainNavigation(viewModel: NewsViewModel) {
             MainScreen(navController = navController, viewModel = viewModel)
         }
 
+        composable(NavRoutes.Map.route) {
+            MainScreen(navController = navController, viewModel = viewModel)
+        }
+
         composable(
             route = NavRoutes.Search.route,
             enterTransition = {

@@ -1,10 +1,10 @@
-// MainScreen.kt
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +31,8 @@ fun MainScreen(
     val items = listOf(
         NavRoutes.NewsList,
         NavRoutes.Favorites,
-        NavRoutes.Profile
+        NavRoutes.Profile,
+        NavRoutes.Map
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -51,6 +52,7 @@ fun MainScreen(
                                 NavRoutes.NewsList -> Icon(Icons.Filled.Home, contentDescription = "News")
                                 NavRoutes.Favorites -> Icon(Icons.Filled.Favorite, contentDescription = "Favorites")
                                 NavRoutes.Profile -> Icon(Icons.Filled.Person, contentDescription = "Profile")
+                                NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
                         },
@@ -79,6 +81,7 @@ fun MainScreen(
             )
             NavRoutes.Favorites.route -> FavoritesScreen()
             NavRoutes.Profile.route -> ProfileScreen()
+            NavRoutes.Map.route -> MapScreen()
         }
     }
 }
