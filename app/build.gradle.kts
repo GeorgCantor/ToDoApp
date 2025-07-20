@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.accompanist.permissions)
 
     debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)

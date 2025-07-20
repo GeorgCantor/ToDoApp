@@ -20,6 +20,8 @@ navigation = "2.7.5"
 leakcanary = "2.14"
 maps-compose = "2.11.4"
 play-services-maps = "18.2.0"
+play_services_location = "21.0.1"
+accompanist_permissions = "0.32.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +45,8 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play_services_location" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist_permissions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

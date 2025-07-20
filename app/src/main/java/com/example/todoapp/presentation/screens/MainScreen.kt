@@ -56,7 +56,9 @@ fun MainScreen(
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
                         },
-                        label = { Text(item.route.replaceFirstChar { it.uppercase() }) },
+                        label = {
+                            Text(item.route.takeWhile { it != '_' }.replaceFirstChar { it.uppercase() })
+                        },
                         selected = currentRoute == item.route,
                         onClick = {
                             selectedItem = index
