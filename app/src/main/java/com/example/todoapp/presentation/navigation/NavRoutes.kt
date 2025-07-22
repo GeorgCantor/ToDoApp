@@ -8,7 +8,7 @@ sealed class NavRoutes(val route: String) {
         const val ARG_NEWS_ID = "news_id"
         fun createRoute(newsId: Int?) = "news_detail/$newsId"
     }
-    object Favorites : NavRoutes("favorites")
+    object BleScanScreen : NavRoutes("bluetooth")
     object Profile : NavRoutes("profile")
     object Map : NavRoutes("map_screen")
 }

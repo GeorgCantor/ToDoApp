@@ -42,7 +42,7 @@ fun MainNavigation(viewModel: NewsViewModel) {
             MainScreen(navController = navController, viewModel = viewModel)
         }
 
-        composable(NavRoutes.Favorites.route) {
+        composable(NavRoutes.BleScanScreen.route) {
             MainScreen(navController = navController, viewModel = viewModel)
         }
 

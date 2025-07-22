@@ -2,10 +2,10 @@ package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -30,7 +30,7 @@ fun MainScreen(
 ) {
     val items = listOf(
         NavRoutes.NewsList,
-        NavRoutes.Favorites,
+        NavRoutes.BleScanScreen,
         NavRoutes.Profile,
         NavRoutes.Map
     )
@@ -50,7 +50,7 @@ fun MainScreen(
                         icon = {
                             when (item) {
                                 NavRoutes.NewsList -> Icon(Icons.Filled.Home, contentDescription = "News")
-                                NavRoutes.Favorites -> Icon(Icons.Filled.Favorite, contentDescription = "Favorites")
+                                NavRoutes.BleScanScreen -> Icon(Icons.Filled.Share, contentDescription = "Bluetooth")
                                 NavRoutes.Profile -> Icon(Icons.Filled.Person, contentDescription = "Profile")
                                 NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
@@ -81,7 +81,7 @@ fun MainScreen(
                 viewModel = viewModel,
                 modifier = Modifier.padding(innerPadding)
             )
-            NavRoutes.Favorites.route -> FavoritesScreen()
+            NavRoutes.BleScanScreen.route -> BleScanScreen()
             NavRoutes.Profile.route -> ProfileScreen()
             NavRoutes.Map.route -> MapScreen()
         }
