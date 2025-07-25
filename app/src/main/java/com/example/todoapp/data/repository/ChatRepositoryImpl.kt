@@ -22,7 +22,9 @@ class ChatRepositoryImpl : ChatRepository {
     override suspend fun getMessages(): List<ChatMessage> {
         return try {
             val snapshot = database.get().await()
-            snapshot.children.mapNotNull { it.getValue(ChatMessage::class.java) }
+            snapshot.children.mapNotNull { child ->
+                child.getValue(ChatMessage::class.java)?.copy(id = child.key.orEmpty())
+            }
         } catch (e: Exception) {
             emptyList()
         }
@@ -31,10 +33,10 @@ class ChatRepositoryImpl : ChatRepository {
     override fun observeMessages(): Flow<List<ChatMessage>> = callbackFlow {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val messages = snapshot.children.mapNotNull {
-                    it.getValue(ChatMessage::class.java)
+                val messages = snapshot.children.mapNotNull { child ->
+                    child.getValue(ChatMessage::class.java)?.copy(id = child.key.orEmpty())
                 }
-                trySend(messages)
+                trySend(messages).isSuccess
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -44,5 +46,13 @@ class ChatRepositoryImpl : ChatRepository {
 
         database.addValueEventListener(listener)
         awaitClose { database.removeEventListener(listener) }
+    }
+
+    suspend fun editMessage(id: String, newText: String) {
+        database.child(id).child("text").setValue(newText).await()
+    }
+
+    suspend fun deleteMessage(id: String) {
+        database.child(id).removeValue().await()
     }
 }

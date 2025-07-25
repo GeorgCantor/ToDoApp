@@ -41,4 +41,22 @@ class ChatViewModel(
             )
         }
     }
+
+    fun editMessage(key: String, newText: String) {
+        viewModelScope.launch {
+            try {
+                repository.editMessage(key, newText)
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    fun deleteMessage(key: String) {
+        viewModelScope.launch {
+            try {
+                repository.deleteMessage(key)
+            } catch (e: Exception) {
+            }
+        }
+    }
 }
