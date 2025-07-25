@@ -2,6 +2,7 @@ package com.example.todoapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
@@ -13,6 +14,7 @@ class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getMessagesUseCase: GetChatMessagesUseCase
 ) : ViewModel() {
+    private val repository = ChatRepositoryImpl()
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
 
@@ -22,9 +24,8 @@ class ChatViewModel(
 
     private fun loadMessages() {
         viewModelScope.launch {
-            try {
-                _messages.value = getMessagesUseCase()
-            } catch (e: Exception) {
+            repository.observeMessages().collect { newMessages ->
+                _messages.value = newMessages.sortedByDescending { it.timestamp }
             }
         }
     }

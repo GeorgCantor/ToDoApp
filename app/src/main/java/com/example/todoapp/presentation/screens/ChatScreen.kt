@@ -47,7 +47,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(bottom = 74.dp)
         ) {
             TextField(
                 value = messageText,
@@ -82,7 +82,7 @@ fun MessageBubble(message: ChatMessage) {
             text = message.text,
             modifier = Modifier
                 .background(
-                    color = if (message.senderId.startsWith("user")) Color.LightGray else Color(0xFFE3F2FD),
+                    color = if (message.senderId.startsWith("user")) Color(0xFF436171) else Color(0xFF3D3F40),
                     shape = RoundedCornerShape(8.dp)
                 )
                 .padding(12.dp)
