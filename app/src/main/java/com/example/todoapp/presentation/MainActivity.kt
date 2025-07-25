@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
-                    MainNavigation(viewModel = viewModel)
+                    MainNavigation(viewModel = viewModel, chatViewModel = chatViewModel)
                 }
             }
         }

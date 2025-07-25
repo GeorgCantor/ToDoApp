@@ -29,7 +29,7 @@ class ChatViewModel(
         }
     }
 
-    fun sendMessage(text: String, senderId: String, senderName: String) {
+    fun sendMessage(text: String, senderId: String = "1", senderName: String = "Alex") {
         viewModelScope.launch {
             sendMessageUseCase(
                 ChatMessage(

@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
@@ -21,17 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.presentation.navigation.NavRoutes
+import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
 @Composable
 fun MainScreen(
     navController: NavController,
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
+    chatViewModel: ChatViewModel
 ) {
     val items = listOf(
         NavRoutes.NewsList,
         NavRoutes.BleScanScreen,
-        NavRoutes.Profile,
+        NavRoutes.Chat,
         NavRoutes.Map
     )
 
@@ -51,7 +53,7 @@ fun MainScreen(
                             when (item) {
                                 NavRoutes.NewsList -> Icon(Icons.Filled.Home, contentDescription = "News")
                                 NavRoutes.BleScanScreen -> Icon(Icons.Filled.Share, contentDescription = "Bluetooth")
-                                NavRoutes.Profile -> Icon(Icons.Filled.Person, contentDescription = "Profile")
+                                NavRoutes.Chat -> Icon(Icons.Filled.MailOutline, contentDescription = "Chat")
                                 NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
@@ -82,7 +84,7 @@ fun MainScreen(
                 modifier = Modifier.padding(innerPadding)
             )
             NavRoutes.BleScanScreen.route -> BleScanScreen()
-            NavRoutes.Profile.route -> ProfileScreen()
+            NavRoutes.Chat.route -> ChatScreen(chatViewModel)
             NavRoutes.Map.route -> MapScreen()
         }
     }

@@ -16,10 +16,14 @@ import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
 @Composable
-fun MainNavigation(viewModel: NewsViewModel) {
+fun MainNavigation(
+    viewModel: NewsViewModel,
+    chatViewModel: ChatViewModel
+) {
     val navController = rememberNavController()
     val isLoading by viewModel.isLoading
 
@@ -39,19 +43,19 @@ fun MainNavigation(viewModel: NewsViewModel) {
         }
 
         composable(NavRoutes.NewsList.route) {
-            MainScreen(navController = navController, viewModel = viewModel)
+            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
         }
 
         composable(NavRoutes.BleScanScreen.route) {
-            MainScreen(navController = navController, viewModel = viewModel)
+            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
         }
 
-        composable(NavRoutes.Profile.route) {
-            MainScreen(navController = navController, viewModel = viewModel)
+        composable(NavRoutes.Chat.route) {
+            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
         }
 
         composable(NavRoutes.Map.route) {
-            MainScreen(navController = navController, viewModel = viewModel)
+            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
         }
 
         composable(

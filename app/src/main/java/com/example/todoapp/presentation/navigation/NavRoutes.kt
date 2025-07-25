@@ -9,6 +9,6 @@ sealed class NavRoutes(val route: String) {
         fun createRoute(newsId: Int?) = "news_detail/$newsId"
     }
     object BleScanScreen : NavRoutes("bluetooth")
-    object Profile : NavRoutes("profile")
+    object Chat : NavRoutes("chat")
     object Map : NavRoutes("map_screen")
 }
