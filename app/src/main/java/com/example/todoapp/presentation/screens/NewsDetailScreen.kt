@@ -38,7 +38,7 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 fun NewsDetailScreen(
     newsId: Int,
     viewModel: NewsViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     val newsItem by viewModel.getNewsById(newsId).collectAsState(initial = null)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -52,7 +52,7 @@ fun NewsDetailScreen(
                     Text(
                         text = newsItem?.title.orEmpty(),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {
@@ -67,39 +67,41 @@ fun NewsDetailScreen(
                         }
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { padding ->
         newsItem?.let { item ->
             Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState()),
             ) {
                 AsyncImage(
                     model = item.urlToImage,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clickable { showZoomedImage = true }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clickable { showZoomedImage = true },
                 )
                 Text(
                     text = item.title,
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(
                     text = item.description.orEmpty(),
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 )
             }
 
             if (showZoomedImage) {
                 ZoomableImage(
                     imageUrl = item.urlToImage.orEmpty(),
-                    onClose = { showZoomedImage = false }
+                    onClose = { showZoomedImage = false },
                 )
             }
         }

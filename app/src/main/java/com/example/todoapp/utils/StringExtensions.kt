@@ -3,8 +3,8 @@ package com.example.todoapp.utils
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-fun String.toFormattedDate(): String {
-    return try {
+fun String.toFormattedDate(): String =
+    try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         val outputFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
         val date = inputFormat.parse(this)
@@ -12,4 +12,3 @@ fun String.toFormattedDate(): String {
     } catch (e: Exception) {
         this
     }
-}

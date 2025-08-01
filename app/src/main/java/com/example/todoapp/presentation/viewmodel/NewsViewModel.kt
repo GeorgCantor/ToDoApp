@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewModel() {
+class NewsViewModel(
+    private val getTopUseCase: GetTopHeadlinesUseCase,
+) : ViewModel() {
     private val _news = mutableStateListOf<NewsArticle>()
     val news: List<NewsArticle> get() = _news
 
@@ -41,7 +43,5 @@ class NewsViewModel(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewMod
         }
     }
 
-    fun getNewsById(id: Int): Flow<NewsArticle?> {
-        return snapshotFlow { _news.toList() }.map { it.find { it.id == id } }
-    }
+    fun getNewsById(id: Int): Flow<NewsArticle?> = snapshotFlow { _news.toList() }.map { it.find { it.id == id } }
 }

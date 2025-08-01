@@ -23,8 +23,8 @@ class ChatRepositoryImpl : ChatRepository {
         database.push().setValue(message).await()
     }
 
-    override suspend fun getMessages(): List<ChatMessage> {
-        return try {
+    override suspend fun getMessages(): List<ChatMessage> =
+        try {
             val snapshot = database.get().await()
             snapshot.children.mapNotNull { child ->
                 child.getValue(ChatMessage::class.java)?.copy(id = child.key.orEmpty())
@@ -32,25 +32,27 @@ class ChatRepositoryImpl : ChatRepository {
         } catch (e: Exception) {
             emptyList()
         }
-    }
 
-    override fun observeMessages(): Flow<List<ChatMessage>> = callbackFlow {
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val messages = snapshot.children.mapNotNull { child ->
-                    child.getValue(ChatMessage::class.java)?.copy(id = child.key.orEmpty())
+    override fun observeMessages(): Flow<List<ChatMessage>> =
+        callbackFlow {
+            val listener =
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val messages =
+                            snapshot.children.mapNotNull { child ->
+                                child.getValue(ChatMessage::class.java)?.copy(id = child.key.orEmpty())
+                            }
+                        trySend(messages).isSuccess
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        close(error.toException())
+                    }
                 }
-                trySend(messages).isSuccess
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                close(error.toException())
-            }
+            database.addValueEventListener(listener)
+            awaitClose { database.removeEventListener(listener) }
         }
-
-        database.addValueEventListener(listener)
-        awaitClose { database.removeEventListener(listener) }
-    }
 
     override suspend fun audioToBase64(file: File): Pair<String, Long> {
         val bytes = file.readBytes()
@@ -59,15 +61,25 @@ class ChatRepositoryImpl : ChatRepository {
         return Pair(base64, duration)
     }
 
-    override fun base64ToAudioFile(base64: String, cacheDir: File): File {
+    override fun base64ToAudioFile(
+        base64: String,
+        cacheDir: File,
+    ): File {
         val bytes = Base64.decode(base64, Base64.DEFAULT)
         val tempFile = File.createTempFile("audio", ".mp3", cacheDir)
         FileOutputStream(tempFile).use { it.write(bytes) }
         return tempFile
     }
 
-    suspend fun editMessage(id: String, newText: String) {
-        database.child(id).child("text").setValue(newText).await()
+    suspend fun editMessage(
+        id: String,
+        newText: String,
+    ) {
+        database
+            .child(id)
+            .child("text")
+            .setValue(newText)
+            .await()
     }
 
     suspend fun deleteMessage(id: String) {

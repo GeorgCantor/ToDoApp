@@ -22,14 +22,14 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 @Composable
 fun MainNavigation(
     viewModel: NewsViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
     val navController = rememberNavController()
     val isLoading by viewModel.isLoading
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Splash.route
+        startDestination = NavRoutes.Splash.route,
     ) {
         composable(NavRoutes.Splash.route) {
             SplashScreen(
@@ -38,7 +38,7 @@ fun MainNavigation(
                     navController.navigate(NavRoutes.NewsList.route) {
                         popUpTo(NavRoutes.Splash.route) { inclusive = true }
                     }
-                }
+                },
             )
         }
 
@@ -63,42 +63,43 @@ fun MainNavigation(
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { 1000 },
-                    animationSpec = tween(300)
+                    animationSpec = tween(300),
                 ) + fadeIn(tween(300))
             },
             popExitTransition = {
                 slideOutHorizontally(
                     targetOffsetX = { 1000 },
-                    animationSpec = tween(300)
+                    animationSpec = tween(300),
                 ) + fadeOut(tween(300))
-            }
+            },
         ) {
             SearchNewsScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(
             route = "${NavRoutes.NewsDetail.route}/{${NavRoutes.NewsDetail.ARG_NEWS_ID}}",
-            arguments = listOf(
-                navArgument(NavRoutes.NewsDetail.ARG_NEWS_ID) { type = NavType.IntType }
-            ),
+            arguments =
+                listOf(
+                    navArgument(NavRoutes.NewsDetail.ARG_NEWS_ID) { type = NavType.IntType },
+                ),
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { 1000 },
-                    animationSpec = tween(300)
+                    animationSpec = tween(300),
                 ) + fadeIn(tween(300))
             },
             popExitTransition = {
                 slideOutHorizontally(
                     targetOffsetX = { 1000 },
-                    animationSpec = tween(300)
+                    animationSpec = tween(300),
                 ) + fadeOut(tween(300))
-            }
+            },
         ) { backStackEntry ->
             val newsId = backStackEntry.arguments?.getInt(NavRoutes.NewsDetail.ARG_NEWS_ID) ?: 0
             NewsDetailScreen(
                 newsId = newsId,
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
             )
         }
     }

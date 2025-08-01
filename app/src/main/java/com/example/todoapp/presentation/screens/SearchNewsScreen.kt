@@ -22,21 +22,23 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 @Composable
 fun SearchNewsScreen(
     navController: NavController,
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
 ) {
     var query by remember { mutableStateOf("") }
-    val filteredNews = viewModel.news.filter {
-        it.title.contains(query, ignoreCase = true) || it.description?.contains(query, ignoreCase = true) == true
-    }
+    val filteredNews =
+        viewModel.news.filter {
+            it.title.contains(query, ignoreCase = true) || it.description?.contains(query, ignoreCase = true) == true
+        }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TextField(
             value = query,
             onValueChange = { query = it },
             placeholder = { Text("Search news") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
         )
 
         LazyColumn {
@@ -45,7 +47,7 @@ fun SearchNewsScreen(
                     article = article,
                     onClick = {
                         navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
-                    }
+                    },
                 )
             }
         }

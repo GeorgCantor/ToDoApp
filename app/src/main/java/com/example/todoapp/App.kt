@@ -8,7 +8,8 @@ object ApiClient {
     private const val BASE_URL = "https://newsapi.org/"
 
     val newsApiService: NewsApiService by lazy {
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

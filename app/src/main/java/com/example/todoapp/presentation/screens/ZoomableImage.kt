@@ -25,39 +25,39 @@ import coil.compose.AsyncImage
 @Composable
 fun ZoomableImage(
     imageUrl: String,
-    onClose: () -> Unit
+    onClose: () -> Unit,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale = (scale * zoom).coerceIn(1f, 5f)
-                    offset += pan
-                }
-            }
-            .clickable {
-                onClose()
-            },
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .pointerInput(Unit) {
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        scale = (scale * zoom).coerceIn(1f, 5f)
+                        offset += pan
+                    }
+                }.clickable {
+                    onClose()
+                },
+        contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offset.x,
-                    translationY = offset.y
-                )
-                .fillMaxWidth()
-                .fillMaxHeight()
+            modifier =
+                Modifier
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y,
+                    ).fillMaxWidth()
+                    .fillMaxHeight(),
         )
     }
 }

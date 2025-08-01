@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private val chatViewModel: ChatViewModel by viewModels {
         ChatViewModelFactory(
             SendMessageUseCase(ChatRepositoryImpl()),
-            GetChatMessagesUseCase(ChatRepositoryImpl())
+            GetChatMessagesUseCase(ChatRepositoryImpl()),
         )
     }
 
@@ -41,9 +41,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             YourAppTheme {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.systemBars)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.systemBars),
                 ) {
                     MainNavigation(viewModel = viewModel, chatViewModel = chatViewModel)
                 }
@@ -52,7 +53,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-class NewsViewModelFactory(private val getTopUseCase: GetTopHeadlinesUseCase) : ViewModelProvider.Factory {
+class NewsViewModelFactory(
+    private val getTopUseCase: GetTopHeadlinesUseCase,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
@@ -64,7 +67,7 @@ class NewsViewModelFactory(private val getTopUseCase: GetTopHeadlinesUseCase) : 
 
 class ChatViewModelFactory(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getMessagesUseCase: GetChatMessagesUseCase
+    private val getMessagesUseCase: GetChatMessagesUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ChatViewModel::class.java)) {

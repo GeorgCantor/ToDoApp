@@ -56,11 +56,12 @@ import java.util.Locale
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) viewModel.startRecording(context, context.cacheDir)
-    }
+    val launcher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) viewModel.startRecording(context, context.cacheDir)
+        }
     var messageText by remember { mutableStateOf("") }
     val messages by viewModel.messages.collectAsState()
     var messageToEdit by remember { mutableStateOf<ChatMessage?>(null) }
@@ -73,7 +74,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
         LazyColumn(
             modifier = Modifier.weight(1f),
             reverseLayout = true,
-            contentPadding = PaddingValues(vertical = 8.dp)
+            contentPadding = PaddingValues(vertical = 8.dp),
         ) {
             items(messages) { message ->
                 MessageBubble(
@@ -110,35 +111,36 @@ fun ChatScreen(viewModel: ChatViewModel) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 74.dp)
+                .padding(bottom = 74.dp),
         ) {
             if (isRecording) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            MaterialTheme.colorScheme.errorContainer,
-                            RoundedCornerShape(16.dp)
-                        )
-                        .padding(8.dp)
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer,
+                                RoundedCornerShape(16.dp),
+                            ).padding(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.AddCircle,
                         contentDescription = "Recording",
-                        tint = MaterialTheme.colorScheme.onErrorContainer
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "${recordingTime}s",
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onErrorContainer,
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
                         onClick = { viewModel.stopRecording() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error
-                        )
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                            ),
                     ) {
                         Text("Stop")
                     }
@@ -152,12 +154,12 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             launcher.launch(Manifest.permission.RECORD_AUDIO)
                         }
                     },
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 ) {
                     Icon(
                         imageVector = Icons.Default.AddCircle,
                         contentDescription = "Record voice",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
 
@@ -166,7 +168,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     onValueChange = { messageText = it },
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("Enter message") },
-                    maxLines = 4
+                    maxLines = 4,
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -177,7 +179,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             messageText = ""
                         }
                     },
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 ) {
                     Text("Send")
                 }
@@ -193,7 +195,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 TextField(
                     value = editText,
                     onValueChange = { editText = it },
-                    singleLine = true
+                    singleLine = true,
                 )
             },
             confirmButton = {
@@ -203,7 +205,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             viewModel.editMessage(messageToEdit?.id.orEmpty(), editText)
                         }
                         messageToEdit = null
-                    }
+                    },
                 ) {
                     Text("Save")
                 }
@@ -212,7 +214,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 TextButton(onClick = { messageToEdit = null }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }
@@ -227,25 +229,34 @@ fun MessageBubble(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val isOwnMessage = message.senderId == "1"
-    val bubbleColor = if (isOwnMessage) MaterialTheme.colorScheme.primaryContainer
-    else MaterialTheme.colorScheme.secondaryContainer
-    val textColor = if (isOwnMessage) MaterialTheme.colorScheme.onPrimaryContainer
-    else MaterialTheme.colorScheme.onSecondaryContainer
+    val bubbleColor =
+        if (isOwnMessage) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.secondaryContainer
+        }
+    val textColor =
+        if (isOwnMessage) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSecondaryContainer
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .combinedClickable(
-                onClick = {},
-                onLongClick = { expanded = true }
-            ),
-        horizontalAlignment = if (isOwnMessage) Alignment.End else Alignment.Start
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = { expanded = true },
+                ),
+        horizontalAlignment = if (isOwnMessage) Alignment.End else Alignment.Start,
     ) {
         Text(
             text = message.senderName,
             style = MaterialTheme.typography.labelSmall,
-            color = textColor.copy(alpha = 0.7f)
+            color = textColor.copy(alpha = 0.7f),
         )
 
         when {
@@ -254,51 +265,53 @@ fun MessageBubble(
                     durationMs = message.durationMs ?: 0,
                     onPlayClick = { onPlayAudio(message.audioBase64) },
                     bubbleColor = bubbleColor,
-                    textColor = textColor
+                    textColor = textColor,
                 )
             }
 
             else -> {
                 Box(
-                    modifier = Modifier
-                        .background(bubbleColor, RoundedCornerShape(16.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .widthIn(max = 280.dp)
+                    modifier =
+                        Modifier
+                            .background(bubbleColor, RoundedCornerShape(16.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .widthIn(max = 280.dp),
                 ) {
                     Text(
                         text = message.text,
                         color = textColor,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
         }
 
         Text(
-            text = SimpleDateFormat("HH:mm", Locale.getDefault())
-                .format(Date(message.timestamp)),
+            text =
+                SimpleDateFormat("HH:mm", Locale.getDefault())
+                    .format(Date(message.timestamp)),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 2.dp),
-            color = textColor.copy(alpha = 0.6f)
+            color = textColor.copy(alpha = 0.6f),
         )
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
                 text = { Text("Edit") },
                 onClick = {
                     expanded = false
                     onEditClick(message)
-                }
+                },
             )
             DropdownMenuItem(
                 text = { Text("Delete") },
                 onClick = {
                     expanded = false
                     onDeleteClick(message)
-                }
+                },
             )
         }
     }
@@ -309,29 +322,30 @@ fun AudioMessageItem(
     durationMs: Long,
     onPlayClick: () -> Unit,
     bubbleColor: Color,
-    textColor: Color
+    textColor: Color,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .background(bubbleColor, RoundedCornerShape(16.dp))
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier =
+            Modifier
+                .background(bubbleColor, RoundedCornerShape(16.dp))
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         IconButton(
             onClick = onPlayClick,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier.size(36.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,
                 contentDescription = "Play audio",
-                tint = textColor
+                tint = textColor,
             )
         }
 
         Text(
             text = "${durationMs / 1000}s",
             color = textColor,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
 }

@@ -32,9 +32,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen() {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val locationPermissionState = rememberPermissionState(
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
+    val locationPermissionState =
+        rememberPermissionState(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
     var fusedLocationClient: FusedLocationProviderClient? by remember { mutableStateOf(null) }
     val hasPermission = locationPermissionState.status.isGranted
@@ -58,19 +59,20 @@ fun MapScreen() {
     }
 
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && hasPermission) {
-                try {
-                    fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
-                        location?.let {
-                            userLocation = LatLng(it.latitude, it.longitude)
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME && hasPermission) {
+                    try {
+                        fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+                            location?.let {
+                                userLocation = LatLng(it.latitude, it.longitude)
+                            }
                         }
+                    } catch (e: SecurityException) {
+                        context.showToast(e.message.orEmpty())
                     }
-                } catch (e: SecurityException) {
-                    context.showToast(e.message.orEmpty())
                 }
             }
-        }
 
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
@@ -79,9 +81,10 @@ fun MapScreen() {
     }
 
     val defaultLocation = LatLng(55.751244, 37.618423)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(userLocation ?: defaultLocation, 12f)
-    }
+    val cameraPositionState =
+        rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(userLocation ?: defaultLocation, 12f)
+        }
 
     LaunchedEffect(userLocation) {
         userLocation?.let {
@@ -97,13 +100,13 @@ fun MapScreen() {
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
     ) {
         userLocation?.let { location ->
             Marker(
                 state = MarkerState(position = location),
                 title = "Ваше местоположение",
-                snippet = "Текущая позиция"
+                snippet = "Текущая позиция",
             )
         }
 
@@ -111,7 +114,7 @@ fun MapScreen() {
             Marker(
                 state = MarkerState(position = defaultLocation),
                 title = "Москва",
-                snippet = "Местоположение по умолчанию"
+                snippet = "Местоположение по умолчанию",
             )
         }
     }

@@ -23,7 +23,7 @@ import java.util.UUID
 
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getMessagesUseCase: GetChatMessagesUseCase
+    private val getMessagesUseCase: GetChatMessagesUseCase,
 ) : ViewModel() {
     val repository = ChatRepositoryImpl()
 
@@ -54,19 +54,26 @@ class ChatViewModel(
         }
     }
 
-    fun sendMessage(text: String, senderId: String = "1", senderName: String = "Alex") {
+    fun sendMessage(
+        text: String,
+        senderId: String = "1",
+        senderName: String = "Alex",
+    ) {
         viewModelScope.launch {
             sendMessageUseCase(
                 ChatMessage(
                     text = text,
                     senderId = senderId,
-                    senderName = senderName
-                )
+                    senderName = senderName,
+                ),
             )
         }
     }
 
-    fun editMessage(key: String, newText: String) {
+    fun editMessage(
+        key: String,
+        newText: String,
+    ) {
         viewModelScope.launch {
             try {
                 repository.editMessage(key, newText)
@@ -86,10 +93,13 @@ class ChatViewModel(
         }
     }
 
-    fun startRecording(context: Context, cacheDir: File) {
+    fun startRecording(
+        context: Context,
+        cacheDir: File,
+    ) {
         if (ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.RECORD_AUDIO
+                Manifest.permission.RECORD_AUDIO,
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             _permissionGranted.value = false
@@ -101,14 +111,15 @@ class ChatViewModel(
 
         try {
             audioFile = File.createTempFile("audio", ".mp3", cacheDir)
-            mediaRecorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                setOutputFile(audioFile?.absolutePath)
-                prepare()
-                start()
-            }
+            mediaRecorder =
+                MediaRecorder().apply {
+                    setAudioSource(MediaRecorder.AudioSource.MIC)
+                    setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                    setOutputFile(audioFile?.absolutePath)
+                    prepare()
+                    start()
+                }
 
             viewModelScope.launch {
                 while (_isRecording.value) {
@@ -149,16 +160,20 @@ class ChatViewModel(
         }
     }
 
-    private suspend fun sendAudioMessage(audioBase64: String, durationMs: Long) {
-        val message = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            text = "",
-            senderId = "1",
-            senderName = "Alex",
-            timestamp = System.currentTimeMillis(),
-            audioBase64 = audioBase64,
-            durationMs = durationMs
-        )
+    private suspend fun sendAudioMessage(
+        audioBase64: String,
+        durationMs: Long,
+    ) {
+        val message =
+            ChatMessage(
+                id = UUID.randomUUID().toString(),
+                text = "",
+                senderId = "1",
+                senderName = "Alex",
+                timestamp = System.currentTimeMillis(),
+                audioBase64 = audioBase64,
+                durationMs = durationMs,
+            )
         sendMessageUseCase(message)
     }
 }

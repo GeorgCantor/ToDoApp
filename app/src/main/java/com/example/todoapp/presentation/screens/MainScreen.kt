@@ -28,14 +28,15 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 fun MainScreen(
     navController: NavController,
     viewModel: NewsViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
-    val items = listOf(
-        NavRoutes.NewsList,
-        NavRoutes.BleScanScreen,
-        NavRoutes.Chat,
-        NavRoutes.Map
-    )
+    val items =
+        listOf(
+            NavRoutes.NewsList,
+            NavRoutes.BleScanScreen,
+            NavRoutes.Chat,
+            NavRoutes.Map,
+        )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -45,7 +46,7 @@ fun MainScreen(
         bottomBar = {
             NavigationBar(
                 containerColor = BottomAppBarDefaults.containerColor,
-                tonalElevation = BottomAppBarDefaults.ContainerElevation
+                tonalElevation = BottomAppBarDefaults.ContainerElevation,
             ) {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
@@ -71,18 +72,19 @@ fun MainScreen(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     ) { innerPadding ->
         when (currentRoute) {
-            NavRoutes.NewsList.route -> NewsListScreen(
-                navController = navController,
-                viewModel = viewModel,
-                modifier = Modifier.padding(innerPadding)
-            )
+            NavRoutes.NewsList.route ->
+                NewsListScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    modifier = Modifier.padding(innerPadding),
+                )
             NavRoutes.BleScanScreen.route -> BleScanScreen()
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
             NavRoutes.Map.route -> MapScreen()

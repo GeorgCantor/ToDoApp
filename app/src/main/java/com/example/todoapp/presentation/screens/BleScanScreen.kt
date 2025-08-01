@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 data class BleDevice(
     val name: String?,
     val address: String?,
-    val rssi: Int?
+    val rssi: Int?,
 )
 
 @SuppressLint("MissingPermission")
@@ -49,9 +49,10 @@ fun BleScanScreen() {
     val isBleSupported by remember {
         mutableStateOf(context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE))
     }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions -> hasBlePermission = permissions.all { it.value } }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) { permissions -> hasBlePermission = permissions.all { it.value } }
 
     LaunchedEffect(Unit) {
         if (isBleSupported) {
@@ -60,41 +61,48 @@ fun BleScanScreen() {
                 permissions.addAll(
                     listOf(
                         android.Manifest.permission.BLUETOOTH_SCAN,
-                        android.Manifest.permission.BLUETOOTH_CONNECT
-                    )
+                        android.Manifest.permission.BLUETOOTH_CONNECT,
+                    ),
                 )
             }
             permissionLauncher.launch(permissions.toTypedArray())
         }
     }
 
-    val scanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            super.onScanResult(callbackType, result)
-            val device = BleDevice(
-                name = result?.device?.name,
-                address = result?.device?.address,
-                rssi = result?.rssi
-            )
-            devices = devices.toMutableList().apply {
-                val existingIndex = indexOfFirst { it.address == device.address }
-                if (existingIndex >= 0) {
-                    set(existingIndex, device)
-                } else {
-                    add(device)
-                }
+    val scanCallback =
+        object : ScanCallback() {
+            override fun onScanResult(
+                callbackType: Int,
+                result: ScanResult?,
+            ) {
+                super.onScanResult(callbackType, result)
+                val device =
+                    BleDevice(
+                        name = result?.device?.name,
+                        address = result?.device?.address,
+                        rssi = result?.rssi,
+                    )
+                devices =
+                    devices.toMutableList().apply {
+                        val existingIndex = indexOfFirst { it.address == device.address }
+                        if (existingIndex >= 0) {
+                            set(existingIndex, device)
+                        } else {
+                            add(device)
+                        }
+                    }
             }
         }
-    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                bluetoothLeScanner?.stopScan(scanCallback)
-                isScanning = false
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) {
+                    bluetoothLeScanner?.stopScan(scanCallback)
+                    isScanning = false
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             bluetoothLeScanner?.stopScan(scanCallback)
@@ -104,9 +112,10 @@ fun BleScanScreen() {
 
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             if (!isBleSupported) {
                 Text("BLE не поддерживается на этом устройстве")
@@ -120,14 +129,16 @@ fun BleScanScreen() {
                             isScanning = false
                         } else {
                             devices = emptyList()
-                            val settings = ScanSettings.Builder()
-                                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                                .build()
+                            val settings =
+                                ScanSettings
+                                    .Builder()
+                                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                                    .build()
                             bluetoothLeScanner?.startScan(null, settings, scanCallback)
                             isScanning = true
                         }
                     },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 ) {
                     Text(if (isScanning) "Остановить сканирование" else "Начать сканирование")
                 }
@@ -137,7 +148,7 @@ fun BleScanScreen() {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = device.name ?: "Unknown device",
-                                modifier = Modifier.padding(bottom = 4.dp)
+                                modifier = Modifier.padding(bottom = 4.dp),
                             )
                             Text(text = "MAC: ${device.address}")
                             Text(text = "RSSI: ${device.rssi} dBm")

@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SplashScreen(
     isLoading: Boolean,
-    onLoaded: () -> Unit
+    onLoaded: () -> Unit,
 ) {
     val logoAlpha = remember { Animatable(0f) }
     val textScale = remember { Animatable(0.5f) }
@@ -43,22 +43,23 @@ fun SplashScreen(
         launch {
             logoAlpha.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+                animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
             )
         }
         launch {
             textScale.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = 800, easing = LinearEasing)
+                animationSpec = tween(durationMillis = 800, easing = LinearEasing),
             )
         }
         launch {
             progressRotation.animateTo(
                 targetValue = 360f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1500, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(1500, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart,
+                    ),
             )
         }
     }
@@ -72,28 +73,30 @@ fun SplashScreen(
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "App logo",
-                modifier = Modifier
-                    .size(128.dp)
-                    .alpha(logoAlpha.value)
+                modifier =
+                    Modifier
+                        .size(128.dp)
+                        .alpha(logoAlpha.value),
             )
             Text(
                 text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.typography.displaySmall.copy(fontSize = 26.sp),
-                modifier = Modifier.scale(textScale.value)
+                modifier = Modifier.scale(textScale.value),
             )
             CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .size(40.dp),
+                modifier =
+                    Modifier
+                        .padding(top = 24.dp)
+                        .size(40.dp),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = Color.LightGray,
-                strokeWidth = 3.dp
+                strokeWidth = 3.dp,
             )
         }
     }

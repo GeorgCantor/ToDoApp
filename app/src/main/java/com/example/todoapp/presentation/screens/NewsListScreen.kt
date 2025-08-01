@@ -34,16 +34,17 @@ import com.example.todoapp.utils.toFormattedDate
 fun NewsListScreen(
     navController: NavController,
     viewModel: NewsViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val news = viewModel.news
     val isLoading by viewModel.isLoading
     val error = viewModel.error
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(8.dp),
     ) {
         when {
             isLoading -> {
@@ -52,10 +53,11 @@ fun NewsListScreen(
 
             !error.isNullOrEmpty() -> {
                 Column(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier =
+                        Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(error, color = MaterialTheme.colorScheme.error)
                     Spacer(modifier = Modifier.height(16.dp))
@@ -72,7 +74,7 @@ fun NewsListScreen(
                             article = article,
                             onClick = {
                                 navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
-                            }
+                            },
                         )
                     }
                 }
@@ -81,29 +83,30 @@ fun NewsListScreen(
     }
 }
 
-
 @Composable
 fun NewsArticleItem(
     article: NewsArticle,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             article.urlToImage?.let { url ->
                 AsyncImage(
                     model = url,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(MaterialTheme.shapes.medium),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(MaterialTheme.shapes.medium),
+                    contentScale = ContentScale.Crop,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -111,7 +114,7 @@ fun NewsArticleItem(
             Text(
                 text = article.title,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 10.dp),
             )
 
             article.description?.let { description ->
@@ -119,7 +122,7 @@ fun NewsArticleItem(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
@@ -127,7 +130,7 @@ fun NewsArticleItem(
                 text = article.publishedAt.toFormattedDate(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
     }
