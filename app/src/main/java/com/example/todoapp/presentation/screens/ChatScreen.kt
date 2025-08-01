@@ -1,6 +1,9 @@
 package com.example.todoapp.presentation.screens
 
+import android.Manifest
 import android.media.MediaPlayer
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -52,6 +55,11 @@ import java.util.Locale
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
     val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) viewModel.startRecording(context, context.cacheDir)
+    }
     var messageText by remember { mutableStateOf("") }
     val messages by viewModel.messages.collectAsState()
     var messageToEdit by remember { mutableStateOf<ChatMessage?>(null) }
@@ -132,7 +140,13 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 }
             } else {
                 IconButton(
-                    onClick = { viewModel.startRecording(context.cacheDir) },
+                    onClick = {
+                        if (viewModel.permissionGranted.value) {
+                            viewModel.startRecording(context, context.cacheDir)
+                        } else {
+                            launcher.launch(Manifest.permission.RECORD_AUDIO)
+                        }
+                    },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     Icon(

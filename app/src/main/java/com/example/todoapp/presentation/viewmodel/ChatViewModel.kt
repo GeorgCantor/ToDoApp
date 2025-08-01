@@ -1,6 +1,12 @@
 package com.example.todoapp.presentation.viewmodel
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.ChatRepositoryImpl
@@ -22,6 +28,9 @@ class ChatViewModel(
 
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
+
+    private var _permissionGranted = mutableStateOf(false)
+    val permissionGranted: State<Boolean> = _permissionGranted
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> get() = _isRecording
@@ -74,7 +83,16 @@ class ChatViewModel(
         }
     }
 
-    fun startRecording(cacheDir: File) {
+    fun startRecording(context: Context, cacheDir: File) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            _permissionGranted.value = false
+            return
+        }
+
         _isRecording.value = true
         _recordingTime.value = 0L
 
