@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.screens
 
+import android.media.MediaPlayer
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -11,15 +12,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
@@ -42,10 +51,14 @@ import java.util.Locale
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
+    val context = LocalContext.current
     var messageText by remember { mutableStateOf("") }
     val messages by viewModel.messages.collectAsState()
     var messageToEdit by remember { mutableStateOf<ChatMessage?>(null) }
     var editText by remember { mutableStateOf("") }
+    val isRecording by viewModel.isRecording.collectAsState()
+    val recordingTime by viewModel.recordingTime.collectAsState()
+    var currentPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
     Column(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -56,13 +69,27 @@ fun ChatScreen(viewModel: ChatViewModel) {
             items(messages) { message ->
                 MessageBubble(
                     message = message,
-                    onEditClick = {
-                        messageToEdit = it
-                        editText = it.text
+                    onEditClick = { messageToEdit = it },
+                    onDeleteClick = { viewModel.deleteMessage(it.id) },
+                    onPlayAudio = { base64 ->
+                        currentPlayer?.release()
+                        try {
+                            val audioFile =
+                                viewModel.repository.base64ToAudioFile(base64, context.cacheDir)
+                            MediaPlayer().apply {
+                                setDataSource(audioFile.absolutePath)
+                                prepare()
+                                start()
+                                setOnCompletionListener {
+                                    release()
+                                    audioFile.delete()
+                                    currentPlayer = null
+                                }
+                                currentPlayer = this
+                            }
+                        } catch (e: Exception) {
+                        }
                     },
-                    onDeleteClick = {
-                        viewModel.deleteMessage(it.id)
-                    }
                 )
             }
         }
@@ -72,24 +99,69 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 .fillMaxWidth()
                 .padding(bottom = 74.dp)
         ) {
-            TextField(
-                value = messageText,
-                onValueChange = { messageText = it },
-                modifier = Modifier.weight(1f),
-                placeholder = { Text("Enter message") },
-                maxLines = 4
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = {
-                    if (messageText.isNotBlank()) {
-                        viewModel.sendMessage(messageText)
-                        messageText = ""
+            if (isRecording) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(
+                            MaterialTheme.colorScheme.errorContainer,
+                            RoundedCornerShape(16.dp)
+                        )
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircle,
+                        contentDescription = "Recording",
+                        tint = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${recordingTime}s",
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(
+                        onClick = { viewModel.stopRecording() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Stop")
                     }
-                },
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Text("Send")
+                }
+            } else {
+                IconButton(
+                    onClick = { viewModel.startRecording(context.cacheDir) },
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircle,
+                        contentDescription = "Record voice",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                TextField(
+                    value = messageText,
+                    onValueChange = { messageText = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Enter message") },
+                    maxLines = 4
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        if (messageText.isNotBlank()) {
+                            viewModel.sendMessage(messageText)
+                            messageText = ""
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Text("Send")
+                }
             }
         }
     }
@@ -131,10 +203,15 @@ fun ChatScreen(viewModel: ChatViewModel) {
 fun MessageBubble(
     message: ChatMessage,
     onEditClick: (ChatMessage) -> Unit,
-    onDeleteClick: (ChatMessage) -> Unit
+    onDeleteClick: (ChatMessage) -> Unit,
+    onPlayAudio: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val isOwnMessage = message.senderId.startsWith("user")
+    val isOwnMessage = message.senderId == "1"
+    val bubbleColor = if (isOwnMessage) MaterialTheme.colorScheme.primaryContainer
+    else MaterialTheme.colorScheme.secondaryContainer
+    val textColor = if (isOwnMessage) MaterialTheme.colorScheme.onPrimaryContainer
+    else MaterialTheme.colorScheme.onSecondaryContainer
 
     Column(
         modifier = Modifier
@@ -149,30 +226,41 @@ fun MessageBubble(
         Text(
             text = message.senderName,
             style = MaterialTheme.typography.labelSmall,
-            color = if (isOwnMessage) Color(0xFF436171) else Color(0xFF9E9E9E)
+            color = textColor.copy(alpha = 0.7f)
         )
 
-        Box(
-            modifier = Modifier
-                .background(
-                    color = if (isOwnMessage) Color(0xFF436171) else Color(0xFF3D3F40),
-                    shape = RoundedCornerShape(8.dp)
+        when {
+            message.audioBase64 != null -> {
+                AudioMessageItem(
+                    durationMs = message.durationMs ?: 0,
+                    onPlayClick = { onPlayAudio(message.audioBase64) },
+                    bubbleColor = bubbleColor,
+                    textColor = textColor
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .widthIn(max = 280.dp)
-        ) {
-            Text(
-                text = message.text,
-                color = Color.White,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            }
+
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .background(bubbleColor, RoundedCornerShape(16.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .widthIn(max = 280.dp)
+                ) {
+                    Text(
+                        text = message.text,
+                        color = textColor,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
 
         Text(
-            text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(message.timestamp)),
+            text = SimpleDateFormat("HH:mm", Locale.getDefault())
+                .format(Date(message.timestamp)),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 2.dp),
-            color = if (isOwnMessage) Color(0xFF436171) else Color(0xFF9E9E9E)
+            color = textColor.copy(alpha = 0.6f)
         )
 
         DropdownMenu(
@@ -194,5 +282,37 @@ fun MessageBubble(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun AudioMessageItem(
+    durationMs: Long,
+    onPlayClick: () -> Unit,
+    bubbleColor: Color,
+    textColor: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .background(bubbleColor, RoundedCornerShape(16.dp))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        IconButton(
+            onClick = onPlayClick,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "Play audio",
+                tint = textColor
+            )
+        }
+
+        Text(
+            text = "${durationMs / 1000}s",
+            color = textColor,
+            modifier = Modifier.padding(start = 8.dp)
+        )
     }
 }

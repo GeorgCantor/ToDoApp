@@ -1,22 +1,36 @@
 package com.example.todoapp.presentation.viewmodel
 
+import android.media.MediaRecorder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.UUID
 
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getMessagesUseCase: GetChatMessagesUseCase
 ) : ViewModel() {
-    private val repository = ChatRepositoryImpl()
+    val repository = ChatRepositoryImpl()
+
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
+
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> get() = _isRecording
+
+    private val _recordingTime = MutableStateFlow(0L)
+    val recordingTime: StateFlow<Long> get() = _recordingTime
+
+    private var mediaRecorder: MediaRecorder? = null
+    private var audioFile: File? = null
 
     init {
         loadMessages()
@@ -58,5 +72,69 @@ class ChatViewModel(
             } catch (e: Exception) {
             }
         }
+    }
+
+    fun startRecording(cacheDir: File) {
+        _isRecording.value = true
+        _recordingTime.value = 0L
+
+        try {
+            audioFile = File.createTempFile("audio", ".mp3", cacheDir)
+            mediaRecorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setOutputFile(audioFile?.absolutePath)
+                prepare()
+                start()
+            }
+
+            viewModelScope.launch {
+                while (_isRecording.value) {
+                    kotlinx.coroutines.delay(1000)
+                    _recordingTime.value += 1
+                }
+            }
+        } catch (e: Exception) {
+            _isRecording.value = false
+        }
+    }
+
+    fun stopRecording() {
+        _isRecording.value = false
+        try {
+            mediaRecorder?.apply {
+                stop()
+                release()
+            }
+        } catch (e: Exception) {
+        } finally {
+            mediaRecorder = null
+        }
+
+        audioFile?.let { file ->
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val (base64, duration) = repository.audioToBase64(file)
+                    sendAudioMessage(base64, duration)
+                } catch (e: Exception) {
+                } finally {
+                    file.delete()
+                }
+            }
+        }
+    }
+
+    private suspend fun sendAudioMessage(audioBase64: String, durationMs: Long) {
+        val message = ChatMessage(
+            id = UUID.randomUUID().toString(),
+            text = "",
+            senderId = "1",
+            senderName = "Alex",
+            timestamp = System.currentTimeMillis(),
+            audioBase64 = audioBase64,
+            durationMs = durationMs
+        )
+        sendMessageUseCase(message)
     }
 }
