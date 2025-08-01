@@ -5,5 +5,7 @@ data class ChatMessage(
     val text: String = "",
     val senderId: String = "",
     val senderName: String = "User",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val audioBase64: String? = null,
+    val durationMs: Long? = null
 )

@@ -1,5 +1,7 @@
 package com.example.todoapp.data.repository
 
+import android.media.MediaPlayer
+import android.util.Base64
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.domain.repository.ChatRepository
 import com.google.firebase.Firebase
@@ -11,6 +13,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.io.File
+import java.io.FileOutputStream
 
 class ChatRepositoryImpl : ChatRepository {
     private val database = Firebase.database.reference.child("chat_messages")
@@ -48,11 +52,34 @@ class ChatRepositoryImpl : ChatRepository {
         awaitClose { database.removeEventListener(listener) }
     }
 
+    override suspend fun audioToBase64(file: File): Pair<String, Long> {
+        val bytes = file.readBytes()
+        val base64 = Base64.encodeToString(bytes, Base64.DEFAULT)
+        val duration = getAudioDuration(file)
+        return Pair(base64, duration)
+    }
+
+    override fun base64ToAudioFile(base64: String, cacheDir: File): File {
+        val bytes = Base64.decode(base64, Base64.DEFAULT)
+        val tempFile = File.createTempFile("audio", ".mp3", cacheDir)
+        FileOutputStream(tempFile).use { it.write(bytes) }
+        return tempFile
+    }
+
     suspend fun editMessage(id: String, newText: String) {
         database.child(id).child("text").setValue(newText).await()
     }
 
     suspend fun deleteMessage(id: String) {
         database.child(id).removeValue().await()
+    }
+
+    private fun getAudioDuration(file: File): Long {
+        val mediaPlayer = MediaPlayer()
+        mediaPlayer.setDataSource(file.absolutePath)
+        mediaPlayer.prepare()
+        val duration = mediaPlayer.duration.toLong()
+        mediaPlayer.release()
+        return duration
     }
 }
