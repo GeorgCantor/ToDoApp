@@ -13,6 +13,7 @@ import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
+import com.example.todoapp.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,6 +71,7 @@ class ChatViewModel(
             try {
                 repository.editMessage(key, newText)
             } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -79,6 +81,7 @@ class ChatViewModel(
             try {
                 repository.deleteMessage(key)
             } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -115,6 +118,7 @@ class ChatViewModel(
             }
         } catch (e: Exception) {
             _isRecording.value = false
+            context.showToast(e.message.orEmpty())
         }
     }
 
@@ -126,6 +130,7 @@ class ChatViewModel(
                 release()
             }
         } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
             mediaRecorder = null
         }
@@ -136,6 +141,7 @@ class ChatViewModel(
                     val (base64, duration) = repository.audioToBase64(file)
                     sendAudioMessage(base64, duration)
                 } catch (e: Exception) {
+                    e.printStackTrace()
                 } finally {
                     file.delete()
                 }

@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
+import com.example.todoapp.utils.showToast
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -77,7 +78,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
             items(messages) { message ->
                 MessageBubble(
                     message = message,
-                    onEditClick = { messageToEdit = it },
+                    onEditClick = {
+                        messageToEdit = it
+                        editText = it.text
+                    },
                     onDeleteClick = { viewModel.deleteMessage(it.id) },
                     onPlayAudio = { base64 ->
                         currentPlayer?.release()
@@ -96,6 +100,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                                 currentPlayer = this
                             }
                         } catch (e: Exception) {
+                            context.showToast(e.message.orEmpty())
                         }
                     },
                 )

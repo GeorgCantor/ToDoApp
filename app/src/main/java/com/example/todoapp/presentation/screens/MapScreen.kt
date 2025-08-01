@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.todoapp.utils.showToast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -51,7 +52,7 @@ fun MapScreen() {
                     }
                 }
             } catch (e: SecurityException) {
-                // TODO
+                context.showToast(e.message.orEmpty())
             }
         }
     }
@@ -66,7 +67,7 @@ fun MapScreen() {
                         }
                     }
                 } catch (e: SecurityException) {
-                    // TODO
+                    context.showToast(e.message.orEmpty())
                 }
             }
         }
