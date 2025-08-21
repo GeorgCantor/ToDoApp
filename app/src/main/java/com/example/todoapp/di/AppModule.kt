@@ -1,0 +1,39 @@
+package com.example.todoapp.di
+
+import com.example.todoapp.data.remote.api.NewsApiService
+import com.example.todoapp.data.repository.ChatRepositoryImpl
+import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.domain.repository.ChatRepository
+import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
+import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import com.example.todoapp.domain.usecase.SendMessageUseCase
+import com.example.todoapp.presentation.viewmodel.ChatViewModel
+import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+val appModule = module {
+    single<Retrofit> {
+        Retrofit.Builder()
+            .baseUrl("https://newsapi.org/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    single<NewsApiService> {
+        get<Retrofit>().create(NewsApiService::class.java)
+    }
+
+    single<NewsRepository> { NewsRepositoryImpl(get()) }
+    single<ChatRepository> { ChatRepositoryImpl() }
+
+    factory { GetTopHeadlinesUseCase(get()) }
+    factory { SendMessageUseCase(get()) }
+    factory { GetChatMessagesUseCase(get()) }
+
+    viewModel { NewsViewModel(get()) }
+    viewModel { ChatViewModel(get(), get()) }
+}

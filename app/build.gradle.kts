@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database.ktx)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
