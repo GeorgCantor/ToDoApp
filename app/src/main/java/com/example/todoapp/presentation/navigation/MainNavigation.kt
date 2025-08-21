@@ -18,14 +18,14 @@ import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainNavigation(
-    viewModel: NewsViewModel,
-    chatViewModel: ChatViewModel,
-) {
+fun MainNavigation() {
     val navController = rememberNavController()
-    val isLoading by viewModel.isLoading
+    val newsViewModel: NewsViewModel = koinViewModel()
+    val chatViewModel: ChatViewModel = koinViewModel()
+    val isLoading by newsViewModel.isLoading
 
     NavHost(
         navController = navController,
@@ -43,19 +43,19 @@ fun MainNavigation(
         }
 
         composable(NavRoutes.NewsList.route) {
-            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
+            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
         }
 
         composable(NavRoutes.BleScanScreen.route) {
-            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
+            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
         }
 
         composable(NavRoutes.Chat.route) {
-            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
+            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
         }
 
         composable(NavRoutes.Map.route) {
-            MainScreen(navController = navController, viewModel = viewModel, chatViewModel = chatViewModel)
+            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
         }
 
         composable(
@@ -73,7 +73,7 @@ fun MainNavigation(
                 ) + fadeOut(tween(300))
             },
         ) {
-            SearchNewsScreen(navController = navController, viewModel = viewModel)
+            SearchNewsScreen(navController = navController, viewModel = newsViewModel)
         }
 
         composable(
@@ -98,7 +98,7 @@ fun MainNavigation(
             val newsId = backStackEntry.arguments?.getInt(NavRoutes.NewsDetail.ARG_NEWS_ID) ?: 0
             NewsDetailScreen(
                 newsId = newsId,
-                viewModel = viewModel,
+                viewModel = newsViewModel,
                 navController = navController,
             )
         }

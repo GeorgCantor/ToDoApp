@@ -15,25 +15,27 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val appModule = module {
-    single<Retrofit> {
-        Retrofit.Builder()
-            .baseUrl("https://newsapi.org/v2/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+val appModule =
+    module {
+        single<Retrofit> {
+            Retrofit
+                .Builder()
+                .baseUrl("https://newsapi.org/v2/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
+        single<NewsApiService> {
+            get<Retrofit>().create(NewsApiService::class.java)
+        }
+
+        single<NewsRepository> { NewsRepositoryImpl(get()) }
+        single<ChatRepository> { ChatRepositoryImpl() }
+
+        factory { GetTopHeadlinesUseCase(get()) }
+        factory { SendMessageUseCase(get()) }
+        factory { GetChatMessagesUseCase(get()) }
+
+        viewModel { NewsViewModel(get()) }
+        viewModel { ChatViewModel(get(), get()) }
     }
-
-    single<NewsApiService> {
-        get<Retrofit>().create(NewsApiService::class.java)
-    }
-
-    single<NewsRepository> { NewsRepositoryImpl(get()) }
-    single<ChatRepository> { ChatRepositoryImpl() }
-
-    factory { GetTopHeadlinesUseCase(get()) }
-    factory { SendMessageUseCase(get()) }
-    factory { GetChatMessagesUseCase(get()) }
-
-    viewModel { NewsViewModel(get()) }
-    viewModel { ChatViewModel(get(), get()) }
-}
