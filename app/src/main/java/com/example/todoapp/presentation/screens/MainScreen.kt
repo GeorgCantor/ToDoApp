@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.presentation.navigation.NavRoutes
@@ -27,8 +28,8 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 @Composable
 fun MainScreen(
     navController: NavController,
-    viewModel: NewsViewModel,
-    chatViewModel: ChatViewModel,
+    viewModel: NewsViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel()
 ) {
     val items =
         listOf(
