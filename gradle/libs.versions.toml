@@ -24,6 +24,10 @@ play_services_location = "21.0.1"
 accompanist_permissions = "0.32.0"
 google_services = "4.4.2"
 firebase_bom = "33.0.0"
+hilt = "2.48.1"
+hiltNavigationCompose = "1.1.0"
+hiltWork = "1.0.0"
+kaptVersion = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,9 +55,15 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist_permissions" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
 firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }
+hiltAndroid = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hiltAndroidCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hiltWork = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+hiltCompiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "kaptVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google_services = { id = "com.google.gms.google-services", version.ref = "google_services" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "13.0.0" }
+hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

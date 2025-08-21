@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ktlint)
+    kotlin("kapt")
+    alias(libs.plugins.hiltAndroid)
 }
 
 android {
@@ -67,6 +69,11 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database.ktx)
+    implementation(libs.hiltAndroid)
+    kapt(libs.hiltAndroidCompiler)
+    implementation(libs.hiltNavigationCompose)
+    implementation(libs.hiltWork)
+    kapt(libs.hiltCompiler)
 
     debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
