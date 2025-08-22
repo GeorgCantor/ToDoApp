@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.viewmodel
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,13 @@ class NewsViewModel(
 
     private val _error = mutableStateOf<String?>(null)
     val error: String? get() = _error.value
+
+    private val _scrollState = mutableStateOf<LazyListState?>(null)
+    val scrollState: State<LazyListState?> get() = _scrollState
+
+    fun saveScrollState(state: LazyListState) {
+        _scrollState.value = state
+    }
 
     init {
         loadNews()

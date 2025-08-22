@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -47,6 +48,12 @@ fun NewsListScreen(
     val news = viewModel.news
     val isLoading by viewModel.isLoading
     val error = viewModel.error
+    val savedScrollState = viewModel.scrollState.value
+    val listState =
+        rememberLazyListState(
+            initialFirstVisibleItemIndex = savedScrollState?.firstVisibleItemIndex ?: 0,
+            initialFirstVisibleItemScrollOffset = savedScrollState?.firstVisibleItemScrollOffset ?: 0,
+        )
 
     Scaffold(
         topBar = {
@@ -93,11 +100,15 @@ fun NewsListScreen(
                 }
 
                 else -> {
-                    LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
+                    LazyColumn(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        state = listState,
+                    ) {
                         items(news) { article ->
                             NewsArticleItem(
                                 article = article,
                                 onClick = {
+                                    viewModel.saveScrollState(listState)
                                     navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
                                 },
                             )
