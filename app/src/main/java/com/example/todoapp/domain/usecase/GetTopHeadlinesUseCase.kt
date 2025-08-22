@@ -6,5 +6,5 @@ import com.example.todoapp.domain.repository.NewsRepository
 class GetTopHeadlinesUseCase(
     private val repository: NewsRepository,
 ) {
-    suspend operator fun invoke(): List<NewsArticle> = repository.getMockHeadlines()
+    suspend operator fun invoke(): List<NewsArticle> = repository.getTopHeadlines()
 }

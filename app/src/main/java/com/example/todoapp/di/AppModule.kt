@@ -10,6 +10,8 @@ import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -17,10 +19,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule =
     module {
-        single<Retrofit> {
+        single {
+            val loggingInterceptor =
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+
+            val okHttpClient =
+                OkHttpClient
+                    .Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .build()
+
             Retrofit
                 .Builder()
-                .baseUrl("https://newsapi.org/v2/")
+                .baseUrl("https://newsapi.org/")
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }
