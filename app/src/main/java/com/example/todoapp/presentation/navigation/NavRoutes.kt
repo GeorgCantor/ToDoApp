@@ -20,4 +20,6 @@ sealed class NavRoutes(
     object Chat : NavRoutes("chat")
 
     object Map : NavRoutes("map_screen")
+
+    object Documents : NavRoutes("documents_screen")
 }

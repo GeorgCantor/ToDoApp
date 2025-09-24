@@ -17,6 +17,7 @@ import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
+import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -25,6 +26,7 @@ fun MainNavigation() {
     val navController = rememberNavController()
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
+    val documentsViewModel: DocumentsViewModel = koinViewModel()
     val isLoading by newsViewModel.isLoading
 
     NavHost(
@@ -43,19 +45,48 @@ fun MainNavigation() {
         }
 
         composable(NavRoutes.NewsList.route) {
-            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+            )
         }
 
         composable(NavRoutes.BleScanScreen.route) {
-            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+            )
         }
 
         composable(NavRoutes.Chat.route) {
-            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+            )
         }
 
         composable(NavRoutes.Map.route) {
-            MainScreen(navController = navController, viewModel = newsViewModel, chatViewModel = chatViewModel)
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+            )
+        }
+
+        composable(NavRoutes.Documents.route) {
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+            )
         }
 
         composable(
