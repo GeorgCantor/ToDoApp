@@ -2,6 +2,7 @@ package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MailOutline
@@ -22,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
+import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
 @Composable
@@ -29,6 +31,7 @@ fun MainScreen(
     navController: NavController,
     viewModel: NewsViewModel,
     chatViewModel: ChatViewModel,
+    documentsViewModel: DocumentsViewModel,
 ) {
     val items =
         listOf(
@@ -36,6 +39,7 @@ fun MainScreen(
             NavRoutes.BleScanScreen,
             NavRoutes.Chat,
             NavRoutes.Map,
+            NavRoutes.Documents,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -56,6 +60,7 @@ fun MainScreen(
                                 NavRoutes.BleScanScreen -> Icon(Icons.Filled.Share, contentDescription = "Bluetooth")
                                 NavRoutes.Chat -> Icon(Icons.Filled.MailOutline, contentDescription = "Chat")
                                 NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                                NavRoutes.Documents -> Icon(Icons.Filled.ExitToApp, contentDescription = "Documents")
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
                         },
@@ -88,6 +93,11 @@ fun MainScreen(
             NavRoutes.BleScanScreen.route -> BleScanScreen()
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
             NavRoutes.Map.route -> MapScreen()
+            NavRoutes.Documents.route ->
+                DocumentsScreen(
+                    navController = navController,
+                    viewModel = documentsViewModel,
+                )
         }
     }
 }

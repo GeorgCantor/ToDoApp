@@ -35,7 +35,7 @@ class DocumentsViewModel(
         loadAvailableDocuments()
     }
 
-    private fun loadAvailableDocuments() {
+    fun loadAvailableDocuments() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -71,6 +71,10 @@ class DocumentsViewModel(
                 _downloadProgress.value = null
             }
         }
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 
     private fun openFile(
