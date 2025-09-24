@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -36,7 +35,6 @@ fun MainScreen(
     val items =
         listOf(
             NavRoutes.NewsList,
-            NavRoutes.BleScanScreen,
             NavRoutes.Chat,
             NavRoutes.Map,
             NavRoutes.Documents,
@@ -57,7 +55,6 @@ fun MainScreen(
                         icon = {
                             when (item) {
                                 NavRoutes.NewsList -> Icon(Icons.Filled.Home, contentDescription = "News")
-                                NavRoutes.BleScanScreen -> Icon(Icons.Filled.Share, contentDescription = "Bluetooth")
                                 NavRoutes.Chat -> Icon(Icons.Filled.MailOutline, contentDescription = "Chat")
                                 NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                                 NavRoutes.Documents -> Icon(Icons.Filled.ExitToApp, contentDescription = "Documents")
@@ -90,7 +87,6 @@ fun MainScreen(
                     viewModel = viewModel,
                     modifier = Modifier.padding(innerPadding),
                 )
-            NavRoutes.BleScanScreen.route -> BleScanScreen()
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
             NavRoutes.Map.route -> MapScreen()
             NavRoutes.Documents.route ->
