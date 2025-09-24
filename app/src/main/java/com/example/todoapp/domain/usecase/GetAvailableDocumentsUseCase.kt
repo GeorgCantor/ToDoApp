@@ -4,9 +4,7 @@ import com.example.todoapp.domain.model.DocumentItem
 import com.example.todoapp.domain.repository.DocumentRepository
 
 class GetAvailableDocumentsUseCase(
-    private val repository: DocumentRepository
+    private val repository: DocumentRepository,
 ) {
-    suspend operator fun invoke(): List<DocumentItem> {
-        return repository.getAvailableDocuments()
-    }
+    suspend operator fun invoke(): List<DocumentItem> = repository.getAvailableDocuments()
 }

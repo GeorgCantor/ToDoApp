@@ -5,5 +5,6 @@ import java.io.File
 
 interface DocumentRepository {
     suspend fun downloadDummyDocument(downloadUrl: String): File
+
     suspend fun getAvailableDocuments(): List<DocumentItem>
 }

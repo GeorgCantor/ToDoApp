@@ -4,9 +4,7 @@ import com.example.todoapp.domain.repository.DocumentRepository
 import java.io.File
 
 class DownloadDocumentUseCase(
-    private val repository: DocumentRepository
+    private val repository: DocumentRepository,
 ) {
-    suspend operator fun invoke(downloadUrl: String): File {
-        return repository.downloadDummyDocument(downloadUrl)
-    }
+    suspend operator fun invoke(downloadUrl: String): File = repository.downloadDummyDocument(downloadUrl)
 }

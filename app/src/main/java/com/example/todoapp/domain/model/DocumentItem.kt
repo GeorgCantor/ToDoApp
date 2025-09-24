@@ -6,5 +6,5 @@ data class DocumentItem(
     val type: String,
     val size: String,
     val description: String,
-    val downloadUrl: String
+    val downloadUrl: String,
 )
