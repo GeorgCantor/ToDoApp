@@ -5,8 +5,11 @@ import com.example.todoapp.domain.model.CalculatorState
 import com.example.todoapp.domain.repository.CalculatorRepository
 
 class CalculatorRepositoryImpl : CalculatorRepository {
-    override fun calculate(currentState: CalculatorState, input: String): CalculatorState {
-        return when {
+    override fun calculate(
+        currentState: CalculatorState,
+        input: String,
+    ): CalculatorState =
+        when {
             input == "C" -> clear()
             input == "DEL" -> deleteLastCharacter(currentState)
             input == "=" -> performCalculation(currentState)
@@ -15,19 +18,15 @@ class CalculatorRepositoryImpl : CalculatorRepository {
             input.matches(Regex("[0-9]")) -> handleDigit(currentState, input)
             else -> currentState
         }
-    }
 
-    override fun clear(): CalculatorState {
-        return CalculatorState()
-    }
+    override fun clear(): CalculatorState = CalculatorState()
 
-    override fun deleteLastCharacter(currentState: CalculatorState): CalculatorState {
-        return if (currentState.displayValue.length > 1) {
+    override fun deleteLastCharacter(currentState: CalculatorState): CalculatorState =
+        if (currentState.displayValue.length > 1) {
             currentState.copy(displayValue = currentState.displayValue.dropLast(1))
         } else {
             currentState.copy(displayValue = "0")
         }
-    }
 
     private fun performCalculation(currentState: CalculatorState): CalculatorState {
         val currentValue = currentState.displayValue.toDoubleOrNull() ?: return currentState
@@ -39,7 +38,7 @@ class CalculatorRepositoryImpl : CalculatorRepository {
                 displayValue = formatResult(result),
                 firstOperand = null,
                 operator = null,
-                waitingForNewOperand = true
+                waitingForNewOperand = true,
             )
         } catch (e: ArithmeticException) {
             CalculatorState("Error")
@@ -48,60 +47,61 @@ class CalculatorRepositoryImpl : CalculatorRepository {
 
     private fun setOperator(
         currentState: CalculatorState,
-        operatorSymbol: String
+        operatorSymbol: String,
     ): CalculatorState {
         val currentValue = currentState.displayValue.toDoubleOrNull() ?: return currentState
 
-        val operator = when (operatorSymbol) {
-            "+" -> CalculatorOperation.Add
-            "-" -> CalculatorOperation.Subtract
-            "×" -> CalculatorOperation.Multiply
-            "÷" -> CalculatorOperation.Divide
-            else -> return currentState
-        }
+        val operator =
+            when (operatorSymbol) {
+                "+" -> CalculatorOperation.Add
+                "-" -> CalculatorOperation.Subtract
+                "×" -> CalculatorOperation.Multiply
+                "÷" -> CalculatorOperation.Divide
+                else -> return currentState
+            }
 
         return CalculatorState(
             displayValue = currentState.displayValue,
             firstOperand = currentValue,
             operator = operator,
-            waitingForNewOperand = true
+            waitingForNewOperand = true,
         )
     }
 
-    private fun handleDecimalPoint(currentState: CalculatorState): CalculatorState {
-        return if (currentState.waitingForNewOperand) {
+    private fun handleDecimalPoint(currentState: CalculatorState): CalculatorState =
+        if (currentState.waitingForNewOperand) {
             currentState.copy(
                 displayValue = "0.",
-                waitingForNewOperand = false
+                waitingForNewOperand = false,
             )
         } else if (!currentState.displayValue.contains(".")) {
             currentState.copy(
                 displayValue = currentState.displayValue + ".",
-                waitingForNewOperand = false
+                waitingForNewOperand = false,
             )
         } else {
             currentState
         }
-    }
 
-    private fun handleDigit(currentState: CalculatorState, digit: String): CalculatorState {
-        return if (currentState.waitingForNewOperand) {
+    private fun handleDigit(
+        currentState: CalculatorState,
+        digit: String,
+    ): CalculatorState =
+        if (currentState.waitingForNewOperand) {
             currentState.copy(
                 displayValue = digit,
-                waitingForNewOperand = false
+                waitingForNewOperand = false,
             )
         } else {
             currentState.copy(
-                displayValue = if (currentState.displayValue == "0") digit else currentState.displayValue + digit
+                displayValue = if (currentState.displayValue == "0") digit else currentState.displayValue + digit,
             )
         }
-    }
 
-    private fun formatResult(result: Double): String {
-        return if (result % 1 == 0.0) {
+    private fun formatResult(result: Double): String =
+        if (result % 1 == 0.0) {
             result.toInt().toString()
         } else {
             String.format("%.8f", result).trimEnd('0').trimEnd('.')
         }
-    }
 }

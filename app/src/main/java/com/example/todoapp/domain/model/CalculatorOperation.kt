@@ -1,13 +1,21 @@
 package com.example.todoapp.domain.model
 
-sealed class CalculatorOperation(val symbol: String) {
+sealed class CalculatorOperation(
+    val symbol: String,
+) {
     object Add : CalculatorOperation("+")
+
     object Subtract : CalculatorOperation("-")
+
     object Multiply : CalculatorOperation("×")
+
     object Divide : CalculatorOperation("÷")
 
-    fun execute(first: Double, second: Double): Double {
-        return when (this) {
+    fun execute(
+        first: Double,
+        second: Double,
+    ): Double =
+        when (this) {
             is Add -> first + second
             is Subtract -> first - second
             is Multiply -> first * second
@@ -16,5 +24,4 @@ sealed class CalculatorOperation(val symbol: String) {
                 first / second
             }
         }
-    }
 }

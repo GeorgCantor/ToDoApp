@@ -5,7 +5,7 @@ import com.example.todoapp.domain.model.CalculatorState
 interface CalculatorRepository {
     fun calculate(
         currentState: CalculatorState,
-        input: String
+        input: String,
     ): CalculatorState
 
     fun clear(): CalculatorState
