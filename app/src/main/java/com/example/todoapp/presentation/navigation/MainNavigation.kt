@@ -16,6 +16,7 @@ import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -27,6 +28,7 @@ fun MainNavigation() {
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
     val documentsViewModel: DocumentsViewModel = koinViewModel()
+    val calculatorViewModel: CalculatorViewModel = koinViewModel()
     val isLoading by newsViewModel.isLoading
 
     NavHost(
@@ -50,6 +52,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -59,6 +62,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -68,6 +72,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -77,6 +82,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -86,6 +92,17 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
+            )
+        }
+
+        composable(NavRoutes.Calculator.route) {
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                documentsViewModel = documentsViewModel,
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
