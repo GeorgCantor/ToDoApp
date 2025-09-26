@@ -5,4 +5,6 @@ data class CalculatorState(
     val firstOperand: Double? = null,
     val operator: CalculatorOperation? = null,
     val waitingForNewOperand: Boolean = false,
+    val isScientificMode: Boolean = false,
+    val memory: Double = 0.0,
 )
