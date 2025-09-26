@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -39,7 +40,7 @@ import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 @Composable
 fun CalculatorScreen(
     navController: NavController,
-    viewModel: CalculatorViewModel
+    viewModel: CalculatorViewModel,
 ) {
     val calculatorState by viewModel.calculatorState.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
@@ -53,7 +54,7 @@ fun CalculatorScreen(
                 TextButton(onClick = { viewModel.clearError() }) {
                     Text("OK")
                 }
-            }
+            },
         )
     }
 
@@ -65,28 +66,31 @@ fun CalculatorScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
             )
-        }
+        },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             CalculatorDisplay(
                 displayValue = calculatorState.displayValue,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(0.5f),
             )
             CalculatorKeyboard(
                 onButtonClick = viewModel::onButtonClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(2.5f),
             )
         }
     }
@@ -95,27 +99,31 @@ fun CalculatorScreen(
 @Composable
 fun CalculatorDisplay(
     displayValue: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .padding(16.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(12.dp)
-            ),
-        contentAlignment = Alignment.CenterEnd
+        modifier =
+            modifier
+                .padding(16.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(12.dp),
+                ),
+        contentAlignment = Alignment.CenterEnd,
     ) {
         Text(
             text = displayValue,
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Light
-            ),
+            style =
+                MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Light,
+                ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-            maxLines = 1
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            softWrap = false,
         )
     }
 }
@@ -123,26 +131,34 @@ fun CalculatorDisplay(
 @Composable
 fun CalculatorKeyboard(
     onButtonClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val buttons = listOf(
-        listOf("C", "DEL", "%", "÷"),
-        listOf("7", "8", "9", "×"),
-        listOf("4", "5", "6", "-"),
-        listOf("1", "2", "3", "+"),
-        listOf("0", ".", "=")
-    )
+    val buttons =
+        listOf(
+            listOf("C", "<", "%", "÷"),
+            listOf("7", "8", "9", "×"),
+            listOf("4", "5", "6", "-"),
+            listOf("1", "2", "3", "+"),
+            listOf("0", ".", "="),
+        )
 
     Column(
         modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         buttons.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                val weight = if (row.size == 4) 1f else if (row.first() == "0") 2f else 1f
+                val weight =
+                    if (row.size == 4) {
+                        1f
+                    } else if (row.first() == "0") {
+                        2f
+                    } else {
+                        1f
+                    }
 
                 row.forEach { button ->
                     CalculatorButton(
@@ -150,7 +166,7 @@ fun CalculatorKeyboard(
                         onClick = { onButtonClick(button) },
                         modifier = Modifier.weight(weight),
                         isOperation = button in listOf("÷", "×", "-", "+", "="),
-                        isFunction = button in listOf("C", "DEL", "%")
+                        isFunction = button in listOf("C", "<", "%"),
                     )
                 }
             }
@@ -164,37 +180,42 @@ fun CalculatorButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isOperation: Boolean = false,
-    isFunction: Boolean = false
+    isFunction: Boolean = false,
 ) {
-    val buttonColors = when {
-        isOperation -> ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        )
+    val buttonColors =
+        when {
+            isOperation ->
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                )
 
-        isFunction -> ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
-        )
+            isFunction ->
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                )
 
-        else -> ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+            else ->
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+        }
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .aspectRatio(1f)
-            .padding(4.dp),
+        modifier =
+            modifier
+                .aspectRatio(1f)
+                .padding(4.dp),
         colors = buttonColors,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 20.sp
+            fontSize = 20.sp,
         )
     }
 }

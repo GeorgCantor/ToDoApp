@@ -52,7 +52,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -62,7 +62,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -72,7 +72,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -82,7 +82,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -92,7 +92,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 
@@ -102,7 +102,7 @@ fun MainNavigation() {
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 documentsViewModel = documentsViewModel,
-                calculatorViewModel = calculatorViewModel
+                calculatorViewModel = calculatorViewModel,
             )
         }
 

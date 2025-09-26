@@ -11,7 +11,7 @@ class CalculatorRepositoryImpl : CalculatorRepository {
     ): CalculatorState =
         when {
             input == "C" -> clear()
-            input == "DEL" -> deleteLastCharacter(currentState)
+            input == "<" -> deleteLastCharacter(currentState)
             input == "=" -> performCalculation(currentState)
             input in listOf("+", "-", "×", "÷") -> setOperator(currentState, input)
             input == "." -> handleDecimalPoint(currentState)

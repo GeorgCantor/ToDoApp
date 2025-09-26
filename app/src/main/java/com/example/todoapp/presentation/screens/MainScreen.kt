@@ -32,7 +32,7 @@ fun MainScreen(
     viewModel: NewsViewModel,
     chatViewModel: ChatViewModel,
     documentsViewModel: DocumentsViewModel,
-    calculatorViewModel: CalculatorViewModel
+    calculatorViewModel: CalculatorViewModel,
 ) {
     val items =
         listOf(
@@ -56,32 +56,39 @@ fun MainScreen(
                     NavigationBarItem(
                         icon = {
                             when (item) {
-                                NavRoutes.NewsList -> Icon(
-                                    Icons.Filled.Home,
-                                    contentDescription = "News"
-                                )
+                                NavRoutes.NewsList ->
+                                    Icon(
+                                        Icons.Filled.Home,
+                                        contentDescription = "News",
+                                    )
 
-                                NavRoutes.Chat -> Icon(
-                                    Icons.Filled.MailOutline,
-                                    contentDescription = "Chat"
-                                )
+                                NavRoutes.Chat ->
+                                    Icon(
+                                        Icons.Filled.MailOutline,
+                                        contentDescription = "Chat",
+                                    )
 
-                                NavRoutes.Documents -> Icon(
-                                    Icons.Filled.ExitToApp,
-                                    contentDescription = "Documents"
-                                )
+                                NavRoutes.Documents ->
+                                    Icon(
+                                        Icons.Filled.ExitToApp,
+                                        contentDescription = "Documents",
+                                    )
 
-                                NavRoutes.Calculator -> Icon(
-                                    Icons.Filled.AddCircle,
-                                    contentDescription = "Calculator"
-                                )
+                                NavRoutes.Calculator ->
+                                    Icon(
+                                        Icons.Filled.AddCircle,
+                                        contentDescription = "Calculator",
+                                    )
 
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
                         },
                         label = {
-                            Text(item.route.takeWhile { it != '_' }
-                                .replaceFirstChar { it.uppercase() })
+                            Text(
+                                item.route
+                                    .takeWhile { it != '_' }
+                                    .replaceFirstChar { it.uppercase() },
+                            )
                         },
                         selected = currentRoute == item.route,
                         onClick = {
