@@ -2,9 +2,9 @@ package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.presentation.navigation.NavRoutes
+import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -31,13 +32,14 @@ fun MainScreen(
     viewModel: NewsViewModel,
     chatViewModel: ChatViewModel,
     documentsViewModel: DocumentsViewModel,
+    calculatorViewModel: CalculatorViewModel
 ) {
     val items =
         listOf(
             NavRoutes.NewsList,
             NavRoutes.Chat,
-            NavRoutes.Map,
             NavRoutes.Documents,
+            NavRoutes.Calculator,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -54,15 +56,32 @@ fun MainScreen(
                     NavigationBarItem(
                         icon = {
                             when (item) {
-                                NavRoutes.NewsList -> Icon(Icons.Filled.Home, contentDescription = "News")
-                                NavRoutes.Chat -> Icon(Icons.Filled.MailOutline, contentDescription = "Chat")
-                                NavRoutes.Map -> Icon(Icons.Filled.LocationOn, contentDescription = "Map")
-                                NavRoutes.Documents -> Icon(Icons.Filled.ExitToApp, contentDescription = "Documents")
+                                NavRoutes.NewsList -> Icon(
+                                    Icons.Filled.Home,
+                                    contentDescription = "News"
+                                )
+
+                                NavRoutes.Chat -> Icon(
+                                    Icons.Filled.MailOutline,
+                                    contentDescription = "Chat"
+                                )
+
+                                NavRoutes.Documents -> Icon(
+                                    Icons.Filled.ExitToApp,
+                                    contentDescription = "Documents"
+                                )
+
+                                NavRoutes.Calculator -> Icon(
+                                    Icons.Filled.AddCircle,
+                                    contentDescription = "Calculator"
+                                )
+
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
                             }
                         },
                         label = {
-                            Text(item.route.takeWhile { it != '_' }.replaceFirstChar { it.uppercase() })
+                            Text(item.route.takeWhile { it != '_' }
+                                .replaceFirstChar { it.uppercase() })
                         },
                         selected = currentRoute == item.route,
                         onClick = {
@@ -87,12 +106,18 @@ fun MainScreen(
                     viewModel = viewModel,
                     modifier = Modifier.padding(innerPadding),
                 )
+
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
-            NavRoutes.Map.route -> MapScreen()
             NavRoutes.Documents.route ->
                 DocumentsScreen(
                     navController = navController,
                     viewModel = documentsViewModel,
+                )
+
+            NavRoutes.Calculator.route ->
+                CalculatorScreen(
+                    navController = navController,
+                    viewModel = calculatorViewModel,
                 )
         }
     }

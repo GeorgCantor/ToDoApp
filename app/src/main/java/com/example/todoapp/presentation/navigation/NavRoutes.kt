@@ -22,4 +22,6 @@ sealed class NavRoutes(
     object Map : NavRoutes("map_screen")
 
     object Documents : NavRoutes("documents_screen")
+
+    object Calculator : NavRoutes("calculator_screen")
 }
