@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,7 +61,15 @@ fun CalculatorScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Calculator") },
+                title = {
+                    Text(
+                        if (calculatorState.isScientificMode) {
+                            "Scientific Calculator"
+                        } else {
+                            "Basic Calculator"
+                        },
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -75,7 +83,8 @@ fun CalculatorScreen(
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(bottom = 60.dp),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             CalculatorDisplay(
@@ -83,14 +92,25 @@ fun CalculatorScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.5f),
+                        .weight(0.2f),
             )
+
+            if (calculatorState.memory != 0.0) {
+                Text(
+                    text = "M: ${calculatorState.memory}",
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
             CalculatorKeyboard(
                 onButtonClick = viewModel::onButtonClick,
+                isScientificMode = calculatorState.isScientificMode,
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .weight(2.5f),
+                        .weight(2.8f),
             )
         }
     }
@@ -104,7 +124,7 @@ fun CalculatorDisplay(
     Box(
         modifier =
             modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(12.dp),
@@ -115,12 +135,12 @@ fun CalculatorDisplay(
             text = displayValue,
             style =
                 MaterialTheme.typography.headlineLarge.copy(
-                    fontSize = 36.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Light,
                 ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             softWrap = false,
@@ -131,9 +151,10 @@ fun CalculatorDisplay(
 @Composable
 fun CalculatorKeyboard(
     onButtonClick: (String) -> Unit,
+    isScientificMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val buttons =
+    val basicButtons =
         listOf(
             listOf("C", "<", "%", "÷"),
             listOf("7", "8", "9", "×"),
@@ -142,11 +163,70 @@ fun CalculatorKeyboard(
             listOf("0", ".", "="),
         )
 
+    val scientificButtons =
+        listOf(
+            listOf("π", "e", "^", "√"),
+            listOf("sin", "cos", "tan", "!"),
+            listOf("log", "ln", "M+", "M-"),
+            listOf("MR", "MC", "(", ")"),
+        )
+
     Column(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        buttons.forEach { row ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            CalculatorButton(
+                text = if (isScientificMode) "BASIC" else "SCI",
+                onClick = { onButtonClick("SCI") },
+                modifier =
+                    Modifier
+                        .height(46.dp)
+                        .weight(1f),
+                isFunction = true,
+            )
+        }
+
+        if (isScientificMode) {
+            scientificButtons.forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    row.forEach { button ->
+                        CalculatorButton(
+                            text = button,
+                            onClick = { onButtonClick(button) },
+                            isOperation = button in listOf("÷", "×", "-", "+", "=", "^", "√"),
+                            isFunction =
+                                button in
+                                    listOf(
+                                        "C",
+                                        "<",
+                                        "%",
+                                        "sin",
+                                        "cos",
+                                        "tan",
+                                        "log",
+                                        "ln",
+                                        "!",
+                                        "π",
+                                        "e",
+                                        "M+",
+                                        "M-",
+                                        "MR",
+                                        "MC",
+                                    ),
+                        )
+                    }
+                }
+            }
+        }
+
+        basicButtons.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -207,7 +287,6 @@ fun CalculatorButton(
         onClick = onClick,
         modifier =
             modifier
-                .aspectRatio(1f)
                 .padding(4.dp),
         colors = buttonColors,
         shape = RoundedCornerShape(12.dp),
