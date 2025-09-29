@@ -1,4 +1,4 @@
-package com.example.todoapp.service
+package com.example.todoapp
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -9,7 +9,7 @@ data class StorageInfo(
     val totalExternalStorage: Long,
     val availableExternalStorage: Long,
     val isExternalStorageAvailable: Boolean,
-    val storageUsagePercentage: Int
+    val storageUsagePercentage: Int,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -17,10 +17,13 @@ data class StorageInfo(
         parcel.readLong(),
         parcel.readLong(),
         parcel.readByte() != 0.toByte(),
-        parcel.readInt()
+        parcel.readInt(),
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeLong(totalInternalStorage)
         parcel.writeLong(availableInternalStorage)
         parcel.writeLong(totalExternalStorage)
@@ -33,6 +36,7 @@ data class StorageInfo(
 
     companion object CREATOR : Parcelable.Creator<StorageInfo> {
         override fun createFromParcel(parcel: Parcel): StorageInfo = StorageInfo(parcel)
+
         override fun newArray(size: Int): Array<StorageInfo?> = arrayOfNulls(size)
     }
 }

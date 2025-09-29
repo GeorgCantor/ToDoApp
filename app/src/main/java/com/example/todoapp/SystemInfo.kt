@@ -1,4 +1,4 @@
-package com.example.todoapp.service
+package com.example.todoapp
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -13,7 +13,7 @@ data class SystemInfo(
     val availableMemory: Long,
     val totalMemory: Long,
     val isCharging: Boolean,
-    val timestamp: Long
+    val timestamp: Long,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().orEmpty(),
@@ -25,10 +25,13 @@ data class SystemInfo(
         parcel.readLong(),
         parcel.readLong(),
         parcel.readByte() != 0.toByte(),
-        parcel.readLong()
+        parcel.readLong(),
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeString(deviceName)
         parcel.writeString(androidVersion)
         parcel.writeInt(apiLevel)
@@ -45,6 +48,7 @@ data class SystemInfo(
 
     companion object CREATOR : Parcelable.Creator<SystemInfo> {
         override fun createFromParcel(parcel: Parcel): SystemInfo = SystemInfo(parcel)
+
         override fun newArray(size: Int): Array<SystemInfo?> = arrayOfNulls(size)
     }
 }

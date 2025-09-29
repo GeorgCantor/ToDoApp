@@ -1,3 +1,3 @@
-package com.example.todoapp.service;
+package com.example.todoapp;
 
 parcelable StorageInfo;
