@@ -80,35 +80,41 @@ fun IPCScreen(navController: NavController) {
         }
     }
 
-    val serviceConnection = remember {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                systemInfoService = ISystemInfoService.Stub.asInterface(service)
-                isConnected = true
-                errorMessage = null
+    val serviceConnection =
+        remember {
+            object : ServiceConnection {
+                override fun onServiceConnected(
+                    name: ComponentName?,
+                    service: IBinder?,
+                ) {
+                    systemInfoService = ISystemInfoService.Stub.asInterface(service)
+                    isConnected = true
+                    errorMessage = null
 
-                coroutineScope.launch {
-                    systemInfoService?.startMonitoring()
-                    loadSystemInfo()
+                    coroutineScope.launch {
+                        systemInfoService?.startMonitoring()
+                        loadSystemInfo()
+                    }
+                }
+
+                override fun onServiceDisconnected(name: ComponentName?) {
+                    systemInfoService = null
+                    isConnected = false
                 }
             }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-                systemInfoService = null
-                isConnected = false
-            }
         }
-    }
 
     fun connectToService() {
         try {
             isLoading = true
-            val intent = Intent().apply {
-                component = ComponentName(
-                    "com.example.todoapp",
-                    "com.example.todoapp.service.SystemInfoService"
-                )
-            }
+            val intent =
+                Intent().apply {
+                    component =
+                        ComponentName(
+                            "com.example.todoapp",
+                            "com.example.todoapp.service.SystemInfoService",
+                        )
+                }
             val bound = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
             if (!bound) {
                 errorMessage = "Failed to bind to service"
@@ -158,60 +164,65 @@ fun IPCScreen(navController: NavController) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
             )
-        }
+        },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = "Service Status",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
                         text = if (isConnected) "Connected" else "Disconnected",
-                        color = if (isConnected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.error
+                        color =
+                            if (isConnected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            },
                     )
                 }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Button(
                     onClick = { connectToService() },
                     enabled = !isConnected && !isLoading,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text("Connect")
                 }
                 Button(
                     onClick = { disconnectFromService() },
                     enabled = isConnected,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text("Disconnect")
                 }
                 Button(
                     onClick = { loadSystemInfo() },
                     enabled = isConnected,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text("Refresh")
                 }
@@ -224,12 +235,12 @@ fun IPCScreen(navController: NavController) {
             errorMessage?.let { error ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 ) {
                     Text(
                         text = error,
                         modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onErrorContainer,
                     )
                 }
             }
@@ -251,12 +262,12 @@ fun SystemInfoCard(systemInfo: SystemInfo) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(Icons.Default.Build, contentDescription = "System")
                 Text(
                     text = "System Information",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -270,7 +281,7 @@ fun SystemInfoCard(systemInfo: SystemInfo) {
             InfoRow("Total Memory", formatBytes(systemInfo.totalMemory))
             InfoRow(
                 "Memory Usage",
-                "${((systemInfo.totalMemory - systemInfo.availableMemory) * 100 / systemInfo.totalMemory).toInt()}%"
+                "${((systemInfo.totalMemory - systemInfo.availableMemory) * 100 / systemInfo.totalMemory).toInt()}%",
             )
             InfoRow("Last Updated", formatTimestamp(systemInfo.timestamp))
         }
@@ -283,12 +294,12 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(Icons.Default.ExitToApp, contentDescription = "Storage")
                 Text(
                     text = "Storage Information",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -298,14 +309,16 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
 
             LinearProgressIndicator(
                 progress = { storageInfo.storageUsagePercentage / 100f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = when {
-                    storageInfo.storageUsagePercentage > 90 -> MaterialTheme.colorScheme.error
-                    storageInfo.storageUsagePercentage > 75 -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.primary
-                }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                color =
+                    when {
+                        storageInfo.storageUsagePercentage > 90 -> MaterialTheme.colorScheme.error
+                        storageInfo.storageUsagePercentage > 75 -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.primary
+                    },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -314,26 +327,30 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
                 InfoRow(
                     "External Total",
                     formatBytes(storageInfo.totalExternalStorage),
-                    Icons.Default.Info
+                    Icons.Default.Info,
                 )
                 InfoRow("External Available", formatBytes(storageInfo.availableExternalStorage))
-                val externalUsage = if (storageInfo.totalExternalStorage > 0) {
-                    ((storageInfo.totalExternalStorage - storageInfo.availableExternalStorage) * 100 / storageInfo.totalExternalStorage).toInt()
-                } else {
-                    0
-                }
+                val externalUsage =
+                    if (storageInfo.totalExternalStorage > 0) {
+                        ((storageInfo.totalExternalStorage - storageInfo.availableExternalStorage) * 100 / storageInfo.totalExternalStorage)
+                            .toInt()
+                    } else {
+                        0
+                    }
                 InfoRow("External Usage", "$externalUsage%")
 
                 LinearProgressIndicator(
                     progress = { externalUsage / 100f },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    color = when {
-                        externalUsage > 90 -> MaterialTheme.colorScheme.error
-                        externalUsage > 75 -> MaterialTheme.colorScheme.primary
-                        else -> MaterialTheme.colorScheme.primary
-                    }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
+                    color =
+                        when {
+                            externalUsage > 90 -> MaterialTheme.colorScheme.error
+                            externalUsage > 75 -> MaterialTheme.colorScheme.primary
+                            else -> MaterialTheme.colorScheme.primary
+                        },
                 )
             } else {
                 InfoRow("External Storage", "Not Available", Icons.Default.Warning)
@@ -346,36 +363,37 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
 fun InfoRow(
     label: String,
     value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector? = null
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             icon?.let {
                 Icon(
                     imageVector = it,
                     contentDescription = label,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
                 )
             }
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
         )
     }
 }
@@ -393,7 +411,7 @@ fun formatBytes(bytes: Long): String {
     return "%.2f %s".format(size, units[unitIndex])
 }
 
-fun formatTimestamp(timestamp: Long): String {
-    return java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
+fun formatTimestamp(timestamp: Long): String =
+    java.text
+        .SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
         .format(java.util.Date(timestamp))
-}

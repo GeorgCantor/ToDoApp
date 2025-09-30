@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ fun MainScreen(
             NavRoutes.Chat,
             NavRoutes.Documents,
             NavRoutes.Calculator,
+            NavRoutes.IPCScreen,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -78,6 +80,12 @@ fun MainScreen(
                                     Icon(
                                         Icons.Filled.AddCircle,
                                         contentDescription = "Calculator",
+                                    )
+
+                                NavRoutes.IPCScreen ->
+                                    Icon(
+                                        Icons.Filled.List,
+                                        contentDescription = "IPC",
                                     )
 
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
@@ -126,6 +134,8 @@ fun MainScreen(
                     navController = navController,
                     viewModel = calculatorViewModel,
                 )
+
+            NavRoutes.IPCScreen.route -> IPCScreen(navController = navController)
         }
     }
 }
