@@ -40,6 +40,15 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".service.SystemInfoService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.todoapp.service.SystemInfoService" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDjzqlRl7UamOoXgdxdCDCWmzpm1gUSSgc" />

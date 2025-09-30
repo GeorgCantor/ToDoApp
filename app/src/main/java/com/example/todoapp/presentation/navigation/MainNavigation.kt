@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.todoapp.presentation.screens.IPCScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
@@ -104,6 +105,10 @@ fun MainNavigation() {
                 documentsViewModel = documentsViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
+        }
+
+        composable(NavRoutes.IPCScreen.route) {
+            IPCScreen(navController = navController)
         }
 
         composable(
