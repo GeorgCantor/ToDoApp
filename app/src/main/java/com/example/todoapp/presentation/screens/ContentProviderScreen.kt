@@ -54,7 +54,7 @@ data class Note(
     val content: String,
     val isCompleted: Boolean,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,21 +72,26 @@ fun ContentProviderScreen(navController: NavController) {
             isLoading = true
             try {
                 withContext(Dispatchers.IO) {
-                    val cursor = context.contentResolver.query(
-                        NotesContract.Notes.CONTENT_URI,
-                        null, null, null, null
-                    )
+                    val cursor =
+                        context.contentResolver.query(
+                            NotesContract.Notes.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null,
+                        )
                     val loadedNotes = mutableListOf<Note>()
                     cursor?.use { c ->
                         while (c.moveToNext()) {
-                            val note = Note(
-                                id = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes._ID)),
-                                title = c.getString(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_TITLE)),
-                                content = c.getString(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_CONTENT)),
-                                isCompleted = c.getInt(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_IS_COMPLETED)) == 1,
-                                createdAt = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_CREATED_AT)),
-                                updatedAt = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_UPDATED_AT))
-                            )
+                            val note =
+                                Note(
+                                    id = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes._ID)),
+                                    title = c.getString(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_TITLE)),
+                                    content = c.getString(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_CONTENT)),
+                                    isCompleted = c.getInt(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_IS_COMPLETED)) == 1,
+                                    createdAt = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_CREATED_AT)),
+                                    updatedAt = c.getLong(c.getColumnIndexOrThrow(NotesContract.Notes.COLUMN_UPDATED_AT)),
+                                )
                             loadedNotes.add(note)
                         }
                     }
@@ -101,15 +106,19 @@ fun ContentProviderScreen(navController: NavController) {
         }
     }
 
-    fun addNote(title: String, content: String) {
+    fun addNote(
+        title: String,
+        content: String,
+    ) {
         coroutineScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    val values = ContentValues().apply {
-                        put(NotesContract.Notes.COLUMN_TITLE, title)
-                        put(NotesContract.Notes.COLUMN_CONTENT, content)
-                        put(NotesContract.Notes.COLUMN_IS_COMPLETED, false)
-                    }
+                    val values =
+                        ContentValues().apply {
+                            put(NotesContract.Notes.COLUMN_TITLE, title)
+                            put(NotesContract.Notes.COLUMN_CONTENT, content)
+                            put(NotesContract.Notes.COLUMN_IS_COMPLETED, false)
+                        }
                     context.contentResolver.insert(NotesContract.Notes.CONTENT_URI, values)
                 }
                 loadNotes()
@@ -135,13 +144,17 @@ fun ContentProviderScreen(navController: NavController) {
         }
     }
 
-    fun toggleNoteCompletion(noteId: Long, currentStatus: Boolean) {
+    fun toggleNoteCompletion(
+        noteId: Long,
+        currentStatus: Boolean,
+    ) {
         coroutineScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    val values = ContentValues().apply {
-                        put(NotesContract.Notes.COLUMN_IS_COMPLETED, !currentStatus)
-                    }
+                    val values =
+                        ContentValues().apply {
+                            put(NotesContract.Notes.COLUMN_IS_COMPLETED, !currentStatus)
+                        }
                     val uri =
                         Uri.withAppendedPath(NotesContract.Notes.CONTENT_URI, noteId.toString())
                     context.contentResolver.update(uri, values, null, null)
@@ -170,23 +183,24 @@ fun ContentProviderScreen(navController: NavController) {
                     IconButton(onClick = { showAddDialog = true }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Note")
                     }
-                }
+                },
             )
-        }
+        },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text("Notes Count: ${notes.size}")
                     Button(onClick = { loadNotes() }) {
@@ -204,12 +218,12 @@ fun ContentProviderScreen(navController: NavController) {
             errorMessage?.let { error ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 ) {
                     Text(
                         text = error,
                         modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
+                        color = MaterialTheme.colorScheme.onErrorContainer,
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -217,13 +231,13 @@ fun ContentProviderScreen(navController: NavController) {
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(notes) { note ->
                     NoteCard(
                         note = note,
                         onDelete = { deleteNote(note.id) },
-                        onToggleComplete = { toggleNoteCompletion(note.id, note.isCompleted) }
+                        onToggleComplete = { toggleNoteCompletion(note.id, note.isCompleted) },
                     )
                 }
             }
@@ -232,7 +246,7 @@ fun ContentProviderScreen(navController: NavController) {
         if (showAddDialog) {
             AddNoteDialog(
                 onAddNote = { title, content -> addNote(title, content) },
-                onDismiss = { showAddDialog = false }
+                onDismiss = { showAddDialog = false },
             )
         }
     }
@@ -242,31 +256,35 @@ fun ContentProviderScreen(navController: NavController) {
 fun NoteCard(
     note: Note,
     onDelete: () -> Unit,
-    onToggleComplete: () -> Unit
+    onToggleComplete: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = note.title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                 )
                 Row {
                     IconButton(onClick = onToggleComplete) {
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Toggle Complete",
-                            tint = if (note.isCompleted) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant
+                            tint =
+                                if (note.isCompleted) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                         )
                     }
                     IconButton(onClick = onDelete) {
@@ -277,13 +295,13 @@ fun NoteCard(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = note.content,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Status: ${if (note.isCompleted) "Completed" else "Active"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -292,7 +310,7 @@ fun NoteCard(
 @Composable
 fun AddNoteDialog(
     onAddNote: (String, String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -306,7 +324,7 @@ fun AddNoteDialog(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Title") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
@@ -315,7 +333,7 @@ fun AddNoteDialog(
                     label = { Text("Content") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = false,
-                    minLines = 3
+                    minLines = 3,
                 )
             }
         },
@@ -326,7 +344,7 @@ fun AddNoteDialog(
                         onAddNote(title, content)
                     }
                 },
-                enabled = title.isNotBlank() && content.isNotBlank()
+                enabled = title.isNotBlank() && content.isNotBlank(),
             ) {
                 Text("Add")
             }
@@ -335,6 +353,6 @@ fun AddNoteDialog(
             TextButton(onClick = onDismiss) {
                 Text("Cancel")
             }
-        }
+        },
     )
 }
