@@ -26,4 +26,6 @@ sealed class NavRoutes(
     object Calculator : NavRoutes("calculator_screen")
 
     object IPCScreen : NavRoutes("ipc_screen")
+
+    object ContentProviderScreen : NavRoutes("content_provider_screen")
 }

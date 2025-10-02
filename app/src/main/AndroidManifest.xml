@@ -49,6 +49,12 @@
             </intent-filter>
         </service>
 
+        <provider
+            android:name=".provider.NotesProvider"
+            android:authorities="com.example.todoapp.provider"
+            android:enabled="true"
+            android:exported="true" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDjzqlRl7UamOoXgdxdCDCWmzpm1gUSSgc" />

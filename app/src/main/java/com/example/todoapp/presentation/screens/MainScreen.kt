@@ -3,7 +3,7 @@ package com.example.todoapp.presentation.screens
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MailOutline
@@ -39,9 +39,9 @@ fun MainScreen(
         listOf(
             NavRoutes.NewsList,
             NavRoutes.Chat,
-            NavRoutes.Documents,
             NavRoutes.Calculator,
             NavRoutes.IPCScreen,
+            NavRoutes.ContentProviderScreen,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -70,12 +70,6 @@ fun MainScreen(
                                         contentDescription = "Chat",
                                     )
 
-                                NavRoutes.Documents ->
-                                    Icon(
-                                        Icons.Filled.ExitToApp,
-                                        contentDescription = "Documents",
-                                    )
-
                                 NavRoutes.Calculator ->
                                     Icon(
                                         Icons.Filled.AddCircle,
@@ -85,6 +79,12 @@ fun MainScreen(
                                 NavRoutes.IPCScreen ->
                                     Icon(
                                         Icons.Filled.List,
+                                        contentDescription = "IPC",
+                                    )
+
+                                NavRoutes.ContentProviderScreen ->
+                                    Icon(
+                                        Icons.Filled.Build,
                                         contentDescription = "IPC",
                                     )
 
@@ -123,11 +123,6 @@ fun MainScreen(
                 )
 
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
-            NavRoutes.Documents.route ->
-                DocumentsScreen(
-                    navController = navController,
-                    viewModel = documentsViewModel,
-                )
 
             NavRoutes.Calculator.route ->
                 CalculatorScreen(
@@ -136,6 +131,8 @@ fun MainScreen(
                 )
 
             NavRoutes.IPCScreen.route -> IPCScreen(navController = navController)
+
+            NavRoutes.ContentProviderScreen.route -> ContentProviderScreen(navController = navController)
         }
     }
 }
