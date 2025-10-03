@@ -49,7 +49,12 @@ fun NewsListScreen(
     modifier: Modifier = Modifier,
 ) {
     val newsPagingItems = viewModel.news.collectAsLazyPagingItems()
-    val listState = rememberLazyListState()
+    val savedScrollState = viewModel.scrollState.value
+    val listState =
+        rememberLazyListState(
+            initialFirstVisibleItemIndex = savedScrollState?.firstVisibleItemIndex ?: 0,
+            initialFirstVisibleItemScrollOffset = savedScrollState?.firstVisibleItemScrollOffset ?: 0,
+        )
 
     Scaffold(
         topBar = {
