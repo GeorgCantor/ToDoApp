@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
@@ -25,10 +26,10 @@ fun SearchNewsScreen(
     viewModel: NewsViewModel,
 ) {
     var query by remember { mutableStateOf("") }
-    val filteredNews =
-        viewModel.news.filter {
-            it.title.contains(query, ignoreCase = true) || it.description?.contains(query, ignoreCase = true) == true
-        }
+    val filteredNews = emptyList<NewsArticle>()
+//        viewModel.news.filter {
+//            it.title.contains(query, ignoreCase = true) || it.description?.contains(query, ignoreCase = true) == true
+//        }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TextField(

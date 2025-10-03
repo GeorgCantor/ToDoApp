@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -24,14 +24,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.navigation.NavRoutes
@@ -45,15 +48,8 @@ fun NewsListScreen(
     viewModel: NewsViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val news = viewModel.news
-    val isLoading by viewModel.isLoading
-    val error = viewModel.error
-    val savedScrollState = viewModel.scrollState.value
-    val listState =
-        rememberLazyListState(
-            initialFirstVisibleItemIndex = savedScrollState?.firstVisibleItemIndex ?: 0,
-            initialFirstVisibleItemScrollOffset = savedScrollState?.firstVisibleItemScrollOffset ?: 0,
-        )
+    val newsPagingItems = viewModel.news.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
@@ -61,9 +57,16 @@ fun NewsListScreen(
                 title = { Text("News") },
                 actions = {
                     IconButton(
-                        onClick = {
-                            navController.navigate(NavRoutes.Search.route)
-                        },
+                        onClick = { newsPagingItems.refresh() },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { navController.navigate(NavRoutes.Search.route) },
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -78,44 +81,117 @@ fun NewsListScreen(
         Box(
             modifier = Modifier.padding(innerPadding),
         ) {
-            when {
-                isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            if (newsPagingItems.loadState.refresh is LoadState.Loading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                NewsPagingList(
+                    newsPagingItems = newsPagingItems,
+                    listState = listState,
+                    onItemClick = { article ->
+                        viewModel.saveScrollState(listState)
+                        navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
+                    },
+                )
+            }
+
+            val error =
+                when {
+                    newsPagingItems.loadState.refresh is LoadState.Error ->
+                        newsPagingItems.loadState.refresh as LoadState.Error
+
+                    newsPagingItems.loadState.append is LoadState.Error ->
+                        newsPagingItems.loadState.append as LoadState.Error
+
+                    else -> null
                 }
 
-                !error.isNullOrEmpty() -> {
-                    Column(
+            error?.let {
+                Text(
+                    text = "Ошибка: ${it.error.message}",
+                    modifier =
+                        Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NewsPagingList(
+    newsPagingItems: LazyPagingItems<NewsArticle>,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    onItemClick: (NewsArticle) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = listState,
+    ) {
+        items(
+            count = newsPagingItems.itemCount,
+            key = { index ->
+                val article = newsPagingItems[index]
+                article?.id ?: index
+            },
+        ) { index ->
+            val newsArticle = newsPagingItems[index]
+
+            if (newsArticle != null) {
+                NewsArticleItem(
+                    article = newsArticle,
+                    onClick = { onItemClick(newsArticle) },
+                )
+            } else {
+                NewsArticlePlaceholder()
+            }
+        }
+
+        when {
+            newsPagingItems.loadState.append is LoadState.Loading -> {
+                item {
+                    Box(
                         modifier =
                             Modifier
-                                .align(Alignment.Center)
+                                .fillParentMaxWidth()
                                 .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Text(error, color = MaterialTheme.colorScheme.error)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.loadNews() }) {
-                            Text("Retry")
-                        }
-                    }
-                }
-
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        state = listState,
-                    ) {
-                        items(news) { article ->
-                            NewsArticleItem(
-                                article = article,
-                                onClick = {
-                                    viewModel.saveScrollState(listState)
-                                    navController.navigate(NavRoutes.NewsDetail.createRoute(article.id))
-                                },
-                            )
-                        }
+                        CircularProgressIndicator()
                     }
                 }
             }
+
+            newsPagingItems.loadState.append is LoadState.Error -> {
+                item {
+                    val error = (newsPagingItems.loadState.append as LoadState.Error).error
+                    ErrorItem(
+                        message = error.message ?: "Ошибка загрузки",
+                        onRetry = { newsPagingItems.retry() },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NewsArticlePlaceholder() {
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .padding(16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
@@ -169,6 +245,35 @@ fun NewsArticleItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp),
             )
+        }
+    }
+}
+
+@Composable
+fun ErrorItem(
+    message: String,
+    onRetry: () -> Unit,
+) {
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRetry) {
+                Text("Повторить")
+            }
         }
     }
 }

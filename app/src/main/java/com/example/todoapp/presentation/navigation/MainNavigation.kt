@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,7 +30,7 @@ fun MainNavigation() {
     val chatViewModel: ChatViewModel = koinViewModel()
     val documentsViewModel: DocumentsViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
-    val isLoading by newsViewModel.isLoading
+//    val isLoading by newsViewModel.isLoading
 
     NavHost(
         navController = navController,
@@ -39,7 +38,7 @@ fun MainNavigation() {
     ) {
         composable(NavRoutes.Splash.route) {
             SplashScreen(
-                isLoading = isLoading,
+                isLoading = false,
                 onLoaded = {
                     navController.navigate(NavRoutes.NewsList.route) {
                         popUpTo(NavRoutes.Splash.route) { inclusive = true }
