@@ -6,12 +6,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.presentation.screens.ContentProviderScreen
 import com.example.todoapp.presentation.screens.IPCScreen
 import com.example.todoapp.presentation.screens.MainScreen
@@ -31,7 +33,11 @@ fun MainNavigation() {
     val chatViewModel: ChatViewModel = koinViewModel()
     val documentsViewModel: DocumentsViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
-    val isLoading by newsViewModel.isLoading
+    val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
+    val isLoading =
+        remember(newsPagingItems.loadState) {
+            newsPagingItems.loadState.refresh is LoadState.Loading
+        }
 
     NavHost(
         navController = navController,

@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.okhttp.logging)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
 
     debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)

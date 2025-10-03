@@ -1,9 +1,11 @@
 package com.example.todoapp.domain.repository
 
+import androidx.paging.PagingData
 import com.example.todoapp.domain.model.NewsArticle
+import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
-    suspend fun getTopHeadlines(): List<NewsArticle>
+    fun getNewsStream(): Flow<PagingData<NewsArticle>>
 
     suspend fun getMockHeadlines(): List<NewsArticle>
 }

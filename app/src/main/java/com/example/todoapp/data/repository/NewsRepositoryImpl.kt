@@ -1,23 +1,27 @@
 package com.example.todoapp.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.todoapp.data.paging.NewsPagingSource
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.domain.repository.NewsRepository
+import kotlinx.coroutines.flow.Flow
 
 class NewsRepositoryImpl(
     private val apiService: NewsApiService,
 ) : NewsRepository {
-    override suspend fun getTopHeadlines(): List<NewsArticle> =
-        try {
-            val response = apiService.getTopHeadlines()
-            if (response.status == "ok") {
-                response.articles.map { it.toNewsArticle() }
-            } else {
-                emptyList()
-            }
-        } catch (e: Exception) {
-            emptyList()
-        }
+    override fun getNewsStream(): Flow<PagingData<NewsArticle>> =
+        Pager(
+            config =
+                PagingConfig(
+                    pageSize = 20,
+                    enablePlaceholders = false,
+                    initialLoadSize = 20,
+                ),
+            pagingSourceFactory = { NewsPagingSource(apiService) },
+        ).flow
 
     override suspend fun getMockHeadlines(): List<NewsArticle> =
         listOf(

@@ -24,7 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +35,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import java.util.Locale
 
@@ -46,7 +48,9 @@ fun NewsDetailScreen(
     viewModel: NewsViewModel,
     navController: NavController,
 ) {
-    val newsItem by viewModel.getNewsById(newsId).collectAsState(initial = null)
+    val newsPagingItems = viewModel.news.collectAsLazyPagingItems()
+    var newsItem by remember { mutableStateOf<NewsArticle?>(null) }
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var showZoomedImage by remember { mutableStateOf(false) }
 
@@ -54,6 +58,10 @@ fun NewsDetailScreen(
     var tts: TextToSpeech? by remember { mutableStateOf(null) }
     var isSpeaking by remember { mutableStateOf(false) }
     var ttsInitialized by remember { mutableStateOf(false) }
+
+    LaunchedEffect(newsPagingItems.itemSnapshotList, newsId) {
+        newsItem = newsPagingItems.itemSnapshotList.items.find { it.id == newsId }
+    }
 
     DisposableEffect(Unit) {
         val textToSpeech =
