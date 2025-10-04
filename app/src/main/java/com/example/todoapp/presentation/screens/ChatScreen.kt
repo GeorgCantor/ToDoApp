@@ -24,17 +24,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,6 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
     val context = LocalContext.current
@@ -70,6 +73,9 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val recordingTime by viewModel.recordingTime.collectAsState()
     var currentPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     Column(Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -82,13 +88,13 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     onEditClick = {
                         messageToEdit = it
                         editText = it.text
+                        showBottomSheet = true
                     },
                     onDeleteClick = { viewModel.deleteMessage(it.id) },
                     onPlayAudio = { base64 ->
                         currentPlayer?.release()
                         try {
-                            val audioFile =
-                                viewModel.repository.base64ToAudioFile(base64, context.cacheDir)
+                            val audioFile = viewModel.repository.base64ToAudioFile(base64, context.cacheDir)
                             MediaPlayer().apply {
                                 setDataSource(audioFile.absolutePath)
                                 prepare()
@@ -187,35 +193,69 @@ fun ChatScreen(viewModel: ChatViewModel) {
         }
     }
 
-    if (messageToEdit != null) {
-        AlertDialog(
-            onDismissRequest = { messageToEdit = null },
-            title = { Text("Edit Message") },
-            text = {
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+                messageToEdit = null
+            },
+            sheetState = sheetState,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+            ) {
+                Text(
+                    text = "Edit Message",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+
                 TextField(
                     value = editText,
                     onValueChange = { editText = it },
-                    singleLine = true,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                    placeholder = { Text("Enter message") },
+                    singleLine = false,
+                    maxLines = 4,
                 )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (editText.isNotBlank() && messageToEdit != null) {
-                            viewModel.editMessage(messageToEdit?.id.orEmpty(), editText)
-                        }
-                        messageToEdit = null
-                    },
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End,
                 ) {
-                    Text("Save")
+                    TextButton(
+                        onClick = {
+                            showBottomSheet = false
+                            messageToEdit = null
+                        },
+                        modifier = Modifier.padding(end = 8.dp),
+                    ) {
+                        Text("Cancel")
+                    }
+
+                    Button(
+                        onClick = {
+                            if (editText.isNotBlank() && messageToEdit != null) {
+                                viewModel.editMessage(messageToEdit?.id.orEmpty(), editText)
+                            }
+                            showBottomSheet = false
+                            messageToEdit = null
+                        },
+                    ) {
+                        Text("Save")
+                    }
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { messageToEdit = null }) {
-                    Text("Cancel")
-                }
-            },
-        )
+
+                Spacer(modifier = Modifier.padding(bottom = 16.dp))
+            }
+        }
     }
 }
 
