@@ -38,12 +38,14 @@ val appModule =
                     level = HttpLoggingInterceptor.Level.BODY
                 }
 
-            val chuckerInterceptor = ChuckerInterceptor.Builder(androidContext())
-                .collector(ChuckerCollector(androidContext()))
-                .maxContentLength(250000L)
-                .redactHeaders("Auth-Token", "Bearer")
-                .alwaysReadResponseBody(false)
-                .build()
+            val chuckerInterceptor =
+                ChuckerInterceptor
+                    .Builder(androidContext())
+                    .collector(ChuckerCollector(androidContext()))
+                    .maxContentLength(250000L)
+                    .redactHeaders("Auth-Token", "Bearer")
+                    .alwaysReadResponseBody(false)
+                    .build()
 
             val okHttpClient =
                 OkHttpClient

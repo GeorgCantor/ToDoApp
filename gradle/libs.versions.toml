@@ -28,7 +28,7 @@ firebase_bom = "33.0.0"
 koin = "3.5.0"
 paging-runtime = "3.2.1"
 paging-compose = "3.3.0-alpha02"
-chucker = "4.2.0"
+chucker = "4.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
