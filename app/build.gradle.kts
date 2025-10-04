@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.auth.ktx)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.okhttp.logging)
