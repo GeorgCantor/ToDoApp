@@ -3,6 +3,8 @@ package com.example.todoapp.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.example.todoapp.data.paging.NewsPagingSource
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.domain.model.NewsArticle
@@ -23,7 +25,28 @@ class NewsRepositoryImpl(
             pagingSourceFactory = { NewsPagingSource(apiService) },
         ).flow
 
-    override suspend fun getMockHeadlines(): List<NewsArticle> =
+    override fun getMockHeadlines(): Flow<PagingData<NewsArticle>> =
+        Pager(
+            config =
+                PagingConfig(
+                    pageSize = 20,
+                    enablePlaceholders = false,
+                ),
+            pagingSourceFactory = {
+                object : PagingSource<Int, NewsArticle>() {
+                    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> =
+                        LoadResult.Page(
+                            data = getMockData(),
+                            prevKey = null,
+                            nextKey = null,
+                        )
+
+                    override fun getRefreshKey(state: PagingState<Int, NewsArticle>): Int? = null
+                }
+            },
+        ).flow
+
+    fun getMockData(): List<NewsArticle> =
         listOf(
             NewsArticle(
                 id = 1,

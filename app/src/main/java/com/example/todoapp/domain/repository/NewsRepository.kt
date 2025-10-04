@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface NewsRepository {
     fun getNewsStream(): Flow<PagingData<NewsArticle>>
 
-    suspend fun getMockHeadlines(): List<NewsArticle>
+    fun getMockHeadlines(): Flow<PagingData<NewsArticle>>
 }

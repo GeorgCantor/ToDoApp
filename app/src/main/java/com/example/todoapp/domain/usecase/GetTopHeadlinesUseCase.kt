@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 class GetTopHeadlinesUseCase(
     private val repository: NewsRepository,
 ) {
-    operator fun invoke(): Flow<PagingData<NewsArticle>> = repository.getNewsStream()
+    operator fun invoke(): Flow<PagingData<NewsArticle>> = repository.getMockHeadlines()
 }
