@@ -28,6 +28,7 @@ firebase_bom = "33.0.0"
 koin = "3.5.0"
 paging-runtime = "3.2.1"
 paging-compose = "3.3.0-alpha02"
+chucker = "4.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +61,8 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging-runtime" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging-compose" }
+chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
+chucker-no-op = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

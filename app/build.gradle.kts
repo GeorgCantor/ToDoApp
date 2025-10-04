@@ -75,6 +75,8 @@ dependencies {
     implementation(libs.paging.compose)
 
     debugImplementation(libs.leakcanary.android)
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.no.op)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

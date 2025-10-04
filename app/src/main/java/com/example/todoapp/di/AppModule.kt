@@ -1,5 +1,7 @@
 package com.example.todoapp.di
 
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
@@ -22,6 +24,7 @@ import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -35,10 +38,20 @@ val appModule =
                     level = HttpLoggingInterceptor.Level.BODY
                 }
 
+            val chuckerInterceptor =
+                ChuckerInterceptor
+                    .Builder(androidContext())
+                    .collector(ChuckerCollector(androidContext()))
+                    .maxContentLength(250000L)
+                    .redactHeaders("Auth-Token", "Bearer")
+                    .alwaysReadResponseBody(false)
+                    .build()
+
             val okHttpClient =
                 OkHttpClient
                     .Builder()
                     .addInterceptor(loggingInterceptor)
+                    .addInterceptor(chuckerInterceptor)
                     .build()
 
             Retrofit
