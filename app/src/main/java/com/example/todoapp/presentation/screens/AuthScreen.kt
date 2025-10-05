@@ -17,11 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.todoapp.presentation.navigation.NavRoutes
-import com.example.todoapp.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(
-    authViewModel: AuthViewModel,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -43,7 +41,7 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Добро пожаловать!",
+                text = "Welcome!",
                 style = MaterialTheme.typography.bodyLarge,
             )
 
@@ -53,7 +51,7 @@ fun AuthScreen(
                 onClick = { navController.navigate(NavRoutes.Login.route) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Войти")
+                Text("Log In")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -62,7 +60,7 @@ fun AuthScreen(
                 onClick = { navController.navigate(NavRoutes.SignUp.route) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Зарегистрироваться")
+                Text("Sign Up")
             }
         }
     }

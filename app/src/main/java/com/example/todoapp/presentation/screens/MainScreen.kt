@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.presentation.navigation.NavRoutes
+import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
-import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 
 @Composable
@@ -32,7 +32,7 @@ fun MainScreen(
     navController: NavController,
     viewModel: NewsViewModel,
     chatViewModel: ChatViewModel,
-    documentsViewModel: DocumentsViewModel,
+    authViewModel: AuthViewModel,
     calculatorViewModel: CalculatorViewModel,
 ) {
     val items =
@@ -85,7 +85,7 @@ fun MainScreen(
                                 NavRoutes.ContentProviderScreen ->
                                     Icon(
                                         Icons.Filled.Build,
-                                        contentDescription = "IPC",
+                                        contentDescription = "Provider",
                                     )
 
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
@@ -119,6 +119,7 @@ fun MainScreen(
                 NewsListScreen(
                     navController = navController,
                     viewModel = viewModel,
+                    authViewModel = authViewModel,
                     modifier = Modifier.padding(innerPadding),
                 )
 

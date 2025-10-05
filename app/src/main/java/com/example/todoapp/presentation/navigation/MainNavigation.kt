@@ -16,12 +16,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.ContentProviderScreen
+import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.IPCScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
+import com.example.todoapp.presentation.screens.SignUpScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
@@ -49,11 +52,29 @@ fun MainNavigation() {
         navController = navController,
         startDestination = if (isAuthenticated) NavRoutes.Splash.route else NavRoutes.Auth.route,
     ) {
+        composable(NavRoutes.Auth.route) {
+            AuthScreen(navController = navController)
+        }
+
         composable(NavRoutes.Login.route) {
             LoginScreen(
                 authViewModel = authViewModel,
                 onSignUpClick = { navController.navigate(NavRoutes.SignUp.route) },
                 onForgotPasswordClick = { navController.navigate(NavRoutes.ForgotPassword.route) },
+            )
+        }
+
+        composable(NavRoutes.SignUp.route) {
+            SignUpScreen(
+                authViewModel = authViewModel,
+                onLoginClick = { navController.popBackStack() },
+            )
+        }
+
+        composable(NavRoutes.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                authViewModel = authViewModel,
+                onBackClick = { navController.popBackStack() },
             )
         }
 
@@ -73,7 +94,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -83,7 +104,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -93,7 +114,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -103,7 +124,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -113,7 +134,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -123,7 +144,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
