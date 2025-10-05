@@ -28,4 +28,12 @@ sealed class NavRoutes(
     object IPCScreen : NavRoutes("ipc_screen")
 
     object ContentProviderScreen : NavRoutes("content_provider_screen")
+
+    object Auth : NavRoutes("auth_screen")
+
+    object Login : NavRoutes("login_screen")
+
+    object SignUp : NavRoutes("signup_screen")
+
+    object ForgotPassword : NavRoutes("forgot_password_screen")
 }

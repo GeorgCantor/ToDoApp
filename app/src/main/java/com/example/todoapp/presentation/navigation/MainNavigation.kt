@@ -6,7 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,10 +18,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.presentation.screens.ContentProviderScreen
 import com.example.todoapp.presentation.screens.IPCScreen
+import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
@@ -29,6 +33,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = koinViewModel()
+    val isAuthenticated by authViewModel.isAuthenticated.collectAsStateWithLifecycle()
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
     val documentsViewModel: DocumentsViewModel = koinViewModel()
@@ -41,8 +47,16 @@ fun MainNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Splash.route,
+        startDestination = if (isAuthenticated) NavRoutes.Splash.route else NavRoutes.Auth.route,
     ) {
+        composable(NavRoutes.Login.route) {
+            LoginScreen(
+                authViewModel = authViewModel,
+                onSignUpClick = { navController.navigate(NavRoutes.SignUp.route) },
+                onForgotPasswordClick = { navController.navigate(NavRoutes.ForgotPassword.route) },
+            )
+        }
+
         composable(NavRoutes.Splash.route) {
             SplashScreen(
                 isLoading = isLoading,
