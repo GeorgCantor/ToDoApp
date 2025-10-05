@@ -3,10 +3,12 @@ package com.example.todoapp.di
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.todoapp.data.remote.api.NewsApiService
+import com.example.todoapp.data.repository.AuthRepositoryImpl
 import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.DocumentRepository
@@ -18,6 +20,7 @@ import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
+import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
@@ -70,6 +73,7 @@ val appModule =
         single<ChatRepository> { ChatRepositoryImpl() }
         single<DocumentRepository> { DocumentRepositoryImpl() }
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
+        single<AuthRepository> { AuthRepositoryImpl() }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -83,4 +87,5 @@ val appModule =
         viewModel { ChatViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get()) }
+        viewModel { AuthViewModel(get()) }
     }

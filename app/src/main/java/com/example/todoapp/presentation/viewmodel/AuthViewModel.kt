@@ -32,7 +32,7 @@ class AuthViewModel(
         }
     }
 
-    fun sighIn(
+    fun signIn(
         email: String,
         password: String,
     ) {
