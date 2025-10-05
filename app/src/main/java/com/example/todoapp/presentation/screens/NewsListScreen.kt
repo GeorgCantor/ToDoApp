@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.navigation.NavRoutes
+import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.utils.toFormattedDate
 
@@ -46,6 +48,7 @@ import com.example.todoapp.utils.toFormattedDate
 fun NewsListScreen(
     navController: NavController,
     viewModel: NewsViewModel,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier,
 ) {
     val newsPagingItems = viewModel.news.collectAsLazyPagingItems()
@@ -76,6 +79,20 @@ fun NewsListScreen(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            authViewModel.signOut()
+                            navController.navigate(NavRoutes.Auth.route) {
+                                popUpTo(NavRoutes.Auth.route) { inclusive = true }
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = "Sign Out",
                         )
                     }
                 },

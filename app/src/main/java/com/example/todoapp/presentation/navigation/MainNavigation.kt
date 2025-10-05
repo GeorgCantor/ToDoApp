@@ -5,8 +5,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,24 +21,30 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.todoapp.domain.model.AuthUiState
+import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.ContentProviderScreen
+import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.IPCScreen
+import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
+import com.example.todoapp.presentation.screens.SignUpScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
-import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = koinViewModel()
+    val isAuthenticated by authViewModel.isAuthenticated.collectAsStateWithLifecycle()
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
-    val documentsViewModel: DocumentsViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
@@ -39,10 +52,47 @@ fun MainNavigation() {
             newsPagingItems.loadState.refresh is LoadState.Loading
         }
 
+    val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    if (uiState is AuthUiState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Splash.route,
+        startDestination = if (isAuthenticated) NavRoutes.Splash.route else NavRoutes.Auth.route,
     ) {
+        composable(NavRoutes.Auth.route) {
+            AuthScreen(navController = navController)
+        }
+
+        composable(NavRoutes.Login.route) {
+            LoginScreen(
+                authViewModel = authViewModel,
+                onSignUpClick = { navController.navigate(NavRoutes.SignUp.route) },
+                onForgotPasswordClick = { navController.navigate(NavRoutes.ForgotPassword.route) },
+            )
+        }
+
+        composable(NavRoutes.SignUp.route) {
+            SignUpScreen(
+                authViewModel = authViewModel,
+                onLoginClick = { navController.popBackStack() },
+            )
+        }
+
+        composable(NavRoutes.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                authViewModel = authViewModel,
+                onBackClick = { navController.popBackStack() },
+            )
+        }
+
         composable(NavRoutes.Splash.route) {
             SplashScreen(
                 isLoading = isLoading,
@@ -59,7 +109,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -69,7 +119,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -79,7 +129,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -89,7 +139,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -99,7 +149,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }
@@ -109,7 +159,7 @@ fun MainNavigation() {
                 navController = navController,
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
-                documentsViewModel = documentsViewModel,
+                authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
             )
         }

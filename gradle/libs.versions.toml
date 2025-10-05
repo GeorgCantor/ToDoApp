@@ -57,6 +57,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist_permissions" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
 firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging-runtime" }
