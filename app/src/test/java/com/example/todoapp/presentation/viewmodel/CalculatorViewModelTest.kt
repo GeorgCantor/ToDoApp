@@ -1,6 +1,7 @@
 package com.example.todoapp.presentation.viewmodel
 
 import app.cash.turbine.test
+import com.example.todoapp.domain.model.CalculatorOperation
 import com.example.todoapp.domain.model.CalculatorState
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
 import com.example.todoapp.domain.usecase.ClearCalculatorUseCase
@@ -96,5 +97,59 @@ class CalculatorViewModelTest {
             viewModel.errorMessage.test {
                 assertEquals(exceptionMessage, awaitItem())
             }
+        }
+
+    @Test
+    fun `should handle digit input correctly`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0)
+            val newState = CalculatorState(displayValue = "57", firstOperand = 57.0)
+            every { calculateExpressionUseCase(currentState, "7") } returns newState
+
+            viewModel.onButtonClick("7")
+
+            verify { calculateExpressionUseCase(any(), "7") }
+        }
+
+    @Test
+    fun `should handle operator input correctly`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0)
+            val newState =
+                CalculatorState(
+                    displayValue = "5+",
+                    firstOperand = 5.0,
+                    operator = CalculatorOperation.Add,
+                    waitingForNewOperand = true,
+                )
+            every { calculateExpressionUseCase(currentState, "+") } returns newState
+
+            viewModel.onButtonClick("+")
+
+            verify { calculateExpressionUseCase(any(), "+") }
+        }
+
+    @Test
+    fun `should handle equals operation correctly`() =
+        runTest {
+            val currentState =
+                CalculatorState(
+                    displayValue = "5+3",
+                    firstOperand = 5.0,
+                    operator = CalculatorOperation.Add,
+                    waitingForNewOperand = true,
+                )
+            val resultState =
+                CalculatorState(
+                    displayValue = "8",
+                    firstOperand = 8.0,
+                    operator = null,
+                    waitingForNewOperand = false,
+                )
+            every { calculateExpressionUseCase(currentState, "=") } returns resultState
+
+            viewModel.onButtonClick("=")
+
+            verify { calculateExpressionUseCase(any(), "=") }
         }
 }
