@@ -152,4 +152,52 @@ class CalculatorViewModelTest {
 
             verify { calculateExpressionUseCase(any(), "=") }
         }
+
+    @Test
+    fun `should clear error message when clearError is called`() =
+        runTest {
+            every { calculateExpressionUseCase(any(), "invalid") } throws RuntimeException("Error")
+            viewModel.onButtonClick("invalid")
+
+            viewModel.errorMessage.test {
+                assertEquals("Error", awaitItem())
+            }
+
+            viewModel.clearError()
+
+            viewModel.errorMessage.test {
+                assertNull(awaitItem())
+            }
+        }
+
+    @Test
+    fun `should set default error message when exception has no message`() =
+        runTest {
+            every { calculateExpressionUseCase(any(), "*") } throws RuntimeException()
+
+            viewModel.onButtonClick("*")
+
+            viewModel.errorMessage.test {
+                assertEquals("Calculation error", awaitItem())
+            }
+        }
+
+    @Test
+    fun `should clear error when successful operation follows error`() =
+        runTest {
+            every { calculateExpressionUseCase(any(), "invalid") } throws RuntimeException("Error")
+            viewModel.onButtonClick("invalid")
+
+            viewModel.errorMessage.test {
+                assertEquals("Error", awaitItem())
+            }
+
+            val clearedState = CalculatorState()
+            every { clearCalculatorUseCase() } returns clearedState
+            viewModel.onButtonClick("C")
+
+            viewModel.errorMessage.test {
+                assertNull(awaitItem())
+            }
+        }
 }
