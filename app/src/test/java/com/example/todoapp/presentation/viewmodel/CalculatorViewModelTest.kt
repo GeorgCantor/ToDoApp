@@ -200,4 +200,144 @@ class CalculatorViewModelTest {
                 assertNull(awaitItem())
             }
         }
+
+    @Test
+    fun `should handle all supported buttons`() =
+        runTest {
+            val buttons =
+                listOf(
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "+",
+                    "-",
+                    "*",
+                    "/",
+                    "=",
+                    "C",
+                    ".",
+                    "sin",
+                    "cos",
+                    "tan",
+                    "log",
+                    "ln",
+                    "π",
+                    "e",
+                    "x²",
+                    "√",
+                    "±",
+                    "MC",
+                    "MR",
+                    "M+",
+                    "M-",
+                )
+            buttons.forEach { button ->
+                if (button == "C") {
+                    every { clearCalculatorUseCase() } returns CalculatorState()
+                } else {
+                    every { calculateExpressionUseCase(any(), button) } returns CalculatorState()
+                }
+
+                viewModel.onButtonClick(button)
+
+                if (button == "C") {
+                    verify { clearCalculatorUseCase() }
+                } else {
+                    verify { calculateExpressionUseCase(any(), button) }
+                }
+            }
+        }
+
+    @Test
+    fun `should preserve previous state when exception occurs`() =
+        runTest {
+            val initialState = CalculatorState(displayValue = "5", firstOperand = 5.0)
+            every { calculateExpressionUseCase(any(), "1") } returns initialState
+
+            viewModel.onButtonClick("1")
+
+            val previousState = viewModel.calculatorState.value
+
+            every { calculateExpressionUseCase(any(), "invalid") } throws RuntimeException("Error")
+            viewModel.onButtonClick("invalid")
+
+            assertEquals(previousState, viewModel.calculatorState.value)
+            viewModel.errorMessage.test {
+                assertEquals("Error", awaitItem())
+            }
+        }
+
+    @Test
+    fun `should handle multiple consecutive operations`() =
+        runTest {
+            val states =
+                listOf(
+                    CalculatorState(displayValue = "1", firstOperand = 1.0),
+                    CalculatorState(displayValue = "12", firstOperand = 12.0),
+                    CalculatorState(
+                        displayValue = "12+",
+                        firstOperand = 12.0,
+                        operator = CalculatorOperation.Add,
+                        waitingForNewOperand = true,
+                    ),
+                    CalculatorState(
+                        displayValue = "12+3",
+                        firstOperand = 12.0,
+                        operator = CalculatorOperation.Add,
+                        waitingForNewOperand = true,
+                    ),
+                    CalculatorState(displayValue = "15", firstOperand = 15.0, operator = null, waitingForNewOperand = false),
+                )
+
+            every { calculateExpressionUseCase(any(), "1") } returns states[0]
+            viewModel.onButtonClick("1")
+            assertEquals(states[0], viewModel.calculatorState.value)
+
+            every { calculateExpressionUseCase(states[0], "2") } returns states[1]
+            viewModel.onButtonClick("2")
+            assertEquals(states[1], viewModel.calculatorState.value)
+
+            every { calculateExpressionUseCase(states[1], "+") } returns states[2]
+            viewModel.onButtonClick("+")
+            assertEquals(states[2], viewModel.calculatorState.value)
+
+            every { calculateExpressionUseCase(states[2], "3") } returns states[3]
+            viewModel.onButtonClick("3")
+            assertEquals(states[3], viewModel.calculatorState.value)
+
+            every { calculateExpressionUseCase(states[3], "=") } returns states[4]
+            viewModel.onButtonClick("=")
+            assertEquals(states[4], viewModel.calculatorState.value)
+        }
+
+    @Test
+    fun `should handle scientific operations`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "45", firstOperand = 45.0)
+            val sinState = CalculatorState(displayValue = "0.7071", firstOperand = 0.7071)
+            every { calculateExpressionUseCase(currentState, "sin") } returns sinState
+
+            viewModel.onButtonClick("sin")
+
+            verify { calculateExpressionUseCase(any(), "sin") }
+        }
+
+    @Test
+    fun `should handle memory operations`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0, memory = 0.0)
+            val memoryState = CalculatorState(displayValue = "5", firstOperand = 5.0, memory = 5.0)
+            every { calculateExpressionUseCase(currentState, "M+") } returns memoryState
+
+            viewModel.onButtonClick("M+")
+
+            verify { calculateExpressionUseCase(any(), "M+") }
+        }
 }
