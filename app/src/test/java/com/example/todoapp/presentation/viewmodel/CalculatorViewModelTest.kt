@@ -218,25 +218,27 @@ class CalculatorViewModelTest {
                     "9",
                     "+",
                     "-",
-                    "*",
-                    "/",
+                    "×",
+                    "÷",
+                    "^",
                     "=",
                     "C",
+                    "<",
                     ".",
+                    "√",
                     "sin",
                     "cos",
                     "tan",
                     "log",
                     "ln",
+                    "!",
                     "π",
                     "e",
-                    "x²",
-                    "√",
-                    "±",
-                    "MC",
-                    "MR",
+                    "SCI",
                     "M+",
                     "M-",
+                    "MR",
+                    "MC",
                 )
             buttons.forEach { button ->
                 if (button == "C") {
@@ -339,5 +341,65 @@ class CalculatorViewModelTest {
             viewModel.onButtonClick("M+")
 
             verify { calculateExpressionUseCase(any(), "M+") }
+        }
+
+    @Test
+    fun `should handle scientific mode toggle`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0, isScientificMode = false)
+            val scientificState = CalculatorState(displayValue = "5", firstOperand = 5.0, isScientificMode = true)
+            every { calculateExpressionUseCase(currentState, "SCI") } returns scientificState
+
+            viewModel.onButtonClick("SCI")
+
+            verify { calculateExpressionUseCase(any(), "SCI") }
+        }
+
+    @Test
+    fun `should handle decimal point correctly`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0)
+            val decimalState = CalculatorState(displayValue = "5.", firstOperand = 5.0)
+            every { calculateExpressionUseCase(currentState, ".") } returns decimalState
+
+            viewModel.onButtonClick(".")
+
+            verify { calculateExpressionUseCase(any(), ".") }
+        }
+
+    @Test
+    fun `should handle backspace correctly on single digit`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "5", firstOperand = 5.0)
+            val backspaceState = CalculatorState(displayValue = "0", firstOperand = null)
+            every { calculateExpressionUseCase(currentState, "<") } returns backspaceState
+
+            viewModel.onButtonClick("<")
+
+            verify { calculateExpressionUseCase(any(), "<") }
+
+            val resultState = viewModel.calculatorState.value
+            assertEquals("0", resultState.displayValue)
+            assertNull(resultState.firstOperand)
+        }
+
+    @Test
+    fun `should handle decimal point after operator`() =
+        runTest {
+            val currentState =
+                CalculatorState(
+                    displayValue = "10+",
+                    firstOperand = 10.0,
+                    operator = CalculatorOperation.Add,
+                    waitingForNewOperand = true,
+                )
+            val decimalState =
+                CalculatorState(
+                    displayValue = "0.",
+                    firstOperand = 0.0,
+                    operator = CalculatorOperation.Add,
+                    waitingForNewOperand = false,
+                )
+            every { calculateExpressionUseCase(currentState, ".") } returns decimalState
         }
 }
