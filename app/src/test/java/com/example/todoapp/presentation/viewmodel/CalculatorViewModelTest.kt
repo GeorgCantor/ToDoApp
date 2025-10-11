@@ -401,5 +401,35 @@ class CalculatorViewModelTest {
                     waitingForNewOperand = false,
                 )
             every { calculateExpressionUseCase(currentState, ".") } returns decimalState
+
+            viewModel.onButtonClick(".")
+
+            verify { calculateExpressionUseCase(any(), ".") }
+        }
+
+    @Test
+    fun `should handle division by zero error`() =
+        runTest {
+            val exceptionMessage = "Division by zero"
+            every { calculateExpressionUseCase(any(), "÷") } throws ArithmeticException(exceptionMessage)
+
+            viewModel.onButtonClick("÷")
+
+            verify { calculateExpressionUseCase(any(), "÷") }
+            viewModel.errorMessage.test {
+                assertEquals(exceptionMessage, awaitItem())
+            }
+        }
+
+    @Test
+    fun `should handle factorial for large number`() =
+        runTest {
+            val currentState = CalculatorState(displayValue = "100", firstOperand = 100.0)
+            val factorialState = CalculatorState(displayValue = "Error", waitingForNewOperand = true)
+            every { calculateExpressionUseCase(currentState, "!") } returns factorialState
+
+            viewModel.onButtonClick("!")
+
+            verify { calculateExpressionUseCase(any(), "!") }
         }
 }
