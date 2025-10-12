@@ -1,18 +1,20 @@
 package com.example.todoapp.presentation.delegates
 
 class ForgotPasswordFormState {
-    val email = EmailProperty()
+    var email: String by EmailProperty()
 
     val isValid: Boolean
-        get() = email.isValid()
+        get() = emailProperty.isValid()
 
-    fun shouldShowErrors(): Boolean = email.shouldShowError()
+    fun shouldShowErrors(): Boolean = emailProperty.shouldShowError()
 
     fun markAsTouched() {
-        email.markAsTouched()
+        emailProperty.markAsTouched()
     }
 
     fun clear() {
-        email.clear()
+        emailProperty.clear()
     }
+
+    private val emailProperty = EmailProperty()
 }

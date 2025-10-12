@@ -1,4 +1,3 @@
-// LoginScreen.kt
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -48,8 +47,8 @@ fun LoginScreen(
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val emailState = formState.email.asState()
-    val passwordState = formState.password.asState()
+    val emailState by formState.emailProperty.state
+    val passwordState by formState.passwordProperty.state
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -92,16 +91,21 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OutlinedTextField(
-                        value = emailState.value,
-                        onValueChange = { formState.email.updateValue(it) },
+                        value = emailState,
+                        onValueChange = { formState.email = it },
                         label = { Text("Email") },
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Email,
+                                contentDescription = "Email",
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
-                        isError = formState.email.shouldShowError(),
+                        isError = formState.emailProperty.shouldShowError(),
                         supportingText = {
-                            if (formState.email.shouldShowError()) {
-                                Text(text = formState.email.getErrorMessage().orEmpty())
+                            if (formState.emailProperty.shouldShowError()) {
+                                Text(text = formState.emailProperty.getErrorMessage().orEmpty())
                             }
                         },
                     )
@@ -109,17 +113,22 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = passwordState.value,
-                        onValueChange = { formState.password.updateValue(it) },
+                        value = passwordState,
+                        onValueChange = { formState.password = it },
                         label = { Text("Password") },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Password") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = "Password",
+                            )
+                        },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth(),
-                        isError = formState.password.shouldShowError(),
+                        isError = formState.passwordProperty.shouldShowError(),
                         supportingText = {
-                            if (formState.password.shouldShowError()) {
-                                Text(text = formState.password.getErrorMessage().orEmpty())
+                            if (formState.passwordProperty.shouldShowError()) {
+                                Text(text = formState.passwordProperty.getErrorMessage().orEmpty())
                             }
                         },
                     )
@@ -131,8 +140,8 @@ fun LoginScreen(
                             formState.markAllAsTouched()
                             if (formState.isValid) {
                                 authViewModel.signIn(
-                                    formState.email.value,
-                                    formState.password.value,
+                                    formState.email,
+                                    formState.password,
                                 )
                             }
                         },

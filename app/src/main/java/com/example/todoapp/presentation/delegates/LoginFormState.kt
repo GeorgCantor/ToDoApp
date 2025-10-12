@@ -1,21 +1,27 @@
 package com.example.todoapp.presentation.delegates
 
 class LoginFormState {
-    val email = EmailProperty()
-    val password = PasswordProperty()
+    private val _emailDelegate = EmailProperty()
+    private val _passwordDelegate = PasswordProperty()
+
+    var email: String by _emailDelegate
+    var password: String by _passwordDelegate
+
+    val emailProperty: EmailProperty get() = _emailDelegate
+    val passwordProperty: PasswordProperty get() = _passwordDelegate
 
     val isValid: Boolean
-        get() = email.isValid() && password.isValid()
+        get() = _emailDelegate.isValid() && _passwordDelegate.isValid()
 
-    fun shouldShowErrors(): Boolean = email.shouldShowError() || password.shouldShowError()
+    fun shouldShowErrors(): Boolean = _emailDelegate.shouldShowError() || _passwordDelegate.shouldShowError()
 
     fun markAllAsTouched() {
-        email.markAsTouched()
-        password.markAsTouched()
+        _emailDelegate.markAsTouched()
+        _passwordDelegate.markAsTouched()
     }
 
     fun clear() {
-        email.clear()
-        password.clear()
+        _emailDelegate.clear()
+        _passwordDelegate.clear()
     }
 }

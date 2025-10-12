@@ -2,39 +2,34 @@ package com.example.todoapp.presentation.delegates
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.example.todoapp.presentation.delegates.ConfirmPasswordProperty.Companion.mockProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class ValidatedProperty<T>(
     initialValue: T,
 ) : ReadWriteProperty<Any?, T> {
-    protected val state: MutableState<T> = mutableStateOf(initialValue)
-    private var isTouched: Boolean = false
+    private val _state: MutableState<T> = mutableStateOf(initialValue)
+    private var _isTouched: Boolean = false
 
     override fun getValue(
         thisRef: Any?,
         property: KProperty<*>,
-    ): T = state.value
+    ): T = _state.value
 
     override fun setValue(
         thisRef: Any?,
         property: KProperty<*>,
         value: T,
     ) {
-        state.value = value
-        isTouched = true
+        _state.value = value
+        _isTouched = true
         onValueChanged(value)
     }
 
-    fun asState(): MutableState<T> = state
+    val state: MutableState<T> get() = _state
 
-    val value: T
-        get() = state.value
-
-    fun updateValue(newValue: T) {
-        setValue(null, mockProperty, newValue)
-    }
+    val value: T get() = _state.value
+    val isTouched: Boolean get() = _isTouched
 
     open fun onValueChanged(newValue: T) {}
 
@@ -42,15 +37,15 @@ abstract class ValidatedProperty<T>(
 
     abstract fun getErrorMessage(): String?
 
-    fun shouldShowError(): Boolean = isTouched && !isValid()
+    fun shouldShowError(): Boolean = _isTouched && !isValid()
 
     fun markAsTouched() {
-        isTouched = true
+        _isTouched = true
     }
 
     fun clear() {
-        state.value = getInitialValue()
-        isTouched = false
+        _state.value = getInitialValue()
+        _isTouched = false
     }
 
     protected abstract fun getInitialValue(): T

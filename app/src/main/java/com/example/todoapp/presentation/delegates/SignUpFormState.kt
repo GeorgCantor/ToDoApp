@@ -1,24 +1,29 @@
 package com.example.todoapp.presentation.delegates
 
 class SignUpFormState {
-    val email = EmailProperty()
-    val password = PasswordProperty()
-    val confirmPassword = ConfirmPasswordProperty({ password })
+    var email: String by EmailProperty()
+    var password: String by PasswordProperty()
+    var confirmPassword: String by ConfirmPasswordProperty({ passwordProperty })
 
     val isValid: Boolean
-        get() = email.isValid() && password.isValid() && confirmPassword.isValid()
+        get() = emailProperty.isValid() && passwordProperty.isValid() && confirmPasswordProperty.isValid()
 
-    fun shouldShowErrors(): Boolean = email.shouldShowError() || password.shouldShowError() || confirmPassword.shouldShowError()
+    fun shouldShowErrors(): Boolean =
+        emailProperty.shouldShowError() || passwordProperty.shouldShowError() || confirmPasswordProperty.shouldShowError()
 
     fun markAllAsTouched() {
-        email.markAsTouched()
-        password.markAsTouched()
-        confirmPassword.markAsTouched()
+        emailProperty.markAsTouched()
+        passwordProperty.markAsTouched()
+        confirmPasswordProperty.markAsTouched()
     }
 
     fun clear() {
-        email.clear()
-        password.clear()
-        confirmPassword.clear()
+        emailProperty.clear()
+        passwordProperty.clear()
+        confirmPasswordProperty.clear()
     }
+
+    private val emailProperty = EmailProperty()
+    private val passwordProperty = PasswordProperty()
+    private val confirmPasswordProperty = ConfirmPasswordProperty({ passwordProperty })
 }
