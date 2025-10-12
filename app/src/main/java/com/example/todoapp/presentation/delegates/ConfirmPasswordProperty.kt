@@ -21,7 +21,7 @@ class ConfirmPasswordProperty(
     override fun getInitialValue(): String = ""
 
     companion object {
-        private val mockProperty =
+        val mockProperty =
             object : KProperty<String> {
                 override val name: String = "mock"
                 override val annotations: List<Annotation> = emptyList()

@@ -1,13 +1,21 @@
 package com.example.todoapp.presentation.delegates
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class ValidatedProperty<T>(
     initialValue: T,
 ) : ReadWriteProperty<Any?, T> {
-    var value: T = initialValue
+    protected val state: MutableState<T> = mutableStateOf(initialValue)
     private var isTouched: Boolean = false
+
+    var value: T
+        get() = state.value
+        set(value) {
+            state.value = value
+        }
 
     override fun getValue(
         thisRef: Any?,
@@ -21,7 +29,12 @@ abstract class ValidatedProperty<T>(
     ) {
         this.value = value
         isTouched = true
+        onValueChanged(value)
     }
+
+    fun asState(): MutableState<T> = state
+
+    open fun onValueChanged(newValue: T) {}
 
     abstract fun isValid(): Boolean
 
