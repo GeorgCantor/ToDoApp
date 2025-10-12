@@ -1,14 +1,14 @@
 package com.example.todoapp.presentation.delegates
 
-class EmailProperty(
+class PasswordProperty(
     initialValue: String = "",
 ) : ValidatedProperty<String>(initialValue) {
-    override fun isValid(): Boolean = value.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$"))
+    override fun isValid(): Boolean = value.length >= 6
 
     override fun getErrorMessage(): String? =
         when {
-            value.isEmpty() -> "Email is required"
-            !isValid() -> "Please enter a valid email address"
+            value.isEmpty() -> "Password is required"
+            value.length < 6 -> "Password must be at least 6 characters"
             else -> null
         }
 
