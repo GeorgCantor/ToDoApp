@@ -93,7 +93,7 @@ fun LoginScreen(
 
                     OutlinedTextField(
                         value = emailState.value,
-                        onValueChange = { formState.email.value = it },
+                        onValueChange = { formState.email.updateValue(it) },
                         label = { Text("Email") },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -110,7 +110,7 @@ fun LoginScreen(
 
                     OutlinedTextField(
                         value = passwordState.value,
-                        onValueChange = { formState.password.value = it },
+                        onValueChange = { formState.password.updateValue(it) },
                         label = { Text("Password") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Password") },
                         visualTransformation = PasswordVisualTransformation(),
@@ -137,6 +137,7 @@ fun LoginScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
+                        enabled = formState.isValid,
                     ) {
                         Text("Sign In")
                     }
