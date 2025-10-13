@@ -172,12 +172,12 @@ fun CalculatorKeyboard(
         )
 
     Column(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             CalculatorButton(
                 text = if (isScientificMode) "BASIC" else "SCI",
@@ -193,8 +193,11 @@ fun CalculatorKeyboard(
         if (isScientificMode) {
             scientificButtons.forEach { row ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     row.forEach { button ->
                         CalculatorButton(
@@ -294,7 +297,7 @@ fun CalculatorButton(
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
         )
     }
 }
