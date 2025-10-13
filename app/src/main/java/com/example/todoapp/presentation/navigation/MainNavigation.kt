@@ -23,6 +23,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.screens.AuthScreen
+import com.example.todoapp.presentation.screens.CalculatorScreen
 import com.example.todoapp.presentation.screens.ContentProviderScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.IPCScreen
@@ -155,13 +156,7 @@ fun MainNavigation() {
         }
 
         composable(NavRoutes.Calculator.route) {
-            MainScreen(
-                navController = navController,
-                viewModel = newsViewModel,
-                chatViewModel = chatViewModel,
-                authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
-            )
+            CalculatorScreen(navController = navController, viewModel = calculatorViewModel)
         }
 
         composable(NavRoutes.IPCScreen.route) {
