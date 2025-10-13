@@ -88,10 +88,12 @@ class ChatRepositoryImpl : ChatRepository {
 
     private fun getAudioDuration(file: File): Long {
         val mediaPlayer = MediaPlayer()
-        mediaPlayer.setDataSource(file.absolutePath)
-        mediaPlayer.prepare()
-        val duration = mediaPlayer.duration.toLong()
-        mediaPlayer.release()
-        return duration
+        try {
+            mediaPlayer.setDataSource(file.absolutePath)
+            mediaPlayer.prepare()
+            return mediaPlayer.duration.toLong()
+        } finally {
+            mediaPlayer.release()
+        }
     }
 }
