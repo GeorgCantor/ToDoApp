@@ -10,8 +10,6 @@ class ForgotPasswordFormState {
     val isValid: Boolean
         get() = _emailDelegate.isValid()
 
-    fun shouldShowErrors(): Boolean = _emailDelegate.shouldShowError()
-
     fun markAsTouched() {
         _emailDelegate.markAsTouched()
     }

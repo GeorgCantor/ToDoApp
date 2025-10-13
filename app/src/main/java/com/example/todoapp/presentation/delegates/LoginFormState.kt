@@ -13,8 +13,6 @@ class LoginFormState {
     val isValid: Boolean
         get() = _emailDelegate.isValid() && _passwordDelegate.isValid()
 
-    fun shouldShowErrors(): Boolean = _emailDelegate.shouldShowError() || _passwordDelegate.shouldShowError()
-
     fun markAllAsTouched() {
         _emailDelegate.markAsTouched()
         _passwordDelegate.markAsTouched()

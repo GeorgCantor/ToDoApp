@@ -1,29 +1,30 @@
 package com.example.todoapp.presentation.delegates
 
 class SignUpFormState {
-    var email: String by EmailProperty()
-    var password: String by PasswordProperty()
-    var confirmPassword: String by ConfirmPasswordProperty({ passwordProperty })
+    private val _emailDelegate = EmailProperty()
+    private val _passwordDelegate = PasswordProperty()
+    private val _confirmPasswordDelegate = ConfirmPasswordProperty({ _passwordDelegate })
+
+    var email: String by _emailDelegate
+    var password: String by _passwordDelegate
+    var confirmPassword: String by _confirmPasswordDelegate
+
+    val emailProperty: EmailProperty get() = _emailDelegate
+    val passwordProperty: PasswordProperty get() = _passwordDelegate
+    val confirmPasswordProperty: ConfirmPasswordProperty get() = _confirmPasswordDelegate
 
     val isValid: Boolean
-        get() = emailProperty.isValid() && passwordProperty.isValid() && confirmPasswordProperty.isValid()
-
-    fun shouldShowErrors(): Boolean =
-        emailProperty.shouldShowError() || passwordProperty.shouldShowError() || confirmPasswordProperty.shouldShowError()
+        get() = _emailDelegate.isValid() && _passwordDelegate.isValid() && _confirmPasswordDelegate.isValid()
 
     fun markAllAsTouched() {
-        emailProperty.markAsTouched()
-        passwordProperty.markAsTouched()
-        confirmPasswordProperty.markAsTouched()
+        _emailDelegate.markAsTouched()
+        _passwordDelegate.markAsTouched()
+        _confirmPasswordDelegate.markAsTouched()
     }
 
     fun clear() {
-        emailProperty.clear()
-        passwordProperty.clear()
-        confirmPasswordProperty.clear()
+        _emailDelegate.clear()
+        _passwordDelegate.clear()
+        _confirmPasswordDelegate.clear()
     }
-
-    private val emailProperty = EmailProperty()
-    private val passwordProperty = PasswordProperty()
-    private val confirmPasswordProperty = ConfirmPasswordProperty({ passwordProperty })
 }

@@ -1,3 +1,4 @@
+// SignUpScreen.kt
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +26,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.domain.model.AuthUiState
+import com.example.todoapp.presentation.delegates.rememberSignUpFormState
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 
 @Composable
@@ -43,12 +43,13 @@ fun SignUpScreen(
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
+    val formState = rememberSignUpFormState()
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val emailState by formState.emailProperty.state
+    val passwordState by formState.passwordProperty.state
+    val confirmPasswordState by formState.confirmPasswordProperty.state
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -56,11 +57,6 @@ fun SignUpScreen(
                 val errorMessage = (uiState as AuthUiState.Error).message
                 snackbarHostState.showSnackbar(errorMessage)
             }
-
-            is AuthUiState.PasswordResetSent -> {
-                snackbarHostState.showSnackbar("Password reset email sent")
-            }
-
             else -> {}
         }
     }
@@ -95,21 +91,27 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
+                        value = emailState,
+                        onValueChange = { formState.email = it },
                         label = { Text("Email") },
                         leadingIcon = {
                             Icon(Icons.Default.Email, contentDescription = "Email")
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
+                        isError = formState.emailProperty.shouldShowError(),
+                        supportingText = {
+                            if (formState.emailProperty.shouldShowError()) {
+                                Text(text = formState.emailProperty.getErrorMessage().orEmpty())
+                            }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
+                        value = passwordState,
+                        onValueChange = { formState.password = it },
                         label = { Text("Password") },
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "Password")
@@ -117,13 +119,19 @@ fun SignUpScreen(
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth(),
+                        isError = formState.passwordProperty.shouldShowError(),
+                        supportingText = {
+                            if (formState.passwordProperty.shouldShowError()) {
+                                Text(text = formState.passwordProperty.getErrorMessage().orEmpty())
+                            }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
+                        value = confirmPasswordState,
+                        onValueChange = { formState.confirmPassword = it },
                         label = { Text("Confirm Password") },
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "Confirm Password")
@@ -131,18 +139,25 @@ fun SignUpScreen(
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth(),
+                        isError = formState.confirmPasswordProperty.shouldShowError(),
+                        supportingText = {
+                            if (formState.confirmPasswordProperty.shouldShowError()) {
+                                Text(text = formState.confirmPasswordProperty.getErrorMessage().orEmpty())
+                            }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
                         onClick = {
-                            if (password == confirmPassword) {
-                                authViewModel.signUp(email, password)
+                            formState.markAllAsTouched()
+                            if (formState.isValid) {
+                                authViewModel.signUp(formState.email, formState.password)
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank(),
+                        enabled = formState.isValid,
                     ) {
                         Text("Sign Up")
                     }
