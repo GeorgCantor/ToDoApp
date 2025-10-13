@@ -13,5 +13,7 @@ class ConfirmPasswordProperty(
             else -> null
         }
 
+    override fun isEmpty(): Boolean = value.isEmpty()
+
     override fun getInitialValue(): String = ""
 }

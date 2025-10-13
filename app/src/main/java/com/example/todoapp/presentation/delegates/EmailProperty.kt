@@ -12,5 +12,7 @@ class EmailProperty(
             else -> null
         }
 
+    override fun isEmpty(): Boolean = value.isEmpty()
+
     override fun getInitialValue(): String = ""
 }

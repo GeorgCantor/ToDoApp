@@ -37,7 +37,9 @@ abstract class ValidatedProperty<T>(
 
     abstract fun getErrorMessage(): String?
 
-    fun shouldShowError(): Boolean = _isTouched && !isValid()
+    abstract fun isEmpty(): Boolean
+
+    fun shouldShowError(): Boolean = _isTouched && !isValid() && !isEmpty()
 
     fun markAsTouched() {
         _isTouched = true
