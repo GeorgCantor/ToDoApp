@@ -1,4 +1,3 @@
-// SignUpScreen.kt
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement

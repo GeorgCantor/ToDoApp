@@ -21,10 +21,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +57,9 @@ fun NewsListScreen(
     authViewModel: AuthViewModel,
     modifier: Modifier = Modifier,
 ) {
+    var showSignOutDialog by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
     val newsPagingItems = viewModel.news.collectAsLazyPagingItems()
     val savedScrollState = viewModel.scrollState.value
     val listState =
@@ -58,6 +67,25 @@ fun NewsListScreen(
             initialFirstVisibleItemIndex = savedScrollState?.firstVisibleItemIndex ?: 0,
             initialFirstVisibleItemScrollOffset = savedScrollState?.firstVisibleItemScrollOffset ?: 0,
         )
+
+    if (showSignOutDialog) {
+        ModalBottomSheet(
+            onDismissRequest = { showSignOutDialog = false },
+            sheetState = sheetState,
+        ) {
+            SignOutConfirmationSheet(
+                onConfirm = {
+                    showSignOutDialog = false
+                    authViewModel.signOut()
+                    navController.navigate(NavRoutes.Auth.route) {
+                        popUpTo(NavRoutes.Auth.route) { inclusive = true }
+                    }
+                },
+                onCancel = { showSignOutDialog = false },
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -83,12 +111,7 @@ fun NewsListScreen(
                     }
 
                     IconButton(
-                        onClick = {
-                            authViewModel.signOut()
-                            navController.navigate(NavRoutes.Auth.route) {
-                                popUpTo(NavRoutes.Auth.route) { inclusive = true }
-                            }
-                        },
+                        onClick = { showSignOutDialog = true },
                     ) {
                         Icon(
                             imageVector = Icons.Default.ExitToApp,
@@ -137,6 +160,62 @@ fun NewsListScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun SignOutConfirmationSheet(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            text = "Sign Out",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Are you sure you want to sign out? After signing out, you will need to log in again to access the application.",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onConfirm,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+        ) {
+            Text("Exit")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onCancel,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+            colors =
+                androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+        ) {
+            Text("Cancel")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
