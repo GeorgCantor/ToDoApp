@@ -24,9 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.domain.model.AuthUiState
+import com.example.todoapp.presentation.delegates.rememberForgotPasswordFormState
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
@@ -43,9 +42,11 @@ fun ForgotPasswordScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var email by remember { mutableStateOf("") }
+    val formState = rememberForgotPasswordFormState()
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val emailState by formState.emailProperty.state
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -53,13 +54,11 @@ fun ForgotPasswordScreen(
                 val errorMessage = (uiState as AuthUiState.Error).message
                 snackbarHostState.showSnackbar(errorMessage)
             }
-
             is AuthUiState.PasswordResetSent -> {
                 snackbarHostState.showSnackbar("Password reset email sent! Check your inbox.")
                 delay(2000)
                 onBackClick()
             }
-
             else -> {}
         }
     }
@@ -103,22 +102,33 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
+                        value = emailState,
+                        onValueChange = { formState.email = it },
                         label = { Text("Email") },
                         leadingIcon = {
                             Icon(Icons.Default.Email, contentDescription = "Email")
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
+                        isError = formState.emailProperty.shouldShowError(),
+                        supportingText = {
+                            if (formState.emailProperty.shouldShowError()) {
+                                Text(text = formState.emailProperty.getErrorMessage().orEmpty())
+                            }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { authViewModel.resetPassword(email) },
+                        onClick = {
+                            formState.markAsTouched()
+                            if (formState.isValid) {
+                                authViewModel.resetPassword(formState.email)
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = email.isNotBlank(),
+                        enabled = formState.isValid,
                     ) {
                         Text("Send Reset Link")
                     }

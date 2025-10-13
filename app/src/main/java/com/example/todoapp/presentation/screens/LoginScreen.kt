@@ -95,10 +95,7 @@ fun LoginScreen(
                         onValueChange = { formState.email = it },
                         label = { Text("Email") },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Email,
-                                contentDescription = "Email",
-                            )
+                            Icon(Icons.Default.Email, contentDescription = "Email")
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
@@ -117,10 +114,7 @@ fun LoginScreen(
                         onValueChange = { formState.password = it },
                         label = { Text("Password") },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock,
-                                contentDescription = "Password",
-                            )
+                            Icon(Icons.Default.Lock, contentDescription = "Password")
                         },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
