@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.domain.repository.AuthRepository
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -111,6 +112,178 @@ class AuthViewModelTest {
             viewModel.uiState.test {
                 val currentState = expectMostRecentItem()
                 assertEquals(AuthUiState.Authenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `signUp should update state to Error on failure`() =
+        runTest {
+            val errorMessage = "Registration failed"
+            coEvery {
+                authRepository.signUpWithEmailAndPassword("new@test.com", "weak")
+            } returns Result.failure(Exception(errorMessage))
+
+            viewModel.signUp("new@test.com", "weak")
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertTrue(currentState is AuthUiState.Error)
+                assertEquals(errorMessage, (currentState as AuthUiState.Error).message)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `resetPassword should update state to PasswordResetSent on success`() =
+        runTest {
+            coEvery {
+                authRepository.resetPassword("test@test.com")
+            } returns Result.success(Unit)
+
+            viewModel.resetPassword("test@test.com")
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.PasswordResetSent, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `resetPassword should update state to Error on failure`() =
+        runTest {
+            val errorMessage = "Password reset failed"
+            coEvery {
+                authRepository.resetPassword("invalid@test.com")
+            } returns Result.failure(Exception(errorMessage))
+
+            viewModel.resetPassword("invalid@test.com")
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertTrue(currentState is AuthUiState.Error)
+                assertEquals(errorMessage, (currentState as AuthUiState.Error).message)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `clearError should reset error state to Unauthenticated`() =
+        runTest {
+            val errorMessage = "Test error"
+            coEvery {
+                authRepository.signInWithEmailAndPassword(any(), any())
+            } returns Result.failure(Exception(errorMessage))
+
+            viewModel.signIn("test", "wrong")
+
+            viewModel.uiState.test {
+                val errorState = expectMostRecentItem()
+                assertTrue(errorState is AuthUiState.Error)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            viewModel.clearError()
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Unauthenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `signOut should call repository signOut`() =
+        runTest {
+            coEvery { authRepository.signOut() } returns Unit
+            viewModel.signOut()
+            coVerify { authRepository.signOut() }
+        }
+
+    @Test
+    fun `isAuthenticated should reflect auth state changes`() =
+        runTest {
+            viewModel.isAuthenticated.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(false, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            authStateFlow.value = true
+
+            viewModel.isAuthenticated.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(true, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            authStateFlow.value = false
+
+            viewModel.isAuthenticated.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(false, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `should handle multiple authentication state changes`() =
+        runTest {
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Unauthenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            authStateFlow.value = true
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Authenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            authStateFlow.value = false
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Unauthenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `should not clear error when not in error state`() =
+        runTest {
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Unauthenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+
+            viewModel.clearError()
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertEquals(AuthUiState.Unauthenticated, currentState)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `should handle empty error message`() =
+        runTest {
+            coEvery {
+                authRepository.signInWithEmailAndPassword(any(), any())
+            } returns Result.failure(Exception())
+
+            viewModel.signIn("test", "wrong")
+
+            viewModel.uiState.test {
+                val currentState = expectMostRecentItem()
+                assertTrue(currentState is AuthUiState.Error)
+                assertEquals("Sign in failed", (currentState as AuthUiState.Error).message)
                 cancelAndConsumeRemainingEvents()
             }
         }
