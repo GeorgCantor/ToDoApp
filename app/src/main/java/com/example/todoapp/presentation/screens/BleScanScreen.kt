@@ -26,10 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.todoapp.R
 
 data class BleDevice(
     val name: String?,
@@ -118,9 +120,9 @@ fun BleScanScreen() {
                     .padding(paddingValues),
         ) {
             if (!isBleSupported) {
-                Text("BLE не поддерживается на этом устройстве")
+                Text(stringResource(R.string.ble_not_supported))
             } else if (!hasBlePermission) {
-                Text("Необходимы разрешения для сканирования BLE")
+                Text(stringResource(R.string.ble_permissions_required))
             } else {
                 Button(
                     onClick = {
@@ -140,18 +142,28 @@ fun BleScanScreen() {
                     },
                     modifier = Modifier.padding(16.dp),
                 ) {
-                    Text(if (isScanning) "Остановить сканирование" else "Начать сканирование")
+                    Text(
+                        if (isScanning) {
+                            stringResource(R.string.stop_scanning)
+                        } else {
+                            stringResource(R.string.start_scanning)
+                        },
+                    )
                 }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(devices) { device ->
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = device.name ?: "Unknown device",
+                                text = device.name ?: stringResource(R.string.unknown_device),
                                 modifier = Modifier.padding(bottom = 4.dp),
                             )
-                            Text(text = "MAC: ${device.address}")
-                            Text(text = "RSSI: ${device.rssi} dBm")
+                            Text(
+                                text = stringResource(R.string.mac_address, device.address ?: "N/A"),
+                            )
+                            Text(
+                                text = stringResource(R.string.rssi_value, device.rssi?.toString() ?: "N/A"),
+                            )
                         }
                     }
                 }

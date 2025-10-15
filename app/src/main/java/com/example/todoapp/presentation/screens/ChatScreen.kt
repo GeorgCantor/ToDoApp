@@ -47,7 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.ChatMessage
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.utils.showToast
@@ -132,7 +134,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 ) {
                     Icon(
                         imageVector = Icons.Default.AddCircle,
-                        contentDescription = "Recording",
+                        contentDescription = stringResource(R.string.recording),
                         tint = MaterialTheme.colorScheme.onErrorContainer,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -148,7 +150,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                                 containerColor = MaterialTheme.colorScheme.error,
                             ),
                     ) {
-                        Text("Stop")
+                        Text(stringResource(R.string.stop))
                     }
                 }
             } else {
@@ -164,7 +166,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 ) {
                     Icon(
                         imageVector = Icons.Default.AddCircle,
-                        contentDescription = "Record voice",
+                        contentDescription = stringResource(R.string.record_voice),
                         tint = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -173,7 +175,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     value = messageText,
                     onValueChange = { messageText = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Enter message") },
+                    placeholder = { Text(stringResource(R.string.enter_message)) },
                     maxLines = 4,
                 )
 
@@ -187,7 +189,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                 ) {
-                    Text("Send")
+                    Text(stringResource(R.string.send))
                 }
             }
         }
@@ -209,7 +211,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                         .padding(16.dp),
             ) {
                 Text(
-                    text = "Edit Message",
+                    text = stringResource(R.string.edit_message),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 16.dp),
                 )
@@ -221,7 +223,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                         Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
-                    placeholder = { Text("Enter message") },
+                    placeholder = { Text(stringResource(R.string.enter_message)) },
                     singleLine = false,
                     maxLines = 4,
                 )
@@ -237,7 +239,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                         },
                         modifier = Modifier.padding(end = 8.dp),
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
 
                     Button(
@@ -249,7 +251,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             messageToEdit = null
                         },
                     ) {
-                        Text("Save")
+                        Text(stringResource(R.string.save))
                     }
                 }
 
@@ -340,14 +342,14 @@ fun MessageBubble(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Edit") },
+                text = { Text(stringResource(R.string.edit)) },
                 onClick = {
                     expanded = false
                     onEditClick(message)
                 },
             )
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text(stringResource(R.string.delete)) },
                 onClick = {
                     expanded = false
                     onDeleteClick(message)
@@ -377,7 +379,7 @@ fun AudioMessageItem(
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play audio",
+                contentDescription = stringResource(R.string.play_audio),
                 tint = textColor,
             )
         }

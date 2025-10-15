@@ -28,12 +28,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,11 +50,11 @@ fun CalculatorScreen(
     if (errorMessage != null) {
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
-            title = { Text("Calculation Error") },
+            title = { Text(stringResource(R.string.calculation_error)) },
             text = { Text(errorMessage.orEmpty()) },
             confirmButton = {
                 TextButton(onClick = { viewModel.clearError() }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
         )
@@ -64,15 +66,15 @@ fun CalculatorScreen(
                 title = {
                     Text(
                         if (calculatorState.isScientificMode) {
-                            "Scientific Calculator"
+                            stringResource(R.string.scientific_calculator)
                         } else {
-                            "Basic Calculator"
+                            stringResource(R.string.basic_calculator)
                         },
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
             )

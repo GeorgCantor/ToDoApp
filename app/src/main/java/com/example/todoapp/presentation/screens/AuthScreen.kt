@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.presentation.navigation.NavRoutes
 
 @Composable
@@ -34,14 +36,14 @@ fun AuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Todo App",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.welcome),
                 style = MaterialTheme.typography.bodyLarge,
             )
 
@@ -51,7 +53,7 @@ fun AuthScreen(
                 onClick = { navController.navigate(NavRoutes.Login.route) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Log In")
+                Text(stringResource(R.string.log_in))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -60,7 +62,7 @@ fun AuthScreen(
                 onClick = { navController.navigate(NavRoutes.SignUp.route) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Sign Up")
+                Text(stringResource(R.string.sign_up))
             }
         }
     }
