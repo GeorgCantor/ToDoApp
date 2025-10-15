@@ -1,0 +1,135 @@
+<resources>
+    <string name="app_name">Todo App</string>
+
+    <!-- Auth Screen -->
+    <string name="welcome">Welcome!</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="dont_have_account">Don\'t have an account? Sign Up</string>
+
+    <!-- Sign Up Screen -->
+    <string name="create_account">Create Account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_password_message">Enter your email address and we\'ll send you a link to reset your password</string>
+    <string name="send_reset_link">Send Reset Link</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="password_reset_sent">Password reset email sent! Check your inbox.</string>
+
+    <!-- News Screens -->
+    <string name="news">News</string>
+    <string name="search_news">Search News</string>
+    <string name="search_news_hint">Search news…</string>
+    <string name="refresh">Refresh</string>
+    <string name="error_loading">Error loading</string>
+    <string name="retry">Retry</string>
+    <string name="loading_documents">Loading documents…</string>
+
+    <!-- Sign Out -->
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_confirmation">Are you sure you want to sign out? After signing out, you will need to log in again to access the application.</string>
+    <string name="exit">Exit</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Calculator -->
+    <string name="basic_calculator">Basic Calculator</string>
+    <string name="scientific_calculator">Scientific Calculator</string>
+    <string name="calculation_error">Calculation Error</string>
+
+    <!-- BLE Screen -->
+    <string name="ble_not_supported">BLE не поддерживается на этом устройстве</string>
+    <string name="ble_permissions_required">Необходимы разрешения для сканирования BLE</string>
+    <string name="start_scanning">Начать сканирование</string>
+    <string name="stop_scanning">Остановить сканирование</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="mac_address">MAC: %s</string>
+    <string name="rssi_value">RSSI: %s dBm</string>
+
+    <!-- Chat Screen -->
+    <string name="record_voice">Record voice</string>
+    <string name="enter_message">Enter message</string>
+    <string name="send">Send</string>
+    <string name="recording">Recording</string>
+    <string name="stop">Stop</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="edit_message">Edit Message</string>
+    <string name="save">Save</string>
+    <string name="play_audio">Play audio</string>
+
+    <!-- Content Provider -->
+    <string name="content_provider_demo">Content Provider Demo</string>
+    <string name="add_note">Add Note</string>
+    <string name="notes_count">Notes Count: %d</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
+    <string name="add">Add</string>
+    <string name="status">Status: %s</string>
+    <string name="active">Active</string>
+    <string name="completed">Completed</string>
+    <string name="toggle_complete">Toggle Complete</string>
+    <string name="error_loading_notes">Error loading notes: %s</string>
+    <string name="error_adding_note">Error adding note: %s</string>
+    <string name="error_deleting_note">Error deleting note: %s</string>
+    <string name="error_updating_note">Error updating note: %s</string>
+
+    <!-- Documents Screen -->
+    <string name="download_documents">Download Documents</string>
+    <string name="no_documents">No documents available</string>
+    <string name="downloading">Downloading</string>
+    <string name="downloading_progress">Downloading… %d%%</string>
+
+    <!-- IPC Screen -->
+    <string name="system_info_ipc">System Info IPC</string>
+    <string name="service_status">Service Status</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="system_information">System Information</string>
+    <string name="storage_information">Storage Information</string>
+    <string name="device">Device</string>
+    <string name="android">Android</string>
+    <string name="manufacturer">Manufacturer</string>
+    <string name="model">Model</string>
+    <string name="battery">Battery</string>
+    <string name="charging">Charging</string>
+    <string name="available_memory">Available Memory</string>
+    <string name="total_memory">Total Memory</string>
+    <string name="memory_usage">Memory Usage</string>
+    <string name="last_updated">Last Updated</string>
+    <string name="internal_total">Internal Total</string>
+    <string name="internal_available">Internal Available</string>
+    <string name="internal_usage">Internal Usage</string>
+    <string name="external_storage">External Storage</string>
+    <string name="external_total">External Total</string>
+    <string name="external_available">External Available</string>
+    <string name="external_usage">External Usage</string>
+    <string name="not_available">Not Available</string>
+    <string name="error_loading_system_info">Error loading system info: %s</string>
+    <string name="failed_to_bind_service">Failed to bind to service</string>
+    <string name="error_disconnecting">Error disconnecting: %s</string>
+
+    <!-- Map Screen -->
+    <string name="your_location">Ваше местоположение</string>
+    <string name="current_position">Текущая позиция</string>
+    <string name="moscow">Москва</string>
+    <string name="default_location">Местоположение по умолчанию</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>

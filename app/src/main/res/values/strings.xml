@@ -1,3 +1,135 @@
 <resources>
-    <string name="app_name">News</string>
+    <string name="app_name">Todo App</string>
+
+    <!-- Auth Screen -->
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="log_in">Войти</string>
+    <string name="sign_up">Зарегистрироваться</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_back">С возвращением</string>
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="sign_in">Войти</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="dont_have_account">Нет аккаунта? Зарегистрироваться</string>
+
+    <!-- Sign Up Screen -->
+    <string name="create_account">Создать аккаунт</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="already_have_account">Уже есть аккаунт? Войти</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="reset_password">Сброс пароля</string>
+    <string name="reset_password_message">Введите ваш email и мы вышлем вам ссылку для сброса пароля</string>
+    <string name="send_reset_link">Отправить ссылку</string>
+    <string name="back_to_login">Назад к входу</string>
+    <string name="password_reset_sent">Письмо для сброса пароля отправлено! Проверьте ваш почтовый ящик.</string>
+
+    <!-- News Screens -->
+    <string name="news">Новости</string>
+    <string name="search_news">Поиск новостей</string>
+    <string name="search_news_hint">Поиск новостей…</string>
+    <string name="refresh">Обновить</string>
+    <string name="error_loading">Ошибка загрузки</string>
+    <string name="retry">Повторить</string>
+    <string name="loading_documents">Загрузка документов…</string>
+
+    <!-- Sign Out -->
+    <string name="sign_out">Выйти</string>
+    <string name="sign_out_confirmation">Вы уверены, что хотите выйти? После выхода вам нужно будет снова войти в приложение.</string>
+    <string name="exit">Выйти</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Calculator -->
+    <string name="basic_calculator">Базовый калькулятор</string>
+    <string name="scientific_calculator">Научный калькулятор</string>
+    <string name="calculation_error">Ошибка вычисления</string>
+
+    <!-- BLE Screen -->
+    <string name="ble_not_supported">BLE не поддерживается на этом устройстве</string>
+    <string name="ble_permissions_required">Необходимы разрешения для сканирования BLE</string>
+    <string name="start_scanning">Начать сканирование</string>
+    <string name="stop_scanning">Остановить сканирование</string>
+    <string name="unknown_device">Неизвестное устройство</string>
+    <string name="mac_address">MAC: %s</string>
+    <string name="rssi_value">RSSI: %s дБм</string>
+
+    <!-- Chat Screen -->
+    <string name="record_voice">Запись голоса</string>
+    <string name="enter_message">Введите сообщение</string>
+    <string name="send">Отправить</string>
+    <string name="recording">Запись</string>
+    <string name="stop">Стоп</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="edit_message">Редактировать сообщение</string>
+    <string name="save">Сохранить</string>
+    <string name="play_audio">Воспроизвести аудио</string>
+
+    <!-- Content Provider -->
+    <string name="content_provider_demo">Демо Content Provider</string>
+    <string name="add_note">Добавить заметку</string>
+    <string name="notes_count">Количество заметок: %d</string>
+    <string name="title">Заголовок</string>
+    <string name="content">Содержание</string>
+    <string name="add">Добавить</string>
+    <string name="status">Статус: %s</string>
+    <string name="active">Активно</string>
+    <string name="completed">Завершено</string>
+    <string name="toggle_complete">Переключить завершение</string>
+    <string name="error_loading_notes">Error loading notes: %s</string>
+    <string name="error_adding_note">Error adding note: %s</string>
+    <string name="error_deleting_note">Error deleting note: %s</string>
+    <string name="error_updating_note">Error updating note: %s</string>
+
+    <!-- Documents Screen -->
+    <string name="download_documents">Загрузка документов</string>
+    <string name="no_documents">Нет доступных документов</string>
+    <string name="downloading">Загрузка</string>
+    <string name="downloading_progress">Загрузка… %d%%</string>
+
+    <!-- IPC Screen -->
+    <string name="system_info_ipc">Системная информация IPC</string>
+    <string name="service_status">Статус службы</string>
+    <string name="connected">Подключено</string>
+    <string name="disconnected">Отключено</string>
+    <string name="connect">Подключить</string>
+    <string name="disconnect">Отключить</string>
+    <string name="system_information">Системная информация</string>
+    <string name="storage_information">Информация о хранилище</string>
+    <string name="device">Устройство</string>
+    <string name="android">Android</string>
+    <string name="manufacturer">Производитель</string>
+    <string name="model">Модель</string>
+    <string name="battery">Батарея</string>
+    <string name="charging">Заряжается</string>
+    <string name="available_memory">Доступная память</string>
+    <string name="total_memory">Всего памяти</string>
+    <string name="memory_usage">Использование памяти</string>
+    <string name="last_updated">Последнее обновление</string>
+    <string name="internal_total">Всего внутренней</string>
+    <string name="internal_available">Доступно внутренней</string>
+    <string name="internal_usage">Использование внутренней</string>
+    <string name="external_storage">Внешнее хранилище</string>
+    <string name="external_total">Всего внешней</string>
+    <string name="external_available">Доступно внешней</string>
+    <string name="external_usage">Использование внешней</string>
+    <string name="not_available">Недоступно</string>
+    <string name="error_loading_system_info">Error loading system info: %s</string>
+    <string name="failed_to_bind_service">Failed to bind to service</string>
+    <string name="error_disconnecting">Error disconnecting: %s</string>
+
+    <!-- Map Screen -->
+    <string name="your_location">Ваше местоположение</string>
+    <string name="current_position">Текущая позиция</string>
+    <string name="moscow">Москва</string>
+    <string name="default_location">Местоположение по умолчанию</string>
+
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="error">Ошибка</string>
+    <string name="ok">ОК</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>
