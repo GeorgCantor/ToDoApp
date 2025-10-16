@@ -13,24 +13,16 @@ object NewsCache {
         val news: List<NewsArticle>,
         val timeStamp: Long = System.currentTimeMillis(),
     ) {
-        fun isExpired() = System.currentTimeMillis() - timeStamp > CACHE_TTL
+        fun isFresh(): Boolean = System.currentTimeMillis() - timeStamp < CACHE_TTL
     }
 
-    fun getNews(): List<NewsArticle>? {
-        val cached = memoryCache.get(HEADLINES)
-        return if (cached != null && !cached.isExpired()) {
-            cached.news
-        } else {
-            cached?.let { memoryCache.remove(HEADLINES) }
-            null
-        }
-    }
+    fun getNews(): CachedNews? = memoryCache.get(HEADLINES)
 
     fun putNews(news: List<NewsArticle>) {
         memoryCache.put(HEADLINES, CachedNews(news))
     }
 
-    fun getArticleById(id: Int): NewsArticle? = memoryCache.get(HEADLINES)?.news?.find { it.id == id }
-
-    fun clear() = memoryCache.clear()
+    fun clear() {
+        memoryCache.clear()
+    }
 }

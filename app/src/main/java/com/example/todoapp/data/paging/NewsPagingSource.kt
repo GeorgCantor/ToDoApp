@@ -2,6 +2,7 @@ package com.example.todoapp.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.todoapp.data.cache.NewsCache
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.domain.model.NewsArticle
 
@@ -19,6 +20,11 @@ class NewsPagingSource(
             val page = params.key ?: 1
             val pageSize = params.loadSize.coerceAtMost(20)
             val response = newsApiService.getTopHeadlines(page = page, pageSize = pageSize)
+
+            if (page == 1) {
+                NewsCache.putNews(response.articles.map { it.toNewsArticle() })
+            }
+
             if (response.status == "ok") {
                 val articles = response.articles.map { it.toNewsArticle() }
                 LoadResult.Page(
@@ -30,6 +36,16 @@ class NewsPagingSource(
                 LoadResult.Error(Throwable("API returned error status"))
             }
         } catch (e: Exception) {
+            if (params.key == null || params.key == 1) {
+                val cachedNews = NewsCache.getNews()
+                if (cachedNews != null) {
+                    LoadResult.Page(
+                        data = cachedNews.news,
+                        prevKey = null,
+                        nextKey = 2,
+                    )
+                }
+            }
             LoadResult.Error(e)
         }
 }
