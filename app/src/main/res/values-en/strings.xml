@@ -27,7 +27,6 @@
     <string name="password_reset_sent">Password reset email sent! Check your inbox.</string>
 
     <!-- News Screens -->
-    <string name="news">News</string>
     <string name="search_news">Search News</string>
     <string name="search_news_hint">Search news…</string>
     <string name="refresh">Refresh</string>
@@ -125,6 +124,13 @@
     <string name="current_position">Current position</string>
     <string name="moscow">Moscow</string>
     <string name="default_location">Default location</string>
+
+    <!-- Main Screen -->
+    <string name="news">News</string>
+    <string name="chat">Chat</string>
+    <string name="calculator">Calculator</string>
+    <string name="ipc">IPC</string>
+    <string name="provider">Provider</string>
 
     <!-- Common -->
     <string name="back">Back</string>

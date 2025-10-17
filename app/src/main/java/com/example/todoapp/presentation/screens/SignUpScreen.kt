@@ -28,10 +28,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.delegates.rememberSignUpFormState
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
@@ -83,7 +85,7 @@ fun SignUpScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Create Account",
+                        text = stringResource(R.string.create_account),
                         style = MaterialTheme.typography.headlineMedium,
                     )
 
@@ -92,9 +94,9 @@ fun SignUpScreen(
                     OutlinedTextField(
                         value = emailState,
                         onValueChange = { formState.email = it },
-                        label = { Text("Email") },
+                        label = { Text(stringResource(R.string.email)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Email, contentDescription = "Email")
+                            Icon(Icons.Default.Email, contentDescription = stringResource(R.string.email))
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
@@ -111,9 +113,9 @@ fun SignUpScreen(
                     OutlinedTextField(
                         value = passwordState,
                         onValueChange = { formState.password = it },
-                        label = { Text("Password") },
+                        label = { Text(stringResource(R.string.password)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = "Password")
+                            Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.password))
                         },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -131,9 +133,9 @@ fun SignUpScreen(
                     OutlinedTextField(
                         value = confirmPasswordState,
                         onValueChange = { formState.confirmPassword = it },
-                        label = { Text("Confirm Password") },
+                        label = { Text(stringResource(R.string.confirm_password)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = "Confirm Password")
+                            Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.confirm_password))
                         },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -158,14 +160,14 @@ fun SignUpScreen(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = formState.isValid,
                     ) {
-                        Text("Sign Up")
+                        Text(stringResource(R.string.sign_up))
                     }
 
                     TextButton(
                         onClick = onLoginClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Already have an account? Sign In")
+                        Text(stringResource(R.string.already_have_account))
                     }
                 }
             }

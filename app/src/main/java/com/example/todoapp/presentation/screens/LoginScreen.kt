@@ -28,10 +28,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.delegates.rememberLoginFormState
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
@@ -84,7 +86,7 @@ fun LoginScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Welcome Back",
+                        text = stringResource(R.string.welcome_back),
                         style = MaterialTheme.typography.headlineMedium,
                     )
 
@@ -93,9 +95,9 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = emailState,
                         onValueChange = { formState.email = it },
-                        label = { Text("Email") },
+                        label = { Text(stringResource(R.string.email)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Email, contentDescription = "Email")
+                            Icon(Icons.Default.Email, contentDescription = stringResource(R.string.email))
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
@@ -112,9 +114,9 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = passwordState,
                         onValueChange = { formState.password = it },
-                        label = { Text("Password") },
+                        label = { Text(stringResource(R.string.password)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = "Password")
+                            Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.password))
                         },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -142,21 +144,21 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = formState.isValid,
                     ) {
-                        Text("Sign In")
+                        Text(stringResource(R.string.sign_in))
                     }
 
                     TextButton(
                         onClick = onForgotPasswordClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Forgot Password?")
+                        Text(stringResource(R.string.forgot_password))
                     }
 
                     TextButton(
                         onClick = onSignUpClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Don't have an account? Sign Up")
+                        Text(stringResource(R.string.dont_have_account))
                     }
                 }
             }

@@ -27,10 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.delegates.rememberForgotPasswordFormState
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
@@ -45,7 +48,7 @@ fun ForgotPasswordScreen(
     val formState = rememberForgotPasswordFormState()
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-
+    val context = LocalContext.current
     val emailState by formState.emailProperty.state
 
     LaunchedEffect(uiState) {
@@ -55,7 +58,7 @@ fun ForgotPasswordScreen(
                 snackbarHostState.showSnackbar(errorMessage)
             }
             is AuthUiState.PasswordResetSent -> {
-                snackbarHostState.showSnackbar("Password reset email sent! Check your inbox.")
+                snackbarHostState.showSnackbar(context.getString(R.string.password_reset_sent))
                 delay(2000)
                 onBackClick()
             }
@@ -86,7 +89,7 @@ fun ForgotPasswordScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Reset Password",
+                        text = stringResource(R.string.reset_password),
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Center,
                     )
@@ -94,7 +97,7 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Enter your email address and we'll send you a link to reset your password",
+                        text = stringResource(R.string.reset_password_message),
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                     )
@@ -104,9 +107,9 @@ fun ForgotPasswordScreen(
                     OutlinedTextField(
                         value = emailState,
                         onValueChange = { formState.email = it },
-                        label = { Text("Email") },
+                        label = { Text(stringResource(R.string.email)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Email, contentDescription = "Email")
+                            Icon(Icons.Default.Email, contentDescription = stringResource(R.string.email))
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier.fillMaxWidth(),
@@ -130,14 +133,14 @@ fun ForgotPasswordScreen(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = formState.isValid,
                     ) {
-                        Text("Send Reset Link")
+                        Text(stringResource(R.string.send_reset_link))
                     }
 
                     TextButton(
                         onClick = onBackClick,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Back to Login")
+                        Text(stringResource(R.string.back_to_login))
                     }
                 }
             }

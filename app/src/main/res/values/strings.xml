@@ -27,7 +27,6 @@
     <string name="password_reset_sent">Письмо для сброса пароля отправлено! Проверьте ваш почтовый ящик.</string>
 
     <!-- News Screens -->
-    <string name="news">Новости</string>
     <string name="search_news">Поиск новостей</string>
     <string name="search_news_hint">Поиск новостей…</string>
     <string name="refresh">Обновить</string>
@@ -125,6 +124,13 @@
     <string name="current_position">Текущая позиция</string>
     <string name="moscow">Москва</string>
     <string name="default_location">Местоположение по умолчанию</string>
+
+    <!-- Main Screen -->
+    <string name="news">Новости</string>
+    <string name="chat">Чат</string>
+    <string name="calculator">Калькулятор</string>
+    <string name="ipc">IPC</string>
+    <string name="provider">Провайдер</string>
 
     <!-- Common -->
     <string name="back">Назад</string>

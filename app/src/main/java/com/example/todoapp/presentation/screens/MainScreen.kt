@@ -19,8 +19,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.todoapp.R
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
@@ -61,31 +63,31 @@ fun MainScreen(
                                 NavRoutes.NewsList ->
                                     Icon(
                                         Icons.Filled.Home,
-                                        contentDescription = "News",
+                                        contentDescription = stringResource(R.string.news),
                                     )
 
                                 NavRoutes.Chat ->
                                     Icon(
                                         Icons.Filled.MailOutline,
-                                        contentDescription = "Chat",
+                                        contentDescription = stringResource(R.string.chat),
                                     )
 
                                 NavRoutes.Calculator ->
                                     Icon(
                                         Icons.Filled.AddCircle,
-                                        contentDescription = "Calculator",
+                                        contentDescription = stringResource(R.string.calculator),
                                     )
 
                                 NavRoutes.IPCScreen ->
                                     Icon(
                                         Icons.Filled.List,
-                                        contentDescription = "IPC",
+                                        contentDescription = stringResource(R.string.ipc),
                                     )
 
                                 NavRoutes.ContentProviderScreen ->
                                     Icon(
                                         Icons.Filled.Build,
-                                        contentDescription = "Provider",
+                                        contentDescription = stringResource(R.string.provider),
                                     )
 
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
@@ -93,9 +95,14 @@ fun MainScreen(
                         },
                         label = {
                             Text(
-                                item.route
-                                    .takeWhile { it != '_' }
-                                    .replaceFirstChar { it.uppercase() },
+                                when (item) {
+                                    NavRoutes.NewsList -> stringResource(R.string.news)
+                                    NavRoutes.Chat -> stringResource(R.string.chat)
+                                    NavRoutes.Calculator -> stringResource(R.string.calculator)
+                                    NavRoutes.IPCScreen -> stringResource(R.string.ipc)
+                                    NavRoutes.ContentProviderScreen -> stringResource(R.string.provider)
+                                    else -> item.route
+                                },
                             )
                         },
                         selected = currentRoute == item.route,
