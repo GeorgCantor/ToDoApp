@@ -75,10 +75,8 @@ object NewsCache {
                             parcel.unmarshall(bytes, 0, bytes.size)
                             parcel.setDataPosition(0)
                             val cachedNews = parcel.readParcelable<CachedNews>(CachedNews::class.java.classLoader)
-                            if (cachedNews != null && cachedNews.isFresh()) {
+                            if (cachedNews != null) {
                                 memoryCache.put(HEADLINES, cachedNews)
-                            } else {
-                                cacheFile.delete()
                             }
                         } finally {
                             parcel.recycle()
