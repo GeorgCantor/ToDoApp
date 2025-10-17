@@ -39,11 +39,6 @@ object NewsCache {
         saveToDisk(cachedNews)
     }
 
-    fun clear() {
-        memoryCache.clear()
-        deleteDiskCache()
-    }
-
     private fun saveToDisk(cachedNews: CachedNews) {
         try {
             cacheDir?.let { dir ->
@@ -82,19 +77,6 @@ object NewsCache {
                             parcel.recycle()
                         }
                     }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun deleteDiskCache() {
-        try {
-            cacheDir?.let { dir ->
-                val cacheFile = File(dir, CACHE_FILE_NAME)
-                if (cacheFile.exists()) {
-                    cacheFile.delete()
                 }
             }
         } catch (e: Exception) {

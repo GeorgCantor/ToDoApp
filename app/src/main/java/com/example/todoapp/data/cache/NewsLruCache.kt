@@ -22,16 +22,5 @@ class NewsLruCache<K, V>(
     }
 
     @Synchronized
-    fun remove(key: K): V? = cache.remove(key)
-
-    @Synchronized
-    fun clear() {
-        cache.clear()
-    }
-
-    @Synchronized
     fun size() = cache.size
-
-    @Synchronized
-    fun getAll(): Map<K, V> = LinkedHashMap(cache)
 }
