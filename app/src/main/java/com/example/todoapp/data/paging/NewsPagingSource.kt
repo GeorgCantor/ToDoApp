@@ -37,15 +37,15 @@ class NewsPagingSource(
             }
         } catch (e: Exception) {
             if (params.key == null || params.key == 1) {
-                val cachedNews = NewsCache.getNews()
-                if (cachedNews != null) {
+                NewsCache.getNews()?.let { cachedNews ->
                     LoadResult.Page(
                         data = cachedNews.news,
                         prevKey = null,
-                        nextKey = 2,
+                        nextKey = null,
                     )
-                }
+                } ?: LoadResult.Error(e)
+            } else {
+                LoadResult.Error(e)
             }
-            LoadResult.Error(e)
         }
 }

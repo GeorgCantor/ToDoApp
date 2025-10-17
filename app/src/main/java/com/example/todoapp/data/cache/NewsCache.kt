@@ -31,7 +31,7 @@ object NewsCache {
         loadFromDisk()
     }
 
-    fun getNews(): CachedNews? = memoryCache.get(HEADLINES)?.takeIf { it.isFresh() }
+    fun getNews(): CachedNews? = memoryCache.get(HEADLINES)
 
     fun putNews(news: List<NewsArticle>) {
         val cachedNews = CachedNews(news)
