@@ -2,6 +2,7 @@ package com.example.todoapp.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 @Parcelize
 data class NewsArticle(
@@ -11,4 +12,5 @@ data class NewsArticle(
     val url: String,
     val urlToImage: String?,
     val publishedAt: String,
-) : Parcelable
+) : Parcelable,
+    Serializable

@@ -16,7 +16,7 @@ class NewsRepositoryImpl(
     private val apiService: NewsApiService,
 ) : NewsRepository {
     override fun getNewsStream(category: String): Flow<PagingData<NewsArticle>> {
-        val cachedNews = NewsCache.getNews()
+        val cachedNews = NewsCache.getNews(category)
 
         return if (cachedNews?.isFresh() == true) {
             createCachedPagingFlow(cachedNews.news)

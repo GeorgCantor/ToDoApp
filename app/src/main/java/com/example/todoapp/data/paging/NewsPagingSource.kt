@@ -29,7 +29,7 @@ class NewsPagingSource(
                 )
 
             if (page == 1) {
-                NewsCache.putNews(response.articles.map { it.toNewsArticle() })
+                NewsCache.putNews(response.articles.map { it.toNewsArticle() }, category)
             }
 
             if (response.status == "ok") {
@@ -44,7 +44,7 @@ class NewsPagingSource(
             }
         } catch (e: Exception) {
             if (params.key == null || params.key == 1) {
-                NewsCache.getNews()?.let { cachedNews ->
+                NewsCache.getNews(category)?.let { cachedNews ->
                     LoadResult.Page(
                         data = cachedNews.news,
                         prevKey = null,

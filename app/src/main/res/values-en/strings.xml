@@ -131,6 +131,7 @@
     <string name="calculator">Calculator</string>
     <string name="ipc">IPC</string>
     <string name="provider">Provider</string>
+    <string name="categories">Categories</string>
 
     <!-- Common -->
     <string name="back">Back</string>

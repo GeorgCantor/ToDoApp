@@ -131,6 +131,7 @@
     <string name="calculator">Калькулятор</string>
     <string name="ipc">IPC</string>
     <string name="provider">Провайдер</string>
+    <string name="categories">Категории</string>
 
     <!-- Common -->
     <string name="back">Назад</string>
