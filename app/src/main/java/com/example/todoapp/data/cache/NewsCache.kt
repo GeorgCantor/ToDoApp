@@ -1,56 +1,52 @@
 package com.example.todoapp.data.cache
 
 import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
 import com.example.todoapp.domain.model.NewsArticle
-import kotlinx.parcelize.Parcelize
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 private const val MAX_MEMORY_CACHE_SIZE = 50
 private const val CACHE_TTL = 30 * 60 * 1000
-private const val CACHE_FILE_NAME = "news_cache.parcel"
-const val HEADLINES = "headlines"
+private const val CACHE_FILE_NAME = "news_cache.ser"
+
+data class CachedNews(
+    val news: List<NewsArticle>,
+    val category: String,
+    val timeStamp: Long = System.currentTimeMillis(),
+) : Serializable {
+    fun isFresh(): Boolean = System.currentTimeMillis() - timeStamp < CACHE_TTL
+}
 
 object NewsCache {
     private val memoryCache = NewsLruCache<String, CachedNews>(MAX_MEMORY_CACHE_SIZE)
     private var cacheDir: File? = null
-
-    @Parcelize
-    data class CachedNews(
-        val news: List<NewsArticle>,
-        val timeStamp: Long = System.currentTimeMillis(),
-    ) : Parcelable {
-        fun isFresh(): Boolean = System.currentTimeMillis() - timeStamp < CACHE_TTL
-    }
 
     fun init(context: Context) {
         cacheDir = context.cacheDir
         loadFromDisk()
     }
 
-    fun getNews(): CachedNews? = memoryCache.get(HEADLINES)
+    fun getNews(category: String) = memoryCache.get(category)
 
-    fun putNews(news: List<NewsArticle>) {
-        val cachedNews = CachedNews(news)
-        memoryCache.put(HEADLINES, cachedNews)
-        saveToDisk(cachedNews)
+    fun putNews(
+        news: List<NewsArticle>,
+        category: String,
+    ) {
+        val cachedNews = CachedNews(news, category)
+        memoryCache.put(category, cachedNews)
+        saveToDisk()
     }
 
-    private fun saveToDisk(cachedNews: CachedNews) {
+    private fun saveToDisk() {
         try {
             cacheDir?.let { dir ->
                 val cacheFile = File(dir, CACHE_FILE_NAME)
-                val parcel = Parcel.obtain()
-                try {
-                    parcel.writeParcelable(cachedNews, 0)
-                    FileOutputStream(cacheFile).use { outputStream ->
-                        outputStream.write(parcel.marshall())
-                    }
-                } finally {
-                    parcel.recycle()
+                ObjectOutputStream(FileOutputStream(cacheFile)).use { outputStream ->
+                    outputStream.writeObject(memoryCache)
                 }
             }
         } catch (e: Exception) {
@@ -58,29 +54,26 @@ object NewsCache {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun loadFromDisk() {
         try {
             cacheDir?.let { dir ->
                 val cacheFile = File(dir, CACHE_FILE_NAME)
                 if (cacheFile.exists() && cacheFile.length() > 0) {
-                    FileInputStream(cacheFile).use { inputStream ->
-                        val bytes = inputStream.readBytes()
-                        val parcel = Parcel.obtain()
-                        try {
-                            parcel.unmarshall(bytes, 0, bytes.size)
-                            parcel.setDataPosition(0)
-                            val cachedNews = parcel.readParcelable<CachedNews>(CachedNews::class.java.classLoader)
-                            if (cachedNews != null) {
-                                memoryCache.put(HEADLINES, cachedNews)
-                            }
-                        } finally {
-                            parcel.recycle()
+                    ObjectInputStream(FileInputStream(cacheFile)).use { inputStream ->
+                        val loadedCache = inputStream.readObject() as? NewsLruCache<String, CachedNews>
+                        loadedCache?.getAll()?.forEach { (category, cachedNews) ->
+                            memoryCache.put(category, cachedNews)
                         }
                     }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            cacheDir?.let { dir ->
+                val cacheFile = File(dir, CACHE_FILE_NAME)
+                if (cacheFile.exists()) cacheFile.delete()
+            }
         }
     }
 }

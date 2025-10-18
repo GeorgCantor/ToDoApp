@@ -24,11 +24,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.CalculatorScreen
-import com.example.todoapp.presentation.screens.ContentProviderScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.IPCScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
+import com.example.todoapp.presentation.screens.NewsCategoriesScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SignUpScreen
@@ -115,37 +115,7 @@ fun MainNavigation() {
             )
         }
 
-        composable(NavRoutes.BleScanScreen.route) {
-            MainScreen(
-                navController = navController,
-                viewModel = newsViewModel,
-                chatViewModel = chatViewModel,
-                authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
-            )
-        }
-
         composable(NavRoutes.Chat.route) {
-            MainScreen(
-                navController = navController,
-                viewModel = newsViewModel,
-                chatViewModel = chatViewModel,
-                authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
-            )
-        }
-
-        composable(NavRoutes.Map.route) {
-            MainScreen(
-                navController = navController,
-                viewModel = newsViewModel,
-                chatViewModel = chatViewModel,
-                authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
-            )
-        }
-
-        composable(NavRoutes.Documents.route) {
             MainScreen(
                 navController = navController,
                 viewModel = newsViewModel,
@@ -163,8 +133,8 @@ fun MainNavigation() {
             IPCScreen(navController = navController)
         }
 
-        composable(NavRoutes.ContentProviderScreen.route) {
-            ContentProviderScreen(navController = navController)
+        composable(NavRoutes.NewsCategories.route) {
+            NewsCategoriesScreen(navController = navController, viewModel = newsViewModel)
         }
 
         composable(

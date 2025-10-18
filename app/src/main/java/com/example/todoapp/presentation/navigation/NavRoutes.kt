@@ -7,6 +7,8 @@ sealed class NavRoutes(
 
     object NewsList : NavRoutes("news_list")
 
+    object NewsCategories : NavRoutes("news_categories")
+
     object Search : NavRoutes("search_news")
 
     object NewsDetail : NavRoutes("news_detail") {

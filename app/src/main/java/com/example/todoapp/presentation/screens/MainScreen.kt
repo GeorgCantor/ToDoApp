@@ -43,7 +43,7 @@ fun MainScreen(
             NavRoutes.Chat,
             NavRoutes.Calculator,
             NavRoutes.IPCScreen,
-            NavRoutes.ContentProviderScreen,
+            NavRoutes.NewsCategories,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -84,10 +84,10 @@ fun MainScreen(
                                         contentDescription = stringResource(R.string.ipc),
                                     )
 
-                                NavRoutes.ContentProviderScreen ->
+                                NavRoutes.NewsCategories ->
                                     Icon(
                                         Icons.Filled.Build,
-                                        contentDescription = stringResource(R.string.provider),
+                                        contentDescription = stringResource(R.string.categories),
                                     )
 
                                 else -> Icon(Icons.Filled.Home, contentDescription = item.route)
@@ -100,7 +100,7 @@ fun MainScreen(
                                     NavRoutes.Chat -> stringResource(R.string.chat)
                                     NavRoutes.Calculator -> stringResource(R.string.calculator)
                                     NavRoutes.IPCScreen -> stringResource(R.string.ipc)
-                                    NavRoutes.ContentProviderScreen -> stringResource(R.string.provider)
+                                    NavRoutes.NewsCategories -> stringResource(R.string.categories)
                                     else -> item.route
                                 },
                             )
@@ -140,7 +140,7 @@ fun MainScreen(
 
             NavRoutes.IPCScreen.route -> IPCScreen(navController = navController)
 
-            NavRoutes.ContentProviderScreen.route -> ContentProviderScreen(navController = navController)
+            NavRoutes.NewsCategories.route -> NewsCategoriesScreen(navController = navController, viewModel = viewModel)
         }
     }
 }

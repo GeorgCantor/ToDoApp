@@ -9,17 +9,30 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 
 class NewsViewModel(
-    getTopUseCase: GetTopHeadlinesUseCase,
+    private val getTopUseCase: GetTopHeadlinesUseCase,
 ) : ViewModel() {
-    val news: Flow<PagingData<NewsArticle>> = getTopUseCase().cachedIn(viewModelScope)
+    private val _currentCategory = MutableStateFlow("general")
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val news: Flow<PagingData<NewsArticle>> =
+        _currentCategory.flatMapLatest { category ->
+            getTopUseCase(category).cachedIn(viewModelScope)
+        }
 
     private val _scrollState = mutableStateOf<LazyListState?>(null)
     val scrollState: State<LazyListState?> get() = _scrollState
 
     fun saveScrollState(state: LazyListState) {
         _scrollState.value = state
+    }
+
+    fun setCategory(category: String) {
+        _currentCategory.value = category
     }
 }

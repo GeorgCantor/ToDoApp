@@ -1,8 +1,10 @@
 package com.example.todoapp.data.cache
 
-class NewsLruCache<K, V>(
+import java.io.Serializable
+
+class NewsLruCache<K : Serializable, V : Serializable>(
     private val maxSize: Int,
-) {
+) : Serializable {
     private val cache = LinkedHashMap<K, V>(maxSize, 0.75F, true)
 
     @Synchronized
@@ -23,4 +25,7 @@ class NewsLruCache<K, V>(
 
     @Synchronized
     fun size() = cache.size
+
+    @Synchronized
+    fun getAll(): Map<K, V> = HashMap(cache)
 }

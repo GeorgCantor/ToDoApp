@@ -8,6 +8,7 @@ import com.example.todoapp.domain.model.NewsArticle
 
 class NewsPagingSource(
     private val newsApiService: NewsApiService,
+    private val category: String,
 ) : PagingSource<Int, NewsArticle>() {
     override fun getRefreshKey(state: PagingState<Int, NewsArticle>): Int? =
         state.anchorPosition?.let { anchorPosition ->
@@ -19,10 +20,16 @@ class NewsPagingSource(
         try {
             val page = params.key ?: 1
             val pageSize = params.loadSize.coerceAtMost(20)
-            val response = newsApiService.getTopHeadlines(page = page, pageSize = pageSize)
+
+            val response =
+                newsApiService.getTopHeadlines(
+                    category = category,
+                    page = page,
+                    pageSize = pageSize,
+                )
 
             if (page == 1) {
-                NewsCache.putNews(response.articles.map { it.toNewsArticle() })
+                NewsCache.putNews(response.articles.map { it.toNewsArticle() }, category)
             }
 
             if (response.status == "ok") {
@@ -37,7 +44,7 @@ class NewsPagingSource(
             }
         } catch (e: Exception) {
             if (params.key == null || params.key == 1) {
-                NewsCache.getNews()?.let { cachedNews ->
+                NewsCache.getNews(category)?.let { cachedNews ->
                     LoadResult.Page(
                         data = cachedNews.news,
                         prevKey = null,

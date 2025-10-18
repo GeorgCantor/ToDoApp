@@ -5,5 +5,5 @@ import com.example.todoapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
-    fun getNewsStream(): Flow<PagingData<NewsArticle>>
+    fun getNewsStream(category: String): Flow<PagingData<NewsArticle>>
 }
