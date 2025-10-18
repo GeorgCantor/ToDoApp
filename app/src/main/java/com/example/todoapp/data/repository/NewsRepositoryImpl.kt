@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 class NewsRepositoryImpl(
     private val apiService: NewsApiService,
 ) : NewsRepository {
-    override fun getNewsStream(): Flow<PagingData<NewsArticle>> {
+    override fun getNewsStream(category: String): Flow<PagingData<NewsArticle>> {
         val cachedNews = NewsCache.getNews()
 
         return if (cachedNews?.isFresh() == true) {
@@ -28,7 +28,7 @@ class NewsRepositoryImpl(
                         enablePlaceholders = false,
                         initialLoadSize = 20,
                     ),
-                pagingSourceFactory = { NewsPagingSource(apiService) },
+                pagingSourceFactory = { NewsPagingSource(apiService, category) },
             ).flow
         }
     }

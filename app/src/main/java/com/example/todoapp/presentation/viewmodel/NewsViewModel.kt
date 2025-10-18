@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 class NewsViewModel(
     getTopUseCase: GetTopHeadlinesUseCase,
 ) : ViewModel() {
-    val news: Flow<PagingData<NewsArticle>> = getTopUseCase().cachedIn(viewModelScope)
+    val news: Flow<PagingData<NewsArticle>> = getTopUseCase("general").cachedIn(viewModelScope)
 
     private val _scrollState = mutableStateOf<LazyListState?>(null)
     val scrollState: State<LazyListState?> get() = _scrollState
