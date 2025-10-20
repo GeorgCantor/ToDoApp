@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
+    implementation(libs.biometric)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)

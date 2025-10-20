@@ -23,6 +23,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.presentation.screens.AuthScreen
+import com.example.todoapp.presentation.screens.BiometricAuthScreen
 import com.example.todoapp.presentation.screens.CalculatorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.IPCScreen
@@ -44,6 +45,7 @@ fun MainNavigation() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = koinViewModel()
     val isAuthenticated by authViewModel.isAuthenticated.collectAsStateWithLifecycle()
+    val isBiometricAvailable = remember { authViewModel.isBiometricAvailable() }
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
@@ -66,8 +68,22 @@ fun MainNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) NavRoutes.Splash.route else NavRoutes.Auth.route,
+        startDestination =
+            if (isBiometricAvailable) {
+                NavRoutes.BiometricAuth.route
+            } else if (isAuthenticated) {
+                NavRoutes.Splash.route
+            } else {
+                NavRoutes.Auth.route
+            },
     ) {
+        composable(NavRoutes.BiometricAuth.route) {
+            BiometricAuthScreen(
+                navController = navController,
+                authViewModel = authViewModel,
+            )
+        }
+
         composable(NavRoutes.Auth.route) {
             AuthScreen(navController = navController)
         }

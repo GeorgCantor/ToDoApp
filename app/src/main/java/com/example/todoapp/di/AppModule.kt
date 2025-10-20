@@ -8,6 +8,8 @@ import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.domain.manager.BiometricAuthManager
+import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
@@ -65,15 +67,13 @@ val appModule =
                 .build()
         }
 
-        single<NewsApiService> {
-            get<Retrofit>().create(NewsApiService::class.java)
-        }
-
+        single<NewsApiService> { get<Retrofit>().create(NewsApiService::class.java) }
+        single<BiometricAuthManager> { BiometricAuthManagerImpl(androidContext()) }
         single<NewsRepository> { NewsRepositoryImpl(get()) }
         single<ChatRepository> { ChatRepositoryImpl() }
         single<DocumentRepository> { DocumentRepositoryImpl() }
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
-        single<AuthRepository> { AuthRepositoryImpl() }
+        single<AuthRepository> { AuthRepositoryImpl(get()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
