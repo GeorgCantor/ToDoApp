@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.viewmodel
 
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.manager.BiometricAuthResult
@@ -96,10 +97,10 @@ class AuthViewModel(
 
     fun isBiometricAvailable() = authRepository.isBiometricAvailable()
 
-    fun authenticateWithBiometric() {
+    fun authenticateWithBiometric(activity: FragmentActivity) {
         _biometricState.value = BiometricAuthState.Loading
         viewModelScope.launch {
-            authRepository.authenticateWithBiometric().collect { result ->
+            authRepository.authenticateWithBiometric(activity).collect { result ->
                 when (result) {
                     is BiometricAuthResult.Success -> {
                         _biometricState.value = BiometricAuthState.Success

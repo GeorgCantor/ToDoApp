@@ -38,4 +38,6 @@ sealed class NavRoutes(
     object SignUp : NavRoutes("signup_screen")
 
     object ForgotPassword : NavRoutes("forgot_password_screen")
+
+    object BiometricAuth : NavRoutes("biometric_auth")
 }

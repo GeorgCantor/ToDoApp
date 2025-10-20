@@ -1,5 +1,6 @@
 package com.example.todoapp.data.repository
 
+import androidx.fragment.app.FragmentActivity
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthResult
 import com.example.todoapp.domain.model.User
@@ -67,7 +68,8 @@ class AuthRepositoryImpl(
 
     override fun isBiometricAvailable() = biometricAuthManager.isBiometricAvailable()
 
-    override suspend fun authenticateWithBiometric(): Flow<BiometricAuthResult> = biometricAuthManager.authenticate()
+    override suspend fun authenticateWithBiometric(activity: FragmentActivity): Flow<BiometricAuthResult> =
+        biometricAuthManager.authenticate(activity)
 
     private fun FirebaseUser.toDomainUser(): User =
         User(

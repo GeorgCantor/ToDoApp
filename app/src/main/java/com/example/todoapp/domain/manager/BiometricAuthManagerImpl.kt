@@ -20,21 +20,14 @@ class BiometricAuthManagerImpl(
         }
     }
 
-    override suspend fun authenticate(): Flow<BiometricAuthResult> =
+    override suspend fun authenticate(activity: FragmentActivity): Flow<BiometricAuthResult> =
         callbackFlow {
-            val activity = context as? FragmentActivity
-            if (activity == null) {
-                trySend(BiometricAuthResult.Error("Context is not FragmentActivity"))
-                close()
-                return@callbackFlow
-            }
-            val executor = ContextCompat.getMainExecutor(context)
+            val executor = ContextCompat.getMainExecutor(activity)
 
             val promptInfo =
                 BiometricPrompt.PromptInfo
                     .Builder()
                     .setTitle("Вход в приложение")
-                    .setSubtitle("Используйте отпечаток пальца для входа")
                     .setNegativeButtonText("Отмена")
                     .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                     .build()
@@ -48,7 +41,16 @@ class BiometricAuthManagerImpl(
                             errorCode: Int,
                             errString: CharSequence,
                         ) {
-                            trySend(BiometricAuthResult.Error("Authentication error: $errString"))
+                            when (errorCode) {
+                                BiometricPrompt.ERROR_USER_CANCELED,
+                                BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                                -> {
+                                    trySend(BiometricAuthResult.Error("Аутентификация отменена"))
+                                }
+                                else -> {
+                                    trySend(BiometricAuthResult.Error("Ошибка: $errString"))
+                                }
+                            }
                             close()
                         }
 
@@ -58,7 +60,7 @@ class BiometricAuthManagerImpl(
                         }
 
                         override fun onAuthenticationFailed() {
-                            trySend(BiometricAuthResult.Error("Authentication failed"))
+                            trySend(BiometricAuthResult.Error("Отпечаток не распознан. Попробуйте еще раз"))
                         }
                     },
                 )
