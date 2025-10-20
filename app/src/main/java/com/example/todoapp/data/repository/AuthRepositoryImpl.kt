@@ -1,5 +1,7 @@
 package com.example.todoapp.data.repository
 
+import com.example.todoapp.domain.manager.BiometricAuthManager
+import com.example.todoapp.domain.manager.BiometricAuthResult
 import com.example.todoapp.domain.model.User
 import com.example.todoapp.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -11,7 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl : AuthRepository {
+class AuthRepositoryImpl(
+    private val biometricAuthManager: BiometricAuthManager,
+) : AuthRepository {
     private val auth: FirebaseAuth = Firebase.auth
 
     override val currentUser: User?
@@ -61,11 +65,15 @@ class AuthRepositoryImpl : AuthRepository {
             Result.failure(e)
         }
 
+    override fun isBiometricAvailable() = biometricAuthManager.isBiometricAvailable()
+
+    override suspend fun authenticateWithBiometric(): Flow<BiometricAuthResult> = biometricAuthManager.authenticate()
+
     private fun FirebaseUser.toDomainUser(): User =
         User(
             id = uid,
-            email = email ?: "",
-            displayName = displayName ?: email?.substringBefore("@") ?: "",
+            email = email.orEmpty(),
+            displayName = displayName ?: email?.substringBefore("@").orEmpty(),
             photoUrl = photoUrl?.toString(),
         )
 }
