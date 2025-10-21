@@ -12,7 +12,9 @@ import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.shareIn
 
 class NewsViewModel(
     private val getTopUseCase: GetTopHeadlinesUseCase,
@@ -21,9 +23,14 @@ class NewsViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val news: Flow<PagingData<NewsArticle>> =
-        _currentCategory.flatMapLatest { category ->
-            getTopUseCase(category).cachedIn(viewModelScope)
-        }
+        _currentCategory
+            .flatMapLatest { category ->
+                getTopUseCase(category).cachedIn(viewModelScope)
+            }.shareIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                replay = 1,
+            )
 
     private val _scrollState = mutableStateOf<LazyListState?>(null)
     val scrollState: State<LazyListState?> get() = _scrollState

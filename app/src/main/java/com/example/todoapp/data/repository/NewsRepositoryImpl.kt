@@ -10,7 +10,9 @@ import com.example.todoapp.data.paging.NewsPagingSource
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.domain.repository.NewsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 class NewsRepositoryImpl(
     private val apiService: NewsApiService,
@@ -29,7 +31,7 @@ class NewsRepositoryImpl(
                         initialLoadSize = 20,
                     ),
                 pagingSourceFactory = { NewsPagingSource(apiService, category) },
-            ).flow
+            ).flow.flowOn(Dispatchers.IO)
         }
     }
 
