@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.LoadState
@@ -56,6 +58,26 @@ fun MainNavigation() {
         }
 
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(uiState, currentRoute) {
+        if (uiState is AuthUiState.Authenticated) {
+            val authScreens =
+                setOf(
+                    NavRoutes.Auth.route,
+                    NavRoutes.Login.route,
+                    NavRoutes.SignUp.route,
+                    NavRoutes.ForgotPassword.route,
+                )
+            if (authScreens.contains(currentRoute)) {
+                navController.navigate(NavRoutes.Splash.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
+    }
+
     if (uiState is AuthUiState.Loading) {
         Box(
             modifier = Modifier.fillMaxSize(),
