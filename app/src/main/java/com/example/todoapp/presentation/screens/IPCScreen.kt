@@ -46,9 +46,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.todoapp.ISystemInfoService
+import com.example.todoapp.R
 import com.example.todoapp.StorageInfo
 import com.example.todoapp.SystemInfo
 import kotlinx.coroutines.delay
@@ -73,7 +75,7 @@ fun IPCScreen(navController: NavController) {
                 storageInfo = systemInfoService?.getStorageInfo()
                 errorMessage = null
             } catch (e: Exception) {
-                errorMessage = "Error loading system info: ${e.message}"
+                errorMessage = context.getString(R.string.error_loading_system_info, e.message)
             } finally {
                 isLoading = false
             }
@@ -117,11 +119,11 @@ fun IPCScreen(navController: NavController) {
                 }
             val bound = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
             if (!bound) {
-                errorMessage = "Failed to bind to service"
+                errorMessage = context.getString(R.string.failed_to_bind_service)
                 isLoading = false
             }
         } catch (e: Exception) {
-            errorMessage = "Error: ${e.message}"
+            errorMessage = context.getString(R.string.error_loading_system_info, e.message)
             isLoading = false
         }
     }
@@ -133,7 +135,7 @@ fun IPCScreen(navController: NavController) {
             systemInfoService = null
             isConnected = false
         } catch (e: Exception) {
-            errorMessage = "Error disconnecting: ${e.message}"
+            errorMessage = context.getString(R.string.error_disconnecting, e.message)
         }
     }
 
@@ -159,10 +161,10 @@ fun IPCScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("System Info IPC") },
+                title = { Text(stringResource(R.string.system_info_ipc)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
             )
@@ -186,11 +188,11 @@ fun IPCScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Service Status",
+                        text = stringResource(R.string.service_status),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = if (isConnected) "Connected" else "Disconnected",
+                        text = if (isConnected) stringResource(R.string.connected) else stringResource(R.string.disconnected),
                         color =
                             if (isConnected) {
                                 MaterialTheme.colorScheme.primary
@@ -210,21 +212,21 @@ fun IPCScreen(navController: NavController) {
                     enabled = !isConnected && !isLoading,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Connect")
+                    Text(stringResource(R.string.connect))
                 }
                 Button(
                     onClick = { disconnectFromService() },
                     enabled = isConnected,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Disconnect")
+                    Text(stringResource(R.string.disconnect))
                 }
                 Button(
                     onClick = { loadSystemInfo() },
                     enabled = isConnected,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Refresh")
+                    Text(stringResource(R.string.refresh))
                 }
             }
 
@@ -264,26 +266,29 @@ fun SystemInfoCard(systemInfo: SystemInfo) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(Icons.Default.Build, contentDescription = "System")
+                Icon(Icons.Default.Build, contentDescription = stringResource(R.string.system_information))
                 Text(
-                    text = "System Information",
+                    text = stringResource(R.string.system_information),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            InfoRow("Device", systemInfo.deviceName)
-            InfoRow("Android", "${systemInfo.androidVersion} (API ${systemInfo.apiLevel})")
-            InfoRow("Manufacturer", systemInfo.manufacturer)
-            InfoRow("Model", systemInfo.model)
-            InfoRow("Battery", "${systemInfo.batteryLevel}%", Icons.Default.Menu)
-            InfoRow("Charging", if (systemInfo.isCharging) "Yes" else "No")
-            InfoRow("Available Memory", formatBytes(systemInfo.availableMemory))
-            InfoRow("Total Memory", formatBytes(systemInfo.totalMemory))
+            InfoRow(stringResource(R.string.device), systemInfo.deviceName)
+            InfoRow(stringResource(R.string.android), "${systemInfo.androidVersion} (API ${systemInfo.apiLevel})")
+            InfoRow(stringResource(R.string.manufacturer), systemInfo.manufacturer)
+            InfoRow(stringResource(R.string.model), systemInfo.model)
+            InfoRow(stringResource(R.string.battery), "${systemInfo.batteryLevel}%", Icons.Default.Menu)
             InfoRow(
-                "Memory Usage",
+                stringResource(R.string.charging),
+                if (systemInfo.isCharging) stringResource(R.string.yes) else stringResource(R.string.no),
+            )
+            InfoRow(stringResource(R.string.available_memory), formatBytes(systemInfo.availableMemory))
+            InfoRow(stringResource(R.string.total_memory), formatBytes(systemInfo.totalMemory))
+            InfoRow(
+                stringResource(R.string.memory_usage),
                 "${((systemInfo.totalMemory - systemInfo.availableMemory) * 100 / systemInfo.totalMemory).toInt()}%",
             )
-            InfoRow("Last Updated", formatTimestamp(systemInfo.timestamp))
+            InfoRow(stringResource(R.string.last_updated), formatTimestamp(systemInfo.timestamp))
         }
     }
 }
@@ -296,16 +301,16 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(Icons.Default.ExitToApp, contentDescription = "Storage")
+                Icon(Icons.Default.ExitToApp, contentDescription = stringResource(R.string.storage_information))
                 Text(
-                    text = "Storage Information",
+                    text = stringResource(R.string.storage_information),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            InfoRow("Internal Total", formatBytes(storageInfo.totalInternalStorage))
-            InfoRow("Internal Available", formatBytes(storageInfo.availableInternalStorage))
-            InfoRow("Internal Usage", "${storageInfo.storageUsagePercentage}%")
+            InfoRow(stringResource(R.string.internal_total), formatBytes(storageInfo.totalInternalStorage))
+            InfoRow(stringResource(R.string.internal_available), formatBytes(storageInfo.availableInternalStorage))
+            InfoRow(stringResource(R.string.internal_usage), "${storageInfo.storageUsagePercentage}%")
 
             LinearProgressIndicator(
                 progress = { storageInfo.storageUsagePercentage / 100f },
@@ -325,11 +330,11 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
 
             if (storageInfo.isExternalStorageAvailable) {
                 InfoRow(
-                    "External Total",
+                    stringResource(R.string.external_storage),
                     formatBytes(storageInfo.totalExternalStorage),
                     Icons.Default.Info,
                 )
-                InfoRow("External Available", formatBytes(storageInfo.availableExternalStorage))
+                InfoRow(stringResource(R.string.external_available), formatBytes(storageInfo.availableExternalStorage))
                 val externalUsage =
                     if (storageInfo.totalExternalStorage > 0) {
                         ((storageInfo.totalExternalStorage - storageInfo.availableExternalStorage) * 100 / storageInfo.totalExternalStorage)
@@ -337,7 +342,7 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
                     } else {
                         0
                     }
-                InfoRow("External Usage", "$externalUsage%")
+                InfoRow(stringResource(R.string.external_usage), "$externalUsage%")
 
                 LinearProgressIndicator(
                     progress = { externalUsage / 100f },
@@ -353,7 +358,7 @@ fun StorageInfoCard(storageInfo: StorageInfo) {
                         },
                 )
             } else {
-                InfoRow("External Storage", "Not Available", Icons.Default.Warning)
+                InfoRow(stringResource(R.string.external_storage), stringResource(R.string.not_available), Icons.Default.Warning)
             }
         }
     }

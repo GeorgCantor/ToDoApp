@@ -25,11 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.BiometricAuthState
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
@@ -83,7 +85,7 @@ fun BiometricAuthScreen(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Вход в приложение",
+                    text = stringResource(R.string.biometric_auth_title),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center,
                 )
@@ -91,7 +93,7 @@ fun BiometricAuthScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Используйте отпечаток пальца для входа",
+                    text = stringResource(R.string.biometric_auth_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -103,7 +105,7 @@ fun BiometricAuthScreen(
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Ожидание отпечатка пальца...",
+                        text = stringResource(R.string.biometric_waiting),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -124,7 +126,7 @@ fun BiometricAuthScreen(
                         onClick = { authViewModel.authenticateWithBiometric(activity) },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Повторить")
+                        Text(stringResource(R.string.biometric_retry))
                     }
                 }
 
@@ -138,7 +140,7 @@ fun BiometricAuthScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Войти с помощью email и пароля")
+                    Text(stringResource(R.string.biometric_use_email_password))
                 }
             }
         }

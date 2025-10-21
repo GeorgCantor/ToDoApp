@@ -41,8 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.provider.NotesContract
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,7 +101,7 @@ fun ContentProviderScreen(navController: NavController) {
                     errorMessage = null
                 }
             } catch (e: Exception) {
-                errorMessage = "Error loading notes: ${e.message}"
+                errorMessage = context.getString(R.string.error_loading_notes, e.message)
             } finally {
                 isLoading = false
             }
@@ -124,7 +126,7 @@ fun ContentProviderScreen(navController: NavController) {
                 loadNotes()
                 showAddDialog = false
             } catch (e: Exception) {
-                errorMessage = "Error adding note: ${e.message}"
+                errorMessage = context.getString(R.string.error_adding_note, e.message)
             }
         }
     }
@@ -139,7 +141,7 @@ fun ContentProviderScreen(navController: NavController) {
                 }
                 loadNotes()
             } catch (e: Exception) {
-                errorMessage = "Error deleting note: ${e.message}"
+                errorMessage = context.getString(R.string.error_deleting_note, e.message)
             }
         }
     }
@@ -161,7 +163,7 @@ fun ContentProviderScreen(navController: NavController) {
                 }
                 loadNotes()
             } catch (e: Exception) {
-                errorMessage = "Error updating note: ${e.message}"
+                errorMessage = context.getString(R.string.error_updating_note, e.message)
             }
         }
     }
@@ -173,15 +175,15 @@ fun ContentProviderScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Content Provider Demo") },
+                title = { Text(stringResource(R.string.content_provider_demo)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Note")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_note))
                     }
                 },
             )
@@ -202,9 +204,9 @@ fun ContentProviderScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Notes Count: ${notes.size}")
+                    Text(stringResource(R.string.notes_count, notes.size))
                     Button(onClick = { loadNotes() }) {
-                        Text("Refresh")
+                        Text(stringResource(R.string.refresh))
                     }
                 }
             }
@@ -278,7 +280,7 @@ fun NoteCard(
                     IconButton(onClick = onToggleComplete) {
                         Icon(
                             Icons.Default.Done,
-                            contentDescription = "Toggle Complete",
+                            contentDescription = stringResource(R.string.toggle_complete),
                             tint =
                                 if (note.isCompleted) {
                                     MaterialTheme.colorScheme.primary
@@ -288,7 +290,7 @@ fun NoteCard(
                         )
                     }
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                     }
                 }
             }
@@ -299,7 +301,11 @@ fun NoteCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Status: ${if (note.isCompleted) "Completed" else "Active"}",
+                text =
+                    stringResource(
+                        R.string.status,
+                        if (note.isCompleted) stringResource(R.string.completed) else stringResource(R.string.active),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -317,20 +323,20 @@ fun AddNoteDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add New Note") },
+        title = { Text(stringResource(R.string.add_new_note)) },
         text = {
             Column {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(R.string.title)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Content") },
+                    label = { Text(stringResource(R.string.content)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = false,
                     minLines = 3,
@@ -346,12 +352,12 @@ fun AddNoteDialog(
                 },
                 enabled = title.isNotBlank() && content.isNotBlank(),
             ) {
-                Text("Add")
+                Text(stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )

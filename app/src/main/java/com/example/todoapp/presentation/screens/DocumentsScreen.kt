@@ -38,9 +38,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.DocumentItem
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 
@@ -66,10 +68,10 @@ fun DocumentsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Download Documents") },
+                title = { Text(stringResource(R.string.download_documents)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -77,7 +79,7 @@ fun DocumentsScreen(
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     } else {
                         IconButton(onClick = { viewModel.loadAvailableDocuments() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                         }
                     }
                 },
@@ -98,7 +100,7 @@ fun DocumentsScreen(
                 ) {
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Loading documents...")
+                    Text(stringResource(R.string.loading_documents))
                 }
             } else if (documents.isEmpty()) {
                 Column(
@@ -108,14 +110,14 @@ fun DocumentsScreen(
                 ) {
                     Icon(
                         Icons.Default.Clear,
-                        contentDescription = "No documents",
+                        contentDescription = stringResource(R.string.no_documents),
                         modifier = Modifier.size(64.dp),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("No documents available")
+                    Text(stringResource(R.string.no_documents))
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = { viewModel.loadAvailableDocuments() }) {
-                        Text("Retry")
+                        Text(stringResource(R.string.retry))
                     }
                 }
             } else {
@@ -192,7 +194,7 @@ fun DocumentCard(
                     if (isDownloading) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     } else {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Download")
+                        Icon(Icons.Default.ExitToApp, contentDescription = stringResource(R.string.downloading))
                     }
                 }
             }
@@ -205,7 +207,7 @@ fun DocumentCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Downloading... ${downloadProgress?.second}%",
+                    text = stringResource(R.string.downloading_progress, downloadProgress?.second ?: 0),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -239,7 +241,7 @@ fun DownloadProgressOverlay(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Downloading $fileName",
+                    text = stringResource(R.string.downloading, fileName),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -257,11 +259,11 @@ fun ErrorDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Error") },
+        title = { Text(stringResource(R.string.error)) },
         text = { Text(error) },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             }
         },
     )

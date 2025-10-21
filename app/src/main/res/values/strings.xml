@@ -69,6 +69,7 @@
     <!-- Content Provider -->
     <string name="content_provider_demo">Демо Content Provider</string>
     <string name="add_note">Добавить заметку</string>
+    <string name="add_new_note">Добавить новую заметку</string>
     <string name="notes_count">Количество заметок: %d</string>
     <string name="title">Заголовок</string>
     <string name="content">Содержание</string>
@@ -139,4 +140,11 @@
     <string name="ok">ОК</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+
+    <!-- Biometric Auth Screen -->
+    <string name="biometric_auth_title">Вход в приложение</string>
+    <string name="biometric_auth_subtitle">Используйте отпечаток пальца для входа</string>
+    <string name="biometric_waiting">Ожидание отпечатка пальца…</string>
+    <string name="biometric_retry">Повторить</string>
+    <string name="biometric_use_email_password">Войти с помощью email и пароля</string>
 </resources>

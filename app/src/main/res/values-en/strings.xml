@@ -69,6 +69,7 @@
     <!-- Content Provider -->
     <string name="content_provider_demo">Content Provider Demo</string>
     <string name="add_note">Add Note</string>
+    <string name="add_new_note">Add New Note</string>
     <string name="notes_count">Notes Count: %d</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
@@ -139,4 +140,11 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <!-- Biometric Auth Screen -->
+    <string name="biometric_auth_title">App Login</string>
+    <string name="biometric_auth_subtitle">Use fingerprint to login</string>
+    <string name="biometric_waiting">Waiting for fingerprint…</string>
+    <string name="biometric_retry">Retry</string>
+    <string name="biometric_use_email_password">Login with email and password</string>
 </resources>
