@@ -147,4 +147,9 @@
     <string name="biometric_waiting">Waiting for fingerprint…</string>
     <string name="biometric_retry">Retry</string>
     <string name="biometric_use_email_password">Login with email and password</string>
+
+    <!-- Chat Widget -->
+    <string name="last_messages">Last messages</string>
+    <string name="no_messages">No messages</string>
+    <string name="new_message">New message</string>
 </resources>
