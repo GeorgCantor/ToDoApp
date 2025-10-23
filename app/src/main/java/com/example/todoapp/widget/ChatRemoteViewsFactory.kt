@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.widget
+package com.example.todoapp.widget
 
 import android.content.Context
 import android.content.Intent

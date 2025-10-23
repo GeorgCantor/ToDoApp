@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.todoapp.domain.model.AuthUiState
+import com.example.todoapp.domain.model.WidgetIntentData
 import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.BiometricAuthScreen
 import com.example.todoapp.presentation.screens.CalculatorScreen
@@ -43,7 +44,10 @@ import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainNavigation() {
+fun MainNavigation(
+    widgetIntentData: WidgetIntentData? = null,
+    onIntentProcessed: () -> Unit = {},
+) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = koinViewModel()
     val isAuthenticated by authViewModel.isAuthenticated.collectAsStateWithLifecycle()
@@ -60,6 +64,13 @@ fun MainNavigation() {
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(widgetIntentData) {
+        widgetIntentData?.let { intentData ->
+            navController.navigate(intentData.targetScreen)
+            onIntentProcessed()
+        }
+    }
 
     LaunchedEffect(uiState, currentRoute) {
         if (uiState is AuthUiState.Authenticated) {
