@@ -147,4 +147,9 @@
     <string name="biometric_waiting">Ожидание отпечатка пальца…</string>
     <string name="biometric_retry">Повторить</string>
     <string name="biometric_use_email_password">Войти с помощью email и пароля</string>
+
+    <!-- Chat Widget -->
+    <string name="last_messages">Последние сообщения</string>
+    <string name="no_messages">Нет сообщений</string>
+    <string name="new_message">Новое сообщение</string>
 </resources>
