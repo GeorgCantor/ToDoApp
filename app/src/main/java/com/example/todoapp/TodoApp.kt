@@ -22,6 +22,7 @@ class TodoApp : Application() {
     }
 
     private fun setupStrictMode() {
+        if (isHuaweiDevice()) return
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy
@@ -54,5 +55,12 @@ class TodoApp : Application() {
 
             StrictMode.setVmPolicy(vmPolicyBuilder.build())
         }
+    }
+
+    private fun isHuaweiDevice(): Boolean {
+        return Build.MANUFACTURER.equals("huawei", ignoreCase = true) ||
+                Build.MANUFACTURER.equals("honor", ignoreCase = true) ||
+                Build.BRAND.equals("huawei", ignoreCase = true) ||
+                Build.BRAND.equals("honor", ignoreCase = true)
     }
 }

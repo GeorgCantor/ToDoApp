@@ -41,6 +41,7 @@ import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -67,6 +68,7 @@ fun MainNavigation(
 
     LaunchedEffect(widgetIntentData) {
         widgetIntentData?.let { intentData ->
+            delay(200)
             navController.navigate(intentData.targetScreen)
             onIntentProcessed()
         }
