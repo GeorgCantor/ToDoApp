@@ -38,6 +38,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +76,13 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val recordingTime by viewModel.recordingTime.collectAsState()
     var currentPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            currentPlayer?.release()
+            currentPlayer = null
+        }
+    }
+
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -110,6 +118,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             }
                         } catch (e: Exception) {
                             context.showToast(e.message.orEmpty())
+                            currentPlayer = null
                         }
                     },
                 )
