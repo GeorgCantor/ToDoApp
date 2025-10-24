@@ -54,6 +54,21 @@ class ChatRepositoryImpl : ChatRepository {
             awaitClose { database.removeEventListener(listener) }
         }
 
+    override suspend fun editMessage(
+        messageId: String,
+        newText: String,
+    ) {
+        database
+            .child(messageId)
+            .child("text")
+            .setValue(newText)
+            .await()
+    }
+
+    override suspend fun deleteMessage(messageId: String) {
+        database.child(messageId).removeValue().await()
+    }
+
     override suspend fun audioToBase64(file: File): Pair<String, Long> {
         val bytes = file.readBytes()
         val base64 = Base64.encodeToString(bytes, Base64.DEFAULT)
@@ -69,21 +84,6 @@ class ChatRepositoryImpl : ChatRepository {
         val tempFile = File.createTempFile("audio", ".mp3", cacheDir)
         FileOutputStream(tempFile).use { it.write(bytes) }
         return tempFile
-    }
-
-    suspend fun editMessage(
-        id: String,
-        newText: String,
-    ) {
-        database
-            .child(id)
-            .child("text")
-            .setValue(newText)
-            .await()
-    }
-
-    suspend fun deleteMessage(id: String) {
-        database.child(id).removeValue().await()
     }
 
     private fun getAudioDuration(file: File): Long {

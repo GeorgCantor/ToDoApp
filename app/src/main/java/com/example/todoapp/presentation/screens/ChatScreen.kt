@@ -96,7 +96,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     onPlayAudio = { base64 ->
                         currentPlayer?.release()
                         try {
-                            val audioFile = viewModel.repository.base64ToAudioFile(base64, context.cacheDir)
+                            val audioFile = viewModel.base64ToAudioFile(base64, context.cacheDir)
                             MediaPlayer().apply {
                                 setDataSource(audioFile.absolutePath)
                                 prepare()

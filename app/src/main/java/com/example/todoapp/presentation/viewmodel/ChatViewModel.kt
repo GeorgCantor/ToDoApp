@@ -9,9 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.domain.model.ChatMessage
-import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
+import com.example.todoapp.domain.usecase.AudioToBase64UseCase
+import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
+import com.example.todoapp.domain.usecase.DeleteMessageUseCase
+import com.example.todoapp.domain.usecase.EditMessageUseCase
+import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.utils.showToast
 import kotlinx.coroutines.Dispatchers
@@ -23,15 +26,17 @@ import java.util.UUID
 
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getMessagesUseCase: GetChatMessagesUseCase,
+    private val observeMessagesUseCase: ObserveMessagesUseCase,
+    private val editMessageUseCase: EditMessageUseCase,
+    private val deleteMessageUseCase: DeleteMessageUseCase,
+    private val audioToBase64UseCase: AudioToBase64UseCase,
+    private val base64ToAudioFileUseCase: Base64ToAudioFileUseCase,
 ) : ViewModel() {
-    val repository = ChatRepositoryImpl()
-
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
 
     private var _permissionGranted = mutableStateOf(false)
-    val permissionGranted: State<Boolean> = _permissionGranted
+    val permissionGranted: State<Boolean> get() = _permissionGranted
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> get() = _isRecording
@@ -48,7 +53,7 @@ class ChatViewModel(
 
     private fun loadMessages() {
         viewModelScope.launch {
-            repository.observeMessages().collect { newMessages ->
+            observeMessagesUseCase().collect { newMessages ->
                 _messages.value = newMessages.sortedByDescending { it.timestamp }
             }
         }
@@ -76,7 +81,7 @@ class ChatViewModel(
     ) {
         viewModelScope.launch {
             try {
-                repository.editMessage(key, newText)
+                editMessageUseCase(key, newText)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -86,7 +91,7 @@ class ChatViewModel(
     fun deleteMessage(key: String) {
         viewModelScope.launch {
             try {
-                repository.deleteMessage(key)
+                deleteMessageUseCase(key)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -149,7 +154,7 @@ class ChatViewModel(
         audioFile?.let { file ->
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val (base64, duration) = repository.audioToBase64(file)
+                    val (base64, duration) = audioToBase64UseCase(file)
                     sendAudioMessage(base64, duration)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -159,6 +164,11 @@ class ChatViewModel(
             }
         }
     }
+
+    fun base64ToAudioFile(
+        base64: String,
+        cacheDir: File,
+    ): File = base64ToAudioFileUseCase(base64, cacheDir)
 
     private suspend fun sendAudioMessage(
         audioBase64: String,
@@ -175,5 +185,10 @@ class ChatViewModel(
                 durationMs = durationMs,
             )
         sendMessageUseCase(message)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mediaRecorder?.release()
     }
 }

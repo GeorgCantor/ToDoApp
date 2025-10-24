@@ -57,10 +57,9 @@ class TodoApp : Application() {
         }
     }
 
-    private fun isHuaweiDevice(): Boolean {
-        return Build.MANUFACTURER.equals("huawei", ignoreCase = true) ||
-                Build.MANUFACTURER.equals("honor", ignoreCase = true) ||
-                Build.BRAND.equals("huawei", ignoreCase = true) ||
-                Build.BRAND.equals("honor", ignoreCase = true)
-    }
+    private fun isHuaweiDevice(): Boolean =
+        Build.MANUFACTURER.equals("huawei", ignoreCase = true) ||
+            Build.MANUFACTURER.equals("honor", ignoreCase = true) ||
+            Build.BRAND.equals("huawei", ignoreCase = true) ||
+            Build.BRAND.equals("honor", ignoreCase = true)
 }
