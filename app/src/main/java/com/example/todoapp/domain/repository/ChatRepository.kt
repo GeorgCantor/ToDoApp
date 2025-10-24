@@ -11,6 +11,13 @@ interface ChatRepository {
 
     fun observeMessages(): Flow<List<ChatMessage>>
 
+    suspend fun editMessage(
+        messageId: String,
+        newText: String,
+    )
+
+    suspend fun deleteMessage(messageId: String)
+
     suspend fun audioToBase64(file: File): Pair<String, Long>
 
     fun base64ToAudioFile(

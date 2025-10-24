@@ -15,12 +15,17 @@ import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.usecase.AudioToBase64UseCase
+import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
 import com.example.todoapp.domain.usecase.ClearCalculatorUseCase
+import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
+import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
@@ -78,13 +83,27 @@ val appModule =
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
         factory { GetChatMessagesUseCase(get()) }
+        factory { ObserveMessagesUseCase(get()) }
+        factory { EditMessageUseCase(get()) }
+        factory { DeleteMessageUseCase(get()) }
+        factory { AudioToBase64UseCase(get()) }
+        factory { Base64ToAudioFileUseCase(get()) }
         factory { GetAvailableDocumentsUseCase(get()) }
         factory { DownloadDocumentUseCase(get()) }
         factory { CalculateExpressionUseCase(get()) }
         factory { ClearCalculatorUseCase(get()) }
 
         viewModel { NewsViewModel(get()) }
-        viewModel { ChatViewModel(get(), get()) }
+        viewModel {
+            ChatViewModel(
+                sendMessageUseCase = get(),
+                observeMessagesUseCase = get(),
+                editMessageUseCase = get(),
+                deleteMessageUseCase = get(),
+                audioToBase64UseCase = get(),
+                base64ToAudioFileUseCase = get(),
+            )
+        }
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get()) }
         viewModel { AuthViewModel(get()) }
