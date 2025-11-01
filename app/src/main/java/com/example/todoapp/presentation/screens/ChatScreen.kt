@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,6 +43,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +53,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.ChatMessage
@@ -76,6 +85,21 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val recordingTime by viewModel.recordingTime.collectAsState()
     var currentPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
+    var isSearching by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    val searchResults by remember(messages, searchQuery) {
+        derivedStateOf {
+            if (searchQuery.isBlank()) {
+                emptyList()
+            } else {
+                messages.filter { message ->
+                    message.text.contains(searchQuery, ignoreCase = true) ||
+                        message.senderName.contains(searchQuery, ignoreCase = true)
+                }
+            }
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             currentPlayer?.release()
@@ -86,13 +110,37 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    if (isSearching) {
+        SearchAppBar(
+            searchQuery = searchQuery,
+            onSearchQueryChange = { searchQuery = it },
+            onCloseSearch = {
+                isSearching = false
+                searchQuery = ""
+            },
+            resultsCount = searchResults.size,
+        )
+    }
+
     Column(Modifier.fillMaxSize()) {
+        val itemsToShow = if (isSearching && searchQuery.isNotBlank()) searchResults else messages
+
         LazyColumn(
             modifier = Modifier.weight(1f),
-            reverseLayout = true,
+            reverseLayout = !isSearching,
             contentPadding = PaddingValues(vertical = 8.dp),
         ) {
-            items(messages) { message ->
+            if (isSearching && searchQuery.isNotBlank()) {
+                item {
+                    SearchResultsHeader(
+                        resultsCount = searchResults.size,
+                        searchQuery = searchQuery,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
+            }
+
+            items(itemsToShow) { message ->
                 MessageBubble(
                     message = message,
                     onEditClick = {
@@ -121,7 +169,20 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             currentPlayer = null
                         }
                     },
+                    searchQuery = if (isSearching) searchQuery else "",
                 )
+            }
+
+            if (isSearching && searchQuery.isNotBlank() && searchResults.isEmpty()) {
+                item {
+                    EmptySearchState(
+                        searchQuery = searchQuery,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                    )
+                }
             }
         }
 
@@ -277,6 +338,7 @@ fun MessageBubble(
     onEditClick: (ChatMessage) -> Unit,
     onDeleteClick: (ChatMessage) -> Unit,
     onPlayAudio: (String) -> Unit,
+    searchQuery: String = "",
 ) {
     var expanded by remember { mutableStateOf(false) }
     val isOwnMessage = message.senderId == "1"
@@ -293,6 +355,58 @@ fun MessageBubble(
             MaterialTheme.colorScheme.onSecondaryContainer
         }
 
+    val highlightedText =
+        if (searchQuery.isNotBlank() && message.text.contains(searchQuery, true)) {
+            buildAnnotatedString {
+                val text = message.text
+                val regex = Regex(searchQuery, RegexOption.IGNORE_CASE)
+                var lastIndex = 0
+
+                regex.findAll(text).forEach { matchResult ->
+                    append(text.substring(lastIndex, matchResult.range.first))
+                    withStyle(
+                        style =
+                            SpanStyle(
+                                background = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                color = textColor,
+                            ),
+                    ) {
+                        append(matchResult.value)
+                    }
+                    lastIndex = matchResult.range.last + 1
+                }
+                append(text.substring(lastIndex))
+            }
+        } else {
+            AnnotatedString(message.text)
+        }
+
+    val highlightedSender =
+        if (searchQuery.isNotBlank() && message.senderName.contains(searchQuery, true)) {
+            buildAnnotatedString {
+                val name = message.senderName
+                val regex = Regex(searchQuery, RegexOption.IGNORE_CASE)
+                var lastIndex = 0
+
+                regex.findAll(name).forEach { matchResult ->
+                    append(name.substring(lastIndex, matchResult.range.first))
+                    withStyle(
+                        style =
+                            SpanStyle(
+                                background = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                color = textColor.copy(alpha = 0.7f),
+                            ),
+                    ) {
+                        append(matchResult.value)
+                    }
+                    lastIndex = matchResult.range.last + 1
+                }
+                append(name.substring(lastIndex))
+            }
+        } else {
+            AnnotatedString(message.senderName)
+        }
+
     Column(
         modifier =
             Modifier
@@ -305,7 +419,7 @@ fun MessageBubble(
         horizontalAlignment = if (isOwnMessage) Alignment.End else Alignment.Start,
     ) {
         Text(
-            text = message.senderName,
+            text = highlightedSender,
             style = MaterialTheme.typography.labelSmall,
             color = textColor.copy(alpha = 0.7f),
         )
@@ -329,7 +443,7 @@ fun MessageBubble(
                             .widthIn(max = 280.dp),
                 ) {
                     Text(
-                        text = message.text,
+                        text = highlightedText,
                         color = textColor,
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -397,6 +511,102 @@ fun AudioMessageItem(
             text = "${durationMs / 1000}s",
             color = textColor,
             modifier = Modifier.padding(start = 8.dp),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchAppBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    onCloseSearch: () -> Unit,
+    resultsCount: Int,
+    modifier: Modifier = Modifier,
+) {
+    androidx.compose.material3.TopAppBar(
+        title = {
+            TextField(
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                placeholder = { Text("Search messages...") },
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                    androidx.compose.material3.TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                    ),
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onCloseSearch) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                )
+            }
+        },
+        actions = {
+            if (searchQuery.isNotBlank()) {
+                Text(
+                    text = "$resultsCount",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp),
+                )
+            }
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun SearchResultsHeader(
+    resultsCount: Int,
+    searchQuery: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "Search results",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = "$resultsCount messages found for \"$searchQuery\"",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+fun EmptySearchState(
+    searchQuery: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = null,
+            modifier = Modifier.size(64.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No messages found",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = "No results for \"$searchQuery\"",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
     }
 }
