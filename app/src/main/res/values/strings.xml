@@ -65,6 +65,7 @@
     <string name="edit_message">Редактировать сообщение</string>
     <string name="save">Сохранить</string>
     <string name="play_audio">Воспроизвести аудио</string>
+    <string name="search_messages">Поиск сообщений</string>
 
     <!-- Content Provider -->
     <string name="content_provider_demo">Демо Content Provider</string>

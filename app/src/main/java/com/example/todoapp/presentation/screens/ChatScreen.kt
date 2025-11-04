@@ -22,11 +22,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -39,6 +41,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -110,19 +114,19 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    if (isSearching) {
-        SearchAppBar(
-            searchQuery = searchQuery,
-            onSearchQueryChange = { searchQuery = it },
-            onCloseSearch = {
-                isSearching = false
-                searchQuery = ""
-            },
-            resultsCount = searchResults.size,
-        )
-    }
-
     Column(Modifier.fillMaxSize()) {
+        if (isSearching) {
+            SearchAppBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                onCloseSearch = {
+                    isSearching = false
+                    searchQuery = ""
+                },
+                resultsCount = searchResults.size,
+            )
+        }
+
         val itemsToShow = if (isSearching && searchQuery.isNotBlank()) searchResults else messages
 
         LazyColumn(
@@ -224,6 +228,22 @@ fun ChatScreen(viewModel: ChatViewModel) {
                     }
                 }
             } else {
+                if (!isSearching) {
+                    IconButton(
+                        onClick = {
+                            isSearching = true
+                            searchQuery = ""
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.search_messages),
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+
                 IconButton(
                     onClick = {
                         if (viewModel.permissionGranted.value) {
@@ -250,6 +270,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Button(
                     onClick = {
                         if (messageText.isNotBlank()) {
@@ -524,7 +545,7 @@ fun SearchAppBar(
     resultsCount: Int,
     modifier: Modifier = Modifier,
 ) {
-    androidx.compose.material3.TopAppBar(
+    TopAppBar(
         title = {
             TextField(
                 value = searchQuery,
@@ -536,6 +557,10 @@ fun SearchAppBar(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         disabledContainerColor = Color.Transparent,
+                    ),
+                keyboardOptions =
+                    KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search,
                     ),
             )
         },
