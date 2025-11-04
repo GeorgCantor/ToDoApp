@@ -65,6 +65,7 @@
     <string name="edit_message">Edit Message</string>
     <string name="save">Save</string>
     <string name="play_audio">Play audio</string>
+    <string name="search_messages">Search messages</string>
 
     <!-- Content Provider -->
     <string name="content_provider_demo">Content Provider Demo</string>
