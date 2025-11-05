@@ -6,31 +6,41 @@ import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.model.UserStatistics
 import com.example.todoapp.domain.repository.UserProfileRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class UserProfileRepositoryImpl(
     private val dataStore: DataStore<UserProfile>,
 ) : UserProfileRepository {
     override suspend fun saveProfile(profile: UserProfile) {
-        TODO("Not yet implemented")
+        dataStore.updateData { profile }
     }
 
     override suspend fun getProfile(): UserProfile? {
-        TODO("Not yet implemented")
+        dataStore.data.map { it }.let { flow ->
+            var profile: UserProfile? = null
+            flow.collect { profile = it }
+            return profile
+        }
     }
 
-    override fun observeProfile(): Flow<UserProfile?> {
-        TODO("Not yet implemented")
-    }
+    override fun observeProfile(): Flow<UserProfile?> = dataStore.data.map { it }
 
     override suspend fun updateStatistics(statistics: (UserStatistics) -> UserStatistics) {
-        TODO("Not yet implemented")
+        dataStore.updateData { currentProfile ->
+            currentProfile.copy(
+                statistics = statistics(currentProfile.statistics),
+                lastSeen = System.currentTimeMillis(),
+            )
+        }
     }
 
     override suspend fun updatePreferences(preferences: (UserPreferences) -> UserPreferences) {
-        TODO("Not yet implemented")
+        dataStore.updateData { currentProfile ->
+            currentProfile.copy(preferences = preferences(currentProfile.preferences))
+        }
     }
 
     override suspend fun clearProfile() {
-        TODO("Not yet implemented")
+        dataStore.updateData { UserProfile() }
     }
 }
