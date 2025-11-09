@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 private const val USER_PROFILE_DATA_STORE_FILE_NAME = "user_profile.pb"
 
-private val Context.userProfileDataStore: DataStore<UserProfile> by dataStore(
+val Context.userProfileDataStore: DataStore<UserProfile> by dataStore(
     fileName = USER_PROFILE_DATA_STORE_FILE_NAME,
     serializer = UserProfileSerializer,
     corruptionHandler =
