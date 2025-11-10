@@ -29,11 +29,11 @@ import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.BiometricAuthScreen
 import com.example.todoapp.presentation.screens.CalculatorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
-import com.example.todoapp.presentation.screens.IPCScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.NewsCategoriesScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
+import com.example.todoapp.presentation.screens.ProfileScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SignUpScreen
 import com.example.todoapp.presentation.screens.SplashScreen
@@ -41,6 +41,7 @@ import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -56,6 +57,7 @@ fun MainNavigation(
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -163,6 +165,7 @@ fun MainNavigation(
                 chatViewModel = chatViewModel,
                 authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
+                profileViewModel = profileViewModel,
             )
         }
 
@@ -173,6 +176,7 @@ fun MainNavigation(
                 chatViewModel = chatViewModel,
                 authViewModel = authViewModel,
                 calculatorViewModel = calculatorViewModel,
+                profileViewModel = profileViewModel,
             )
         }
 
@@ -180,8 +184,8 @@ fun MainNavigation(
             CalculatorScreen(navController = navController, viewModel = calculatorViewModel)
         }
 
-        composable(NavRoutes.IPCScreen.route) {
-            IPCScreen(navController = navController)
+        composable(NavRoutes.Profile.route) {
+            ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
 
         composable(NavRoutes.NewsCategories.route) {

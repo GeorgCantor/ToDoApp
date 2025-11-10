@@ -40,4 +40,6 @@ sealed class NavRoutes(
     object ForgotPassword : NavRoutes("forgot_password_screen")
 
     object BiometricAuth : NavRoutes("biometric_auth")
+
+    object Profile : NavRoutes("profile_screen")
 }
