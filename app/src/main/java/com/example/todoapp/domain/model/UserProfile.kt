@@ -1,9 +1,6 @@
 package com.example.todoapp.domain.model
 
 import kotlinx.serialization.Serializable
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Serializable
 data class UserProfile(
@@ -19,9 +16,14 @@ data class UserProfile(
     val preferences: UserPreferences = UserPreferences(),
     val statistics: UserStatistics = UserStatistics(),
 ) {
-    fun getJoinDateLocal(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(joinDate), ZoneId.systemDefault())
-
-    fun getLastSeenLocal(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSeen), ZoneId.systemDefault())
+    fun createDefaultProfile(): UserProfile =
+        UserProfile(
+            displayName = "",
+            email = "user@example.com",
+            bio = "",
+            phoneNumber = "",
+            location = "",
+        )
 }
 
 @Serializable
