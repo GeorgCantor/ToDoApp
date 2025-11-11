@@ -7,6 +7,7 @@ import com.example.todoapp.domain.manager.BiometricAuthResult
 import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.domain.model.BiometricAuthState
 import com.example.todoapp.domain.repository.AuthRepository
+import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
+    private val initializeUserProfileUseCase: InitializeUserProfileUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Loading)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -47,6 +49,7 @@ class AuthViewModel(
             val result = authRepository.signInWithEmailAndPassword(email, password)
             _uiState.value =
                 if (result.isSuccess) {
+                    initializeUserProfileUseCase(email)
                     AuthUiState.Authenticated
                 } else {
                     AuthUiState.Error(result.exceptionOrNull()?.message ?: "Sign in failed")

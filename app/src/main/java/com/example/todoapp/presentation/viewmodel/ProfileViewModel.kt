@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
-import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
 import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import kotlinx.coroutines.delay
@@ -18,7 +17,6 @@ class ProfileViewModel(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val saveUserProfileUseCase: SaveUserProfileUseCase,
     private val updateUserStatisticsUseCase: UpdateUserStatisticsUseCase,
-    private val initializeUserProfileUseCase: InitializeUserProfileUseCase,
 ) : ViewModel() {
     private val _profileState = MutableStateFlow<UserProfile?>(null)
     val profileState: StateFlow<UserProfile?> = _profileState.asStateFlow()
@@ -34,12 +32,6 @@ class ProfileViewModel(
 
     init {
         loadProfile()
-    }
-
-    fun initializeProfile(email: String) {
-        viewModelScope.launch {
-            initializeUserProfileUseCase(email)
-        }
     }
 
     fun saveProfile(profile: UserProfile) {
@@ -63,39 +55,6 @@ class ProfileViewModel(
     fun updatePreferences(preferences: UserPreferences) {
         _profileState.value?.let { currentProfile ->
             saveProfile(currentProfile.copy(preferences = preferences))
-        }
-    }
-
-    fun trackNewsRead() {
-        viewModelScope.launch {
-            updateUserStatisticsUseCase { stats ->
-                stats.copy(
-                    newsRead = stats.newsRead + 1,
-                    lastActive = System.currentTimeMillis(),
-                )
-            }
-        }
-    }
-
-    fun trackMessageSent() {
-        viewModelScope.launch {
-            updateUserStatisticsUseCase { stats ->
-                stats.copy(
-                    messagesSent = stats.messagesSent + 1,
-                    lastActive = System.currentTimeMillis(),
-                )
-            }
-        }
-    }
-
-    fun trackCalculation() {
-        viewModelScope.launch {
-            updateUserStatisticsUseCase { stats ->
-                stats.copy(
-                    calculationsMade = stats.calculationsMade + 1,
-                    lastActive = System.currentTimeMillis(),
-                )
-            }
         }
     }
 

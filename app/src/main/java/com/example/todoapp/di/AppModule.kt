@@ -108,7 +108,7 @@ val appModule =
         factory { UpdateUserStatisticsUseCase(get()) }
         factory { InitializeUserProfileUseCase(get()) }
 
-        viewModel { NewsViewModel(get()) }
+        viewModel { NewsViewModel(get(), get()) }
         viewModel {
             ChatViewModel(
                 sendMessageUseCase = get(),
@@ -117,6 +117,7 @@ val appModule =
                 deleteMessageUseCase = get(),
                 audioToBase64UseCase = get(),
                 base64ToAudioFileUseCase = get(),
+                updateUserStatisticsUseCase = get(),
             )
         }
         viewModel {
@@ -124,10 +125,9 @@ val appModule =
                 getUserProfileUseCase = get(),
                 saveUserProfileUseCase = get(),
                 updateUserStatisticsUseCase = get(),
-                initializeUserProfileUseCase = get(),
             )
         }
         viewModel { DocumentsViewModel(get(), get()) }
-        viewModel { CalculatorViewModel(get(), get()) }
-        viewModel { AuthViewModel(get()) }
+        viewModel { CalculatorViewModel(get(), get(), get()) }
+        viewModel { AuthViewModel(get(), get()) }
     }
