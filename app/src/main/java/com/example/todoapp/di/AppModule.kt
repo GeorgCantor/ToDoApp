@@ -1,5 +1,6 @@
 package com.example.todoapp.di
 
+import androidx.datastore.core.DataStore
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.todoapp.data.remote.api.NewsApiService
@@ -8,13 +9,16 @@ import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
+import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.repository.UserProfileRepository
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
@@ -25,13 +29,18 @@ import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import com.example.todoapp.domain.usecase.GetUserProfileUseCase
+import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
+import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
+import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -74,11 +83,13 @@ val appModule =
 
         single<NewsApiService> { get<Retrofit>().create(NewsApiService::class.java) }
         single<BiometricAuthManager> { BiometricAuthManagerImpl(androidContext()) }
+        single<DataStore<UserProfile>> { androidContext().userProfileDataStore }
         single<NewsRepository> { NewsRepositoryImpl(get()) }
         single<ChatRepository> { ChatRepositoryImpl() }
         single<DocumentRepository> { DocumentRepositoryImpl() }
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
         single<AuthRepository> { AuthRepositoryImpl(get()) }
+        single<UserProfileRepository> { UserProfileRepositoryImpl(get()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -92,8 +103,12 @@ val appModule =
         factory { DownloadDocumentUseCase(get()) }
         factory { CalculateExpressionUseCase(get()) }
         factory { ClearCalculatorUseCase(get()) }
+        factory { GetUserProfileUseCase(get()) }
+        factory { SaveUserProfileUseCase(get()) }
+        factory { UpdateUserStatisticsUseCase(get()) }
+        factory { InitializeUserProfileUseCase(get()) }
 
-        viewModel { NewsViewModel(get()) }
+        viewModel { NewsViewModel(get(), get()) }
         viewModel {
             ChatViewModel(
                 sendMessageUseCase = get(),
@@ -102,9 +117,11 @@ val appModule =
                 deleteMessageUseCase = get(),
                 audioToBase64UseCase = get(),
                 base64ToAudioFileUseCase = get(),
+                updateUserStatisticsUseCase = get(),
             )
         }
+        viewModel { ProfileViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get(), get()) }
-        viewModel { CalculatorViewModel(get(), get()) }
-        viewModel { AuthViewModel(get()) }
+        viewModel { CalculatorViewModel(get(), get(), get()) }
+        viewModel { AuthViewModel(get(), get()) }
     }

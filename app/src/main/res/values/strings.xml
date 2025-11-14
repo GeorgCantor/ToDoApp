@@ -153,4 +153,49 @@
     <string name="last_messages">Последние сообщения</string>
     <string name="no_messages">Нет сообщений</string>
     <string name="new_message">Новое сообщение</string>
+
+    <!-- Profile Screen -->
+    <string name="profile">Профиль</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="profile_saved_successfully">Профиль успешно сохранен!</string>
+
+    <!-- Profile Header -->
+    <string name="profile_picture">Фотография профиля</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="anonymous_user">Анонимный пользователь</string>
+    <string name="member_since">Участник с %s</string>
+
+    <!-- Personal Information -->
+    <string name="personal_information">Личная информация</string>
+    <string name="display_name">Отображаемое имя</string>
+    <string name="bio">О себе</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="phone">Телефон</string>
+    <string name="location">Местоположение</string>
+    <string name="not_set">Не задано</string>
+    <string name="no_bio">Нет информации</string>
+
+    <!-- Statistics -->
+    <string name="statistics">Статистика</string>
+    <string name="news_read">Новостей прочитано</string>
+    <string name="messages">Сообщений</string>
+    <string name="calculations">Вычислений</string>
+    <string name="documents">Документов</string>
+
+    <!-- Preferences -->
+    <string name="preferences">Настройки</string>
+    <string name="dark_mode">Темная тема</string>
+    <string name="enable_dark_theme">Включить темную тему</string>
+    <string name="notifications">Уведомления</string>
+    <string name="receive_push_notifications">Получать push-уведомления</string>
+    <string name="biometric_auth">Биометрическая аутентификация</string>
+    <string name="use_fingerprint_or_face_id">Использовать отпечаток пальца или лицо</string>
+    <string name="auto_save">Автосохранение</string>
+    <string name="automatically_save_changes">Автоматически сохранять изменения</string>
+
+    <!-- Empty State -->
+    <string name="no_profile">Нет профиля</string>
+    <string name="no_profile_found">Профиль не найден</string>
+    <string name="create_profile_to_get_started">Создайте профиль чтобы начать</string>
+    <string name="create_profile">Создать профиль</string>
 </resources>

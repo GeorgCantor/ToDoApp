@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
 }
 
@@ -100,6 +101,9 @@ dependencies {
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
     implementation(libs.biometric)
+    implementation(libs.datastore)
+    implementation(libs.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)

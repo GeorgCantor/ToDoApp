@@ -16,6 +16,7 @@ import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
+import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import com.example.todoapp.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,7 @@ class ChatViewModel(
     private val deleteMessageUseCase: DeleteMessageUseCase,
     private val audioToBase64UseCase: AudioToBase64UseCase,
     private val base64ToAudioFileUseCase: Base64ToAudioFileUseCase,
+    private val updateUserStatisticsUseCase: UpdateUserStatisticsUseCase,
 ) : ViewModel() {
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
@@ -72,6 +74,7 @@ class ChatViewModel(
                     senderName = senderName,
                 ),
             )
+            trackMessageSent()
         }
     }
 
@@ -185,6 +188,17 @@ class ChatViewModel(
                 durationMs = durationMs,
             )
         sendMessageUseCase(message)
+    }
+
+    private fun trackMessageSent() {
+        viewModelScope.launch {
+            updateUserStatisticsUseCase { stats ->
+                stats.copy(
+                    messagesSent = stats.messagesSent + 1,
+                    lastActive = System.currentTimeMillis(),
+                )
+            }
+        }
     }
 
     override fun onCleared() {

@@ -9,15 +9,18 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
+import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 
 class NewsViewModel(
     private val getTopUseCase: GetTopHeadlinesUseCase,
+    private val updateUserStatisticsUseCase: UpdateUserStatisticsUseCase,
 ) : ViewModel() {
     private val _currentCategory = MutableStateFlow("general")
 
@@ -37,9 +40,21 @@ class NewsViewModel(
 
     fun saveScrollState(state: LazyListState) {
         _scrollState.value = state
+        trackNewsRead()
     }
 
     fun setCategory(category: String) {
         _currentCategory.value = category
+    }
+
+    private fun trackNewsRead() {
+        viewModelScope.launch {
+            updateUserStatisticsUseCase { stats ->
+                stats.copy(
+                    newsRead = stats.newsRead + 1,
+                    lastActive = System.currentTimeMillis(),
+                )
+            }
+        }
     }
 }

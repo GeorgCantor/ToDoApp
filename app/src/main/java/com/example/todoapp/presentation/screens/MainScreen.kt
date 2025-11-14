@@ -6,8 +6,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -31,6 +31,7 @@ import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MainScreen(
@@ -39,13 +40,14 @@ fun MainScreen(
     chatViewModel: ChatViewModel,
     authViewModel: AuthViewModel,
     calculatorViewModel: CalculatorViewModel,
+    profileViewModel: ProfileViewModel,
 ) {
     val items =
         listOf(
             NavRoutes.NewsList,
             NavRoutes.Chat,
             NavRoutes.Calculator,
-            NavRoutes.IPCScreen,
+            NavRoutes.Profile,
             NavRoutes.NewsCategories,
         )
 
@@ -81,10 +83,10 @@ fun MainScreen(
                                         contentDescription = stringResource(R.string.calculator),
                                     )
 
-                                NavRoutes.IPCScreen ->
+                                NavRoutes.Profile ->
                                     Icon(
-                                        Icons.Filled.List,
-                                        contentDescription = stringResource(R.string.ipc),
+                                        Icons.Filled.Person,
+                                        contentDescription = stringResource(R.string.profile),
                                     )
 
                                 NavRoutes.NewsCategories ->
@@ -102,7 +104,7 @@ fun MainScreen(
                                     NavRoutes.NewsList -> stringResource(R.string.news)
                                     NavRoutes.Chat -> stringResource(R.string.chat)
                                     NavRoutes.Calculator -> stringResource(R.string.calculator)
-                                    NavRoutes.IPCScreen -> stringResource(R.string.ipc)
+                                    NavRoutes.Profile -> stringResource(R.string.profile)
                                     NavRoutes.NewsCategories -> stringResource(R.string.categories)
                                     else -> item.route
                                 },
@@ -145,7 +147,7 @@ fun MainScreen(
                     viewModel = calculatorViewModel,
                 )
 
-            NavRoutes.IPCScreen.route -> IPCScreen(navController = navController)
+            NavRoutes.Profile.route -> ProfileScreen(navController = navController, viewModel = profileViewModel)
 
             NavRoutes.NewsCategories.route -> NewsCategoriesScreen(navController = navController, viewModel = viewModel)
         }
