@@ -79,7 +79,10 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     LaunchedEffect(profileState) {
-        profileState?.let { editedProfile = it }
+        profileState?.let {
+            editedProfile = it
+            isEditing = false
+        }
     }
 
     LaunchedEffect(saveSuccess) {
@@ -191,7 +194,10 @@ fun ProfileScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Button(
-                                onClick = { isEditing = false },
+                                onClick = {
+                                    isEditing = false
+                                    profileState?.let { editedProfile = it }
+                                },
                                 modifier = Modifier.weight(1f),
                                 enabled = !isLoading,
                             ) {
