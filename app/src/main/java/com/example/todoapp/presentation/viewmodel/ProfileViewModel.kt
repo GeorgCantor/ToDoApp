@@ -6,7 +6,6 @@ import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
-import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val saveUserProfileUseCase: SaveUserProfileUseCase,
-    private val updateUserStatisticsUseCase: UpdateUserStatisticsUseCase,
 ) : ViewModel() {
     private val _profileState = MutableStateFlow<UserProfile?>(null)
     val profileState: StateFlow<UserProfile?> = _profileState.asStateFlow()

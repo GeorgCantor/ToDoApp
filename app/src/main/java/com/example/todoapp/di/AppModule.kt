@@ -120,13 +120,7 @@ val appModule =
                 updateUserStatisticsUseCase = get(),
             )
         }
-        viewModel {
-            ProfileViewModel(
-                getUserProfileUseCase = get(),
-                saveUserProfileUseCase = get(),
-                updateUserStatisticsUseCase = get(),
-            )
-        }
+        viewModel { ProfileViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get(), get()) }
         viewModel { AuthViewModel(get(), get()) }
