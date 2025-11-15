@@ -198,4 +198,9 @@
     <string name="no_profile_found">No Profile Found</string>
     <string name="create_profile_to_get_started">Create your profile to get started</string>
     <string name="create_profile">Create Profile</string>
+
+    <!-- Profile image -->
+    <string name="choose_image_source">Choose Image Source</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="take_photo">Take Photo</string>
 </resources>
