@@ -1,6 +1,6 @@
 package com.example.todoapp.presentation.screens
 
-import androidx.compose.foundation.Image
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,17 +50,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.todoapp.R
+import com.example.todoapp.domain.manager.ImageManager
 import com.example.todoapp.domain.model.AppTheme
 import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
+import com.example.todoapp.presentation.components.ImagePickerDialog
+import com.example.todoapp.presentation.utils.rememberImagePicker
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +83,34 @@ fun ProfileScreen(
     var editedProfile by remember { mutableStateOf(profileState ?: UserProfile().createDefaultProfile()) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    var showImagePickerDialog by remember { mutableStateOf(false) }
+    val imageManager = ImageManager(context)
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val imagePicker =
+        rememberImagePicker(
+            onImageSelected = { uri ->
+                selectedImageUri = uri
+                showImagePickerDialog = false
+            },
+            onError = { showImagePickerDialog = false },
+        )
+
+    LaunchedEffect(selectedImageUri) {
+        selectedImageUri?.let { uri ->
+            try {
+                val imagePath = imageManager.saveImageFromUri(uri)
+                imagePath?.let { path ->
+                    editedProfile = editedProfile.copy(photoPath = path)
+                    viewModel.saveProfile(editedProfile)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                selectedImageUri = null
+            }
+        }
+    }
 
     LaunchedEffect(profileState) {
         profileState?.let {
@@ -163,11 +197,10 @@ fun ProfileScreen(
                     ProfileHeaderSection(
                         profile = editedProfile,
                         isEditing = isEditing,
-                        onProfileImageChange = { newImageUrl ->
-                            if (isEditing) {
-                                editedProfile = editedProfile.copy(photoUrl = newImageUrl)
-                            }
+                        onProfileImageChange = { action ->
+                            if (action == "open_dialog") showImagePickerDialog = true
                         },
+                        imageManager = imageManager,
                     )
 
                     PersonalInfoSection(
@@ -220,6 +253,14 @@ fun ProfileScreen(
                     }
                 }
             }
+
+            if (showImagePickerDialog) {
+                ImagePickerDialog(
+                    onDismiss = { showImagePickerDialog = false },
+                    onGallerySelected = { imagePicker.openGallery() },
+                    onCameraSelected = { imagePicker.openCamera() },
+                )
+            }
         }
     }
 }
@@ -229,6 +270,7 @@ private fun ProfileHeaderSection(
     profile: UserProfile,
     isEditing: Boolean,
     onProfileImageChange: (String) -> Unit,
+    imageManager: ImageManager,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -236,8 +278,13 @@ private fun ProfileHeaderSection(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                AsyncImage(
+                    model =
+                        if (profile.photoPath.isNotEmpty()) {
+                            imageManager.getImageUri(profile.photoPath)
+                        } else {
+                            R.drawable.ic_launcher_foreground
+                        },
                     contentDescription = stringResource(R.string.profile_picture),
                     modifier =
                         Modifier
@@ -248,7 +295,7 @@ private fun ProfileHeaderSection(
                 )
                 if (isEditing) {
                     Icon(
-                        imageVector = Icons.Default.Person,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = stringResource(R.string.change_photo),
                         modifier =
                             Modifier
@@ -257,7 +304,7 @@ private fun ProfileHeaderSection(
                                 .background(MaterialTheme.colorScheme.primary, CircleShape)
                                 .padding(8.dp)
                                 .clickable {
-                                    onProfileImageChange("new_photo_url")
+                                    onProfileImageChange("open_dialog")
                                 },
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -275,7 +322,11 @@ private fun ProfileHeaderSection(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = stringResource(R.string.member_since, profile.joinDate),
+                text =
+                    stringResource(
+                        R.string.member_since,
+                        SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date(profile.joinDate)),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline,
             )

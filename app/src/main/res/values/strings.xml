@@ -198,4 +198,9 @@
     <string name="no_profile_found">Профиль не найден</string>
     <string name="create_profile_to_get_started">Создайте профиль чтобы начать</string>
     <string name="create_profile">Создать профиль</string>
+
+    <!-- Profile image -->
+    <string name="choose_image_source">Выберите источник изображения</string>
+    <string name="choose_from_gallery">Из галереи</string>
+    <string name="take_photo">Сделать фото</string>
 </resources>
