@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.screens
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,6 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.todoapp.R
+import com.example.todoapp.domain.manager.ImageManager
 import com.example.todoapp.domain.model.AppTheme
 import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
@@ -82,16 +84,33 @@ fun ProfileScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     var showImagePickerDialog by remember { mutableStateOf(false) }
+    val imageManager = ImageManager(context)
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val imagePicker =
         rememberImagePicker(
             onImageSelected = { uri ->
-                val imageUrl = uri.toString()
-                editedProfile = editedProfile.copy(photoUrl = imageUrl)
+                selectedImageUri = uri
                 showImagePickerDialog = false
             },
             onError = { showImagePickerDialog = false },
         )
+
+    LaunchedEffect(selectedImageUri) {
+        selectedImageUri?.let { uri ->
+            try {
+                val imagePath = imageManager.saveImageFromUri(uri)
+                imagePath?.let { path ->
+                    editedProfile = editedProfile.copy(photoPath = path)
+                    viewModel.saveProfile(editedProfile)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                selectedImageUri = null
+            }
+        }
+    }
 
     LaunchedEffect(profileState) {
         profileState?.let {
@@ -179,13 +198,9 @@ fun ProfileScreen(
                         profile = editedProfile,
                         isEditing = isEditing,
                         onProfileImageChange = { action ->
-                            when (action) {
-                                "open_dialog" -> showImagePickerDialog = true
-                                else -> {
-                                    editedProfile = editedProfile.copy(photoUrl = action)
-                                }
-                            }
+                            if (action == "open_dialog") showImagePickerDialog = true
                         },
+                        imageManager = imageManager,
                     )
 
                     PersonalInfoSection(
@@ -255,6 +270,7 @@ private fun ProfileHeaderSection(
     profile: UserProfile,
     isEditing: Boolean,
     onProfileImageChange: (String) -> Unit,
+    imageManager: ImageManager,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -263,7 +279,12 @@ private fun ProfileHeaderSection(
         ) {
             Box {
                 AsyncImage(
-                    model = profile.photoUrl?.ifEmpty { R.drawable.ic_launcher_foreground },
+                    model =
+                        if (profile.photoPath.isNotEmpty()) {
+                            imageManager.getImageUri(profile.photoPath)
+                        } else {
+                            R.drawable.ic_launcher_foreground
+                        },
                     contentDescription = stringResource(R.string.profile_picture),
                     modifier =
                         Modifier
