@@ -36,13 +36,15 @@ class SessionTracker(
     }
 
     private fun onAppBackgrounded() {
-        if (isSessionActive) scheduleSessionEnd()
+        if (isSessionActive) {
+            scheduleSessionEnd()
+            isSessionActive = false
+        }
     }
 
     private fun startNewSession() {
         sessionStartTime = System.currentTimeMillis()
         isSessionActive = true
-        println("Session started at $sessionStartTime")
     }
 
     private fun scheduleSessionEnd() {
@@ -67,20 +69,5 @@ class SessionTracker(
 
     private fun cancelPendingSessionEnd() {
         WorkManager.getInstance(context).cancelAllWorkByTag(SESSION_END)
-    }
-
-    fun forceEndSession() {
-        if (isSessionActive) {
-            val sessionDuration = System.currentTimeMillis() - sessionStartTime
-            logSessionEnd(sessionDuration)
-        }
-    }
-
-    private fun logSessionEnd(duration: Long) {
-        println("Session ended. Duration: $duration ms")
-    }
-
-    fun cleanup() {
-        ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
     }
 }
