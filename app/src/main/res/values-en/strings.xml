@@ -181,6 +181,10 @@
     <string name="messages">Messages</string>
     <string name="calculations">Calculations</string>
     <string name="documents">Documents</string>
+    <string name="sessions">Sessions</string>
+    <string name="total_session_time">Total session time</string>
+    <string name="last_session">Last session</string>
+    <string name="average_session">Average session</string>
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>

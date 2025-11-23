@@ -104,6 +104,8 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.work.runtime.ktx)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)
