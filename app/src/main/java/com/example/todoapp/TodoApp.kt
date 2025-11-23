@@ -5,10 +5,13 @@ import android.os.Build
 import android.os.StrictMode
 import com.example.todoapp.data.cache.NewsCache
 import com.example.todoapp.di.appModule
+import com.example.todoapp.domain.manager.SessionTracker
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class TodoApp : Application() {
+    private lateinit var sessionTracker: SessionTracker
+
     override fun onCreate() {
         super.onCreate()
         setupStrictMode()
@@ -19,6 +22,7 @@ class TodoApp : Application() {
         }
 
         NewsCache.init(this)
+        sessionTracker = SessionTracker(this)
     }
 
     private fun setupStrictMode() {

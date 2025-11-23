@@ -61,6 +61,7 @@ import com.example.todoapp.domain.manager.ImageManager
 import com.example.todoapp.domain.model.AppTheme
 import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
+import com.example.todoapp.domain.model.UserStatistics
 import com.example.todoapp.presentation.components.ImagePickerDialog
 import com.example.todoapp.presentation.utils.rememberImagePicker
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
@@ -446,11 +447,14 @@ private fun StatisticsSection(profile: UserProfile) {
                     modifier = Modifier.weight(1f),
                 )
                 StatItem(
-                    count = profile.statistics.documentsDownloaded.toString(),
-                    label = stringResource(R.string.documents),
+                    count = profile.statistics.sessionsCount.toString(),
+                    label = stringResource(R.string.sessions),
                     modifier = Modifier.weight(1f),
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            SessionTimeInfo(statistics = profile.statistics)
         }
     }
 }
@@ -633,5 +637,38 @@ private fun InfoRow(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
         )
+    }
+}
+
+@Composable
+private fun SessionTimeInfo(statistics: UserStatistics) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        InfoRow(
+            label = stringResource(R.string.total_session_time),
+            value = formatSessionTime(statistics.totalSessionTime),
+        )
+        InfoRow(
+            label = stringResource(R.string.last_session),
+            value = formatSessionTime(statistics.lastSessionDuration),
+        )
+        InfoRow(
+            label = stringResource(R.string.average_session),
+            value = formatSessionTime(statistics.calculateAverageSessionTime()),
+        )
+    }
+}
+
+private fun formatSessionTime(millis: Long): String {
+    val seconds = millis / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+
+    return when {
+        hours > 0 -> "${hours}h ${minutes % 60}m"
+        minutes > 0 -> "${minutes}m ${seconds % 60}s"
+        else -> "${seconds}s"
     }
 }

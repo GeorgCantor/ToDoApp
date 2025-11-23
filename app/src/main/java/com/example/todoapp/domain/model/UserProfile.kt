@@ -42,7 +42,13 @@ data class UserStatistics(
     val calculationsMade: Int = 0,
     val documentsDownloaded: Int = 0,
     val lastActive: Long = System.currentTimeMillis(),
-)
+    val totalSessionTime: Long = 0,
+    val sessionsCount: Int = 0,
+    val lastSessionDuration: Long = 0,
+    val averageSessionTime: Long = 0,
+) {
+    fun calculateAverageSessionTime(): Long = if (sessionsCount > 0) totalSessionTime / sessionsCount else 0
+}
 
 enum class AppTheme {
     LIGHT,

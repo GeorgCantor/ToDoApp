@@ -181,6 +181,10 @@
     <string name="messages">Сообщений</string>
     <string name="calculations">Вычислений</string>
     <string name="documents">Документов</string>
+    <string name="sessions">Сессии</string>
+    <string name="total_session_time">Общее время</string>
+    <string name="last_session">Последняя сессия</string>
+    <string name="average_session">Средняя сессия</string>
 
     <!-- Preferences -->
     <string name="preferences">Настройки</string>
