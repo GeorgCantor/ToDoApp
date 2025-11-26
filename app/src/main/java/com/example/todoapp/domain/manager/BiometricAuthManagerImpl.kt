@@ -22,12 +22,19 @@ class BiometricAuthManagerImpl(
 
     override suspend fun authenticate(activity: FragmentActivity): Flow<BiometricAuthResult> =
         callbackFlow {
+            if (activity.isFinishing || activity.isDestroyed) {
+                trySend(BiometricAuthResult.Error("Activity not available"))
+                close()
+                return@callbackFlow
+            }
+
             val executor = ContextCompat.getMainExecutor(activity)
 
             val promptInfo =
                 BiometricPrompt.PromptInfo
                     .Builder()
                     .setTitle("Вход в приложение")
+                    .setSubtitle("Подтвердите вашу личность")
                     .setNegativeButtonText("Отмена")
                     .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                     .build()
@@ -41,16 +48,16 @@ class BiometricAuthManagerImpl(
                             errorCode: Int,
                             errString: CharSequence,
                         ) {
-                            when (errorCode) {
-                                BiometricPrompt.ERROR_USER_CANCELED,
-                                BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                                -> {
-                                    trySend(BiometricAuthResult.Error("Аутентификация отменена"))
+                            val errorMessage =
+                                when (errorCode) {
+                                    BiometricPrompt.ERROR_USER_CANCELED,
+                                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                                    -> "Аутентификация отменена"
+                                    BiometricPrompt.ERROR_LOCKOUT -> "Слишком много попыток. Попробуйте позже"
+                                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> "Биометрия заблокирована. Используйте пароль"
+                                    else -> "Ошибка: $errString"
                                 }
-                                else -> {
-                                    trySend(BiometricAuthResult.Error("Ошибка: $errString"))
-                                }
-                            }
+                            trySend(BiometricAuthResult.Error(errorMessage))
                             close()
                         }
 
@@ -68,7 +75,12 @@ class BiometricAuthManagerImpl(
             biometricPrompt.authenticate(promptInfo)
 
             awaitClose {
-                biometricPrompt.cancelAuthentication()
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    try {
+                        biometricPrompt.cancelAuthentication()
+                    } catch (e: Exception) {
+                    }
+                }
             }
         }
 }
