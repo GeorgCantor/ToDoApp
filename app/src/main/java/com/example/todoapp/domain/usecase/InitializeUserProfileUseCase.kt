@@ -7,7 +7,7 @@ class InitializeUserProfileUseCase(
     private val repository: UserProfileRepository,
 ) {
     suspend operator fun invoke(email: String) {
-        repository.getProfile()?.email?.takeIf { it.isNotBlank() }?.let {
+        repository.getProfile().email.takeIf { it.isNotBlank() }?.let {
             repository.saveProfile(
                 UserProfile(
                     id = System.currentTimeMillis().toString(),

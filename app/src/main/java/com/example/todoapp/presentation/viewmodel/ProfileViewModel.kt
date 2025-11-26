@@ -2,7 +2,6 @@ package com.example.todoapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
@@ -47,12 +46,6 @@ class ProfileViewModel(
             } finally {
                 _isLoading.value = false
             }
-        }
-    }
-
-    fun updatePreferences(preferences: UserPreferences) {
-        _profileState.value?.let { currentProfile ->
-            saveProfile(currentProfile.copy(preferences = preferences))
         }
     }
 

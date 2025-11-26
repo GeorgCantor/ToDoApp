@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserProfileRepository {
     suspend fun saveProfile(profile: UserProfile)
 
-    suspend fun getProfile(): UserProfile?
+    suspend fun getProfile(): UserProfile
 
     fun observeProfile(): Flow<UserProfile?>
 

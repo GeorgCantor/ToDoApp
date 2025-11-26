@@ -6,7 +6,7 @@ import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.model.UserStatistics
 import com.example.todoapp.domain.repository.UserProfileRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 
 class UserProfileRepositoryImpl(
     private val dataStore: DataStore<UserProfile>,
@@ -15,15 +15,9 @@ class UserProfileRepositoryImpl(
         dataStore.updateData { profile }
     }
 
-    override suspend fun getProfile(): UserProfile? {
-        dataStore.data.map { it }.let { flow ->
-            var profile: UserProfile? = null
-            flow.collect { profile = it }
-            return profile
-        }
-    }
+    override suspend fun getProfile(): UserProfile = dataStore.data.first()
 
-    override fun observeProfile(): Flow<UserProfile?> = dataStore.data.map { it }
+    override fun observeProfile(): Flow<UserProfile?> = dataStore.data
 
     override suspend fun updateStatistics(statistics: (UserStatistics) -> UserStatistics) {
         dataStore.updateData { currentProfile ->
