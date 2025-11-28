@@ -126,7 +126,10 @@ fun DocumentsScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    items(documents) { document ->
+                    items(
+                        items = documents,
+                        key = { it.id },
+                    ) { document ->
                         DocumentCard(
                             document = document,
                             downloadProgress = downloadProgress,

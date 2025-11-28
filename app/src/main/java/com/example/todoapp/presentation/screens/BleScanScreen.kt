@@ -152,7 +152,10 @@ fun BleScanScreen() {
                 }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(devices) { device ->
+                    items(
+                        items = devices,
+                        key = { it.address.orEmpty() },
+                    ) { device ->
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = device.name ?: stringResource(R.string.unknown_device),

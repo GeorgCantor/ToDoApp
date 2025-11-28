@@ -9,12 +9,18 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class ChatRepositoryImpl : ChatRepository {
     private val database = Firebase.database.reference.child("chat_messages")
@@ -86,14 +92,27 @@ class ChatRepositoryImpl : ChatRepository {
         return tempFile
     }
 
-    private fun getAudioDuration(file: File): Long {
-        val mediaPlayer = MediaPlayer()
-        try {
-            mediaPlayer.setDataSource(file.absolutePath)
-            mediaPlayer.prepare()
-            return mediaPlayer.duration.toLong()
-        } finally {
-            mediaPlayer.release()
+    private suspend fun getAudioDuration(file: File): Long =
+        withContext(Dispatchers.IO) {
+            val mediaPlayer = MediaPlayer()
+            try {
+                mediaPlayer.setDataSource(file.absolutePath)
+                return@withContext suspendCancellableCoroutine { continuation ->
+                    mediaPlayer.setOnPreparedListener {
+                        continuation.resume(mediaPlayer.duration.toLong())
+                    }
+                    mediaPlayer.setOnErrorListener { _, what, extra ->
+                        continuation.resumeWithException(IOException("MediaPlayer error: $what, $extra"))
+                        true
+                    }
+                    mediaPlayer.prepareAsync()
+                    continuation.invokeOnCancellation { mediaPlayer.release() }
+                }
+            } catch (e: Exception) {
+                mediaPlayer.release()
+                throw e
+            } finally {
+                mediaPlayer.release()
+            }
         }
-    }
 }

@@ -144,7 +144,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 }
             }
 
-            items(itemsToShow) { message ->
+            items(
+                items = itemsToShow,
+                key = { it.id },
+            ) { message ->
                 MessageBubble(
                     message = message,
                     onEditClick = {
