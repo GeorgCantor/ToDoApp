@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.screens
 
+import android.content.Intent
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -133,6 +135,22 @@ fun NewsDetailScreen(
                             Icon(
                                 imageVector = if (isSpeaking) Icons.Default.Clear else Icons.Default.PlayArrow,
                                 contentDescription = if (isSpeaking) "Stop reading" else "Read aloud",
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, "${item.title}\n\n${item.description}\n\n${item.url}")
+                                    }
+                                context.startActivity(Intent.createChooser(intent, "Share news"))
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share news",
                             )
                         }
                     }
