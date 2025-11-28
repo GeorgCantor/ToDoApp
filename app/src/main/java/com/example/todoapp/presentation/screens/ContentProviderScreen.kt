@@ -235,7 +235,10 @@ fun ContentProviderScreen(navController: NavController) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(notes) { note ->
+                items(
+                    items = notes,
+                    key = { it.id },
+                ) { note ->
                     NoteCard(
                         note = note,
                         onDelete = { deleteNote(note.id) },
