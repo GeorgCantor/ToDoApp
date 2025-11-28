@@ -31,6 +31,7 @@ import com.example.todoapp.presentation.screens.CalculatorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
+import com.example.todoapp.presentation.screens.MapScreen
 import com.example.todoapp.presentation.screens.NewsCategoriesScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
@@ -191,6 +192,8 @@ fun MainNavigation(
         composable(NavRoutes.NewsCategories.route) {
             NewsCategoriesScreen(navController = navController, viewModel = newsViewModel)
         }
+
+        composable(NavRoutes.Map.route) { MapScreen() }
 
         composable(
             route = NavRoutes.Search.route,
