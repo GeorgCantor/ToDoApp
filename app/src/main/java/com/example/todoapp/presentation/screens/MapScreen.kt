@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.todoapp.R
+import com.example.todoapp.domain.model.MapStyleType
 import com.example.todoapp.utils.showToast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -24,6 +25,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -33,12 +36,13 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen() {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val locationPermissionState =
-        rememberPermissionState(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        )
+
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
     var fusedLocationClient: FusedLocationProviderClient? by remember { mutableStateOf(null) }
+    var selectedMapType by remember { mutableStateOf(MapStyleType.NORMAL) }
+    var showMapTypeSelector by remember { mutableStateOf(false) }
+
+    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val hasPermission = locationPermissionState.status.isGranted
 
     LaunchedEffect(Unit) {
@@ -98,6 +102,20 @@ fun MapScreen() {
             locationPermissionState.launchPermissionRequest()
         }
     }
+
+    val mapProperties =
+        remember(selectedMapType) {
+            MapProperties(mapType = selectedMapType.mapType, isMyLocationEnabled = hasPermission)
+        }
+
+    val mapUiSettings =
+        remember {
+            MapUiSettings(
+                compassEnabled = true,
+                myLocationButtonEnabled = true,
+                zoomControlsEnabled = false,
+            )
+        }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
