@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.todoapp.R
 import com.example.todoapp.utils.showToast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -105,16 +106,16 @@ fun MapScreen() {
         userLocation?.let { location ->
             Marker(
                 state = MarkerState(position = location),
-                title = "Ваше местоположение",
-                snippet = "Текущая позиция",
+                title = context.getString(R.string.your_location),
+                snippet = context.getString(R.string.current_position),
             )
         }
 
         if (userLocation == null) {
             Marker(
                 state = MarkerState(position = defaultLocation),
-                title = "Москва",
-                snippet = "Местоположение по умолчанию",
+                title = context.getString(R.string.moscow),
+                snippet = context.getString(R.string.default_location),
             )
         }
     }

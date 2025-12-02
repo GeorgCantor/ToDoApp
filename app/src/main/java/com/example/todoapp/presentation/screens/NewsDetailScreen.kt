@@ -34,11 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.NewsArticle
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import java.util.Locale
@@ -72,7 +74,7 @@ fun NewsDetailScreen(
                     ttsInitialized = true
                 }
             }
-        textToSpeech.language = Locale.US
+        textToSpeech.language = Locale.getDefault()
         tts = textToSpeech
 
         onDispose {
@@ -101,7 +103,7 @@ fun NewsDetailScreen(
                         }
                         navController.popBackStack()
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -134,7 +136,7 @@ fun NewsDetailScreen(
                         ) {
                             Icon(
                                 imageVector = if (isSpeaking) Icons.Default.Clear else Icons.Default.PlayArrow,
-                                contentDescription = if (isSpeaking) "Stop reading" else "Read aloud",
+                                contentDescription = stringResource(if (isSpeaking) R.string.stop_reading else R.string.read_aloud),
                             )
                         }
 
@@ -143,21 +145,36 @@ fun NewsDetailScreen(
                                 val intent =
                                     Intent(Intent.ACTION_SEND).apply {
                                         type = "text/plain"
-                                        putExtra(Intent.EXTRA_TEXT, "${item.title}\n\n${item.description}\n\n${item.url}")
+                                        putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            "${item.title}\n\n${item.description}\n\n${item.url}",
+                                        )
+                                        putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            context.getString(R.string.share_news_subject),
+                                        )
                                     }
-                                context.startActivity(Intent.createChooser(intent, "Share news"))
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        context.getString(R.string.share_news_chooser),
+                                    ),
+                                )
                             },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Share,
-                                contentDescription = "Share news",
+                                contentDescription = stringResource(R.string.share_news),
                             )
                         }
                     }
 
                     if (showZoomedImage) {
                         IconButton(onClick = { showZoomedImage = false }) {
-                            Icon(Icons.Default.Close, contentDescription = "Close")
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(R.string.close),
+                            )
                         }
                     }
                 },
@@ -174,7 +191,7 @@ fun NewsDetailScreen(
             ) {
                 AsyncImage(
                     model = item.urlToImage,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.news_image_content_description),
                     modifier =
                         Modifier
                             .fillMaxWidth()

@@ -33,6 +33,12 @@
     <string name="error_loading">Ошибка загрузки</string>
     <string name="retry">Повторить</string>
     <string name="loading_documents">Загрузка документов…</string>
+    <string name="read_aloud">Читать вслух</string>
+    <string name="stop_reading">Остановить чтение</string>
+    <string name="share_news">Поделиться новостью</string>
+    <string name="share_news_subject">Посмотрите эту новость</string>
+    <string name="share_news_chooser">Поделиться новостью через</string>
+    <string name="news_image_content_description">Изображение новости</string>
 
     <!-- Sign Out -->
     <string name="sign_out">Выйти</string>
@@ -137,6 +143,7 @@
 
     <!-- Common -->
     <string name="back">Назад</string>
+    <string name="close">Закрыть</string>
     <string name="error">Ошибка</string>
     <string name="ok">ОК</string>
     <string name="yes">Да</string>

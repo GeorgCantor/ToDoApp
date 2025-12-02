@@ -33,6 +33,12 @@
     <string name="error_loading">Error loading</string>
     <string name="retry">Retry</string>
     <string name="loading_documents">Loading documents…</string>
+    <string name="read_aloud">Read aloud</string>
+    <string name="stop_reading">Stop reading</string>
+    <string name="share_news">Share news</string>
+    <string name="share_news_subject">Check out this news</string>
+    <string name="share_news_chooser">Share news with</string>
+    <string name="news_image_content_description">News image</string>
 
     <!-- Sign Out -->
     <string name="sign_out">Sign Out</string>
@@ -137,6 +143,7 @@
 
     <!-- Common -->
     <string name="back">Back</string>
+    <string name="close">Close</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
