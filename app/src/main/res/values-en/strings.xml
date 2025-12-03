@@ -132,6 +132,9 @@
     <string name="current_position">Current position</string>
     <string name="moscow">Moscow</string>
     <string name="default_location">Default location</string>
+    <string name="map_type">Map type</string>
+    <string name="change_map_type">Change map type</string>
+    <string name="selected">Selected</string>
 
     <!-- Main Screen -->
     <string name="news">News</string>

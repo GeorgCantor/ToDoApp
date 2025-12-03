@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +53,6 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -134,18 +134,17 @@ fun MapScreen() {
             MapProperties(mapType = selectedMapType.mapType, isMyLocationEnabled = hasPermission)
         }
 
-    val mapUiSettings = remember { MapUiSettings(compassEnabled = true) }
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showMapTypeSelector = !showMapTypeSelector },
                 containerColor = MaterialTheme.colorScheme.primary,
                 shape = androidx.compose.foundation.shape.CircleShape,
+                modifier = Modifier.padding(end = 50.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "Изменить тип карты",
+                    contentDescription = stringResource(R.string.change_map_type),
                     modifier = Modifier.size(24.dp),
                 )
             }
@@ -158,21 +157,20 @@ fun MapScreen() {
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
                 properties = mapProperties,
-                uiSettings = mapUiSettings,
             ) {
                 userLocation?.let { location ->
                     Marker(
                         state = MarkerState(position = location),
-                        title = context.getString(R.string.your_location),
-                        snippet = context.getString(R.string.current_position),
+                        title = stringResource(R.string.your_location),
+                        snippet = stringResource(R.string.current_position),
                     )
                 }
 
                 if (userLocation == null) {
                     Marker(
                         state = MarkerState(position = defaultLocation),
-                        title = context.getString(R.string.moscow),
-                        snippet = context.getString(R.string.default_location),
+                        title = stringResource(R.string.moscow),
+                        snippet = stringResource(R.string.default_location),
                     )
                 }
             }
@@ -204,7 +202,7 @@ fun MapTypeSelector(
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(
-                text = "Тип карты",
+                text = stringResource(R.string.map_type),
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -258,7 +256,7 @@ fun MapTypeItem(
                 Spacer(modifier = Modifier.weight(1F))
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Выбрано",
+                    contentDescription = stringResource(R.string.selected),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp),
                 )

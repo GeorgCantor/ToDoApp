@@ -132,6 +132,9 @@
     <string name="current_position">Текущая позиция</string>
     <string name="moscow">Москва</string>
     <string name="default_location">Местоположение по умолчанию</string>
+    <string name="map_type">Тип карты</string>
+    <string name="change_map_type">Изменить тип карты</string>
+    <string name="selected">Выбрано</string>
 
     <!-- Main Screen -->
     <string name="news">Новости</string>
