@@ -1,11 +1,16 @@
 package com.example.todoapp.domain.model
 
 enum class Player {
-    X, O, NONE
+    X,
+    O,
+    NONE,
 }
 
 enum class GameStatus {
-    PLAYING, X_WON, O_WON, DRAW
+    PLAYING,
+    X_WON,
+    O_WON,
+    DRAW,
 }
 
 data class GameSate(
