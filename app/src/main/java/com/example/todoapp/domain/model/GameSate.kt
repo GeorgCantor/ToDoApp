@@ -13,7 +13,7 @@ enum class GameStatus {
     DRAW,
 }
 
-data class GameSate(
+data class GameState(
     val board: List<List<Player>> = List(3) { List(3) { Player.NONE } },
     val currentPlayer: Player = Player.X,
     val status: GameStatus = GameStatus.PLAYING,

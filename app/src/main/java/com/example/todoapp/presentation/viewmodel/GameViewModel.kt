@@ -2,7 +2,7 @@ package com.example.todoapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.domain.model.GameSate
+import com.example.todoapp.domain.model.GameState
 import com.example.todoapp.domain.model.GameStatus
 import com.example.todoapp.domain.model.Player
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
-    private val _gameState = MutableStateFlow(GameSate())
+    private val _gameState = MutableStateFlow(GameState())
     val gameState = _gameState.asStateFlow()
 
     fun makeMove(
@@ -48,7 +48,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun restartGame() {
-        viewModelScope.launch { _gameState.value = GameSate() }
+        viewModelScope.launch { _gameState.value = GameState() }
     }
 
     fun undoMove() {
@@ -73,7 +73,7 @@ class GameViewModel : ViewModel() {
                 }
 
             _gameState.value =
-                GameSate(
+                GameState(
                     board = restoredBoard,
                     currentPlayer = if (newHistory.size % 2 == 0) Player.X else Player.O,
                     moveHistory = newHistory,
