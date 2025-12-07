@@ -212,11 +212,11 @@ fun GameBoard(
 
 @Composable
 fun DrawX(isWinning: Boolean) {
-    val color = if (isWinning) colorScheme.primary else colorScheme.onSurface
+    val color = if (isWinning) Color.Green else Color.Red
     Box(
         modifier =
             Modifier
-                .size(48.dp)
+                .size(58.dp)
                 .drawBehind {
                     drawLine(
                         color = color,
@@ -236,11 +236,11 @@ fun DrawX(isWinning: Boolean) {
 
 @Composable
 fun DrawO(isWinning: Boolean) {
-    val color = if (isWinning) colorScheme.secondary else colorScheme.onSurface
+    val color = if (isWinning) Color.Green else Color.Red
     Box(
         modifier =
             Modifier
-                .size(48.dp)
+                .size(58.dp)
                 .drawBehind {
                     drawCircle(
                         color = color,
