@@ -217,4 +217,16 @@
     <string name="choose_image_source">Выберите источник изображения</string>
     <string name="choose_from_gallery">Из галереи</string>
     <string name="take_photo">Сделать фото</string>
+
+    <!-- Tic Tac Toe -->
+    <string name="tictactoe_title">Крестики-нолики</string>
+    <string name="current_turn_x">Сейчас ходят: ❌ Крестики</string>
+    <string name="current_turn_o">Сейчас ходят: ⭕ Нолики</string>
+    <string name="x_wins">🎉 Победили Крестики! ❌</string>
+    <string name="o_wins">🎉 Победили Нолики! ⭕</string>
+    <string name="draw">🤝 Ничья!</string>
+    <string name="make_move">Сделайте ход на поле ниже</string>
+    <string name="undo_move">Отменить ход</string>
+    <string name="new_game">Новая игра</string>
+    <string name="rules">Правила: 3 в ряд по горизонтали, вертикали или диагонали</string>
 </resources>

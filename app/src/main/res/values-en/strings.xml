@@ -217,4 +217,16 @@
     <string name="choose_image_source">Choose Image Source</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="take_photo">Take Photo</string>
+
+    <!-- Tic Tac Toe -->
+    <string name="tictactoe_title">Tic Tac Toe</string>
+    <string name="current_turn_x">Current turn: ❌ X</string>
+    <string name="current_turn_o">Current turn: ⭕ O</string>
+    <string name="x_wins">🎉 X wins! ❌</string>
+    <string name="o_wins">🎉 O wins! ⭕</string>
+    <string name="draw">🤝 Draw!</string>
+    <string name="make_move">Make your move on the board below</string>
+    <string name="undo_move">Undo move</string>
+    <string name="new_game">New Game</string>
+    <string name="rules">Rules: 3 in a row horizontally, vertically or diagonally</string>
 </resources>
