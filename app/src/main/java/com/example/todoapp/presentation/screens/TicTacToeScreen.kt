@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults.cardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,11 +39,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.GameStatus
 import com.example.todoapp.domain.model.Player
 import com.example.todoapp.presentation.viewmodel.GameViewModel
@@ -56,7 +59,7 @@ fun TicTacToeScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tic tac toe", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.tictactoe_title), fontWeight = FontWeight.Bold) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = colorScheme.primaryContainer,
@@ -74,37 +77,37 @@ fun TicTacToeScreen() {
                 currentPlayer = gameState.value.currentPlayer,
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            GameBoard(
+                board = gameState.value.board,
+                winningLine = gameState.value.winningLine,
+                onCellClick = { row, col -> viewModel.makeMove(row, col) },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1F)
+                        .padding(16.dp),
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            GameControls(
+                onRestart = { viewModel.restartGame() },
+                onUndo = { viewModel.undoMove() },
+                canUndo = gameState.value.moveHistory.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            )
+
+            Text(
+                text = stringResource(R.string.rules),
+                modifier = Modifier.padding(16.dp),
+                color = colorScheme.onSurfaceVariant,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        GameBoard(
-            board = gameState.value.board,
-            winningLine = gameState.value.winningLine,
-            onCellClick = { row, col -> viewModel.makeMove(row, col) },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1F)
-                    .padding(16.dp),
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        GameControls(
-            onRestart = { viewModel.restartGame() },
-            onUndo = { viewModel.undoMove() },
-            canUndo = gameState.value.moveHistory.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        )
-
-        Text(
-            text = "Правила: 3 в ряд по горизонтали, вертикали или диагонали",
-            modifier = Modifier.padding(16.dp),
-            color = colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-        )
     }
 }
 
@@ -117,9 +120,7 @@ fun GameStatusCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        elevation =
-            androidx.compose.material3.CardDefaults
-                .cardElevation(defaultElevation = 4.dp),
+        elevation = cardElevation(defaultElevation = 4.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -128,10 +129,12 @@ fun GameStatusCard(
             Text(
                 text =
                     when (status) {
-                        GameStatus.PLAYING -> "Сейчас ходят: ${if (currentPlayer == Player.X) "❌ Крестики" else "⭕ Нолики"}"
-                        GameStatus.X_WON -> "🎉 Победили Крестики! ❌"
-                        GameStatus.O_WON -> "🎉 Победили Нолики! ⭕"
-                        GameStatus.DRAW -> "🤝 Ничья!"
+                        GameStatus.PLAYING -> {
+                            stringResource(if (currentPlayer == Player.X) R.string.current_turn_x else R.string.current_turn_o)
+                        }
+                        GameStatus.X_WON -> stringResource(R.string.x_wins)
+                        GameStatus.O_WON -> stringResource(R.string.o_wins)
+                        GameStatus.DRAW -> stringResource(R.string.draw)
                     },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -146,7 +149,7 @@ fun GameStatusCard(
             if (status == GameStatus.PLAYING) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Сделайте ход на поле ниже",
+                    text = stringResource(R.string.make_move),
                     fontSize = 14.sp,
                     color = colorScheme.onSurfaceVariant,
                 )
@@ -270,7 +273,7 @@ fun GameControls(
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Отменить ход",
+                contentDescription = stringResource(R.string.undo_move),
                 tint = if (canUndo) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp),
             )
@@ -285,11 +288,11 @@ fun GameControls(
         ) {
             Icon(
                 imageVector = Icons.Default.Refresh,
-                contentDescription = "Новая игра",
+                contentDescription = stringResource(R.string.new_game),
                 modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Новая игра", fontSize = 16.sp)
+            Text(stringResource(R.string.new_game), fontSize = 16.sp)
         }
     }
 }
