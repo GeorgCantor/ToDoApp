@@ -36,13 +36,48 @@ class GameViewModel : ViewModel() {
 
             val (winStatus, winningLine) = checkWin(newBoard, row, col)
 
-            _gameState.value = current.copy(
-                board = newBoard,
-                currentPlayer = if (current.currentPlayer == Player.X) Player.O else Player.X,
-                status = winStatus ?: if (isBoardFull(newBoard)) GameStatus.DRAW else GameStatus.PLAYING,
-                winningLine = winningLine ?: emptyList(),
-                moveHistory = current.moveHistory + (row to col)
-            )
+            _gameState.value =
+                current.copy(
+                    board = newBoard,
+                    currentPlayer = if (current.currentPlayer == Player.X) Player.O else Player.X,
+                    status = winStatus ?: if (isBoardFull(newBoard)) GameStatus.DRAW else GameStatus.PLAYING,
+                    winningLine = winningLine ?: emptyList(),
+                    moveHistory = current.moveHistory + (row to col),
+                )
+        }
+    }
+
+    fun restartGame() {
+        viewModelScope.launch { _gameState.value = GameSate() }
+    }
+
+    fun undoMove() {
+        viewModelScope.launch {
+            val current = _gameState.value
+            if (current.moveHistory.isEmpty()) return@launch
+            val newHistory = current.moveHistory.dropLast(1)
+            val newBoard = List(3) { List(3) { Player.NONE } }
+
+            val restoredBoard =
+                newHistory.foldIndexed(newBoard) { i, board, (row, col) ->
+                    val player = if (i % 2 == 0) Player.X else Player.O
+                    board.mapIndexed { r, rowList ->
+                        if (r == row) {
+                            rowList.mapIndexed { c, current ->
+                                if (c == col) player else current
+                            }
+                        } else {
+                            rowList
+                        }
+                    }
+                }
+
+            _gameState.value =
+                GameSate(
+                    board = restoredBoard,
+                    currentPlayer = if (newHistory.size % 2 == 0) Player.X else Player.O,
+                    moveHistory = newHistory,
+                )
         }
     }
 
