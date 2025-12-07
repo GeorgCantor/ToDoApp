@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -63,6 +64,7 @@ import com.example.todoapp.domain.model.UserPreferences
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.model.UserStatistics
 import com.example.todoapp.presentation.components.ImagePickerDialog
+import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.utils.rememberImagePicker
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import java.text.SimpleDateFormat
@@ -167,6 +169,15 @@ fun ProfileScreen(
                         IconButton(onClick = { isEditing = true }) {
                             Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
                         }
+                    }
+
+                    IconButton(
+                        onClick = { navController.navigate(NavRoutes.TicTacToe.route) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = stringResource(R.string.tictactoe_title),
+                        )
                     }
                 },
             )

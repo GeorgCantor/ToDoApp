@@ -38,6 +38,7 @@ import com.example.todoapp.presentation.screens.ProfileScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SignUpScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.screens.TicTacToeScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
@@ -194,6 +195,8 @@ fun MainNavigation(
         }
 
         composable(NavRoutes.Map.route) { MapScreen() }
+
+        composable(NavRoutes.TicTacToe.route) { TicTacToeScreen() }
 
         composable(
             route = NavRoutes.Search.route,

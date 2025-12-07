@@ -42,4 +42,6 @@ sealed class NavRoutes(
     object BiometricAuth : NavRoutes("biometric_auth")
 
     object Profile : NavRoutes("profile_screen")
+
+    object TicTacToe : NavRoutes("tic_tac_toe_screen")
 }
