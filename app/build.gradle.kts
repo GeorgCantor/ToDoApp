@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
+    id("com.apollographql.apollo3") version "3.8.2"
 }
 
 android {
@@ -71,6 +72,15 @@ android {
     }
 }
 
+apollo {
+    packageName.set("com.example.todoapp")
+    service("spacex") {
+        packageName.set("com.example.todoapp")
+        schemaFile.set(file("src/main/graphql/schema.graphqls"))
+        srcDir("src/main/graphql")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -106,6 +116,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.apollo.runtime)
+    implementation(libs.apollo.normalized.cache)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)

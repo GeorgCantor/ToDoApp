@@ -42,6 +42,7 @@ datastore = "1.0.0"
 kotlinSerialization = "1.5.1"
 lifecycleProcess = "2.6.2"
 workRuntimeKtx = "2.8.1"
+apollo = "3.8.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -94,6 +95,8 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-normalized-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
