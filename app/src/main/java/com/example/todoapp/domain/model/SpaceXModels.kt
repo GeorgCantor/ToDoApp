@@ -9,12 +9,12 @@ data class SpaceXLaunch(
     val details: String?,
     val launchSite: LaunchSite,
     val links: LaunchLinks,
-    val upcoming: Boolean
+    val upcoming: Boolean,
 )
 
 data class LaunchSite(
     val siteName: String,
-    val siteNameLong: String?
+    val siteNameLong: String?,
 )
 
 data class LaunchLinks(
@@ -23,7 +23,7 @@ data class LaunchLinks(
     val articleLink: String?,
     val videoLink: String?,
     val wikipedia: String?,
-    val redditCampaign: String?
+    val redditCampaign: String?,
 )
 
 data class SpaceXRocket(
@@ -34,21 +34,27 @@ data class SpaceXRocket(
     val diameter: RocketDimension?,
     val mass: RocketMass?,
     val firstFlight: String?,
-    val active: Boolean
+    val active: Boolean,
 )
 
 data class RocketDimension(
     val meters: Float?,
-    val feet: Float?
+    val feet: Float?,
 )
 
 data class RocketMass(
     val kg: Int?,
-    val lb: Int?
+    val lb: Int?,
 )
 
 sealed class SpaceXUiState {
     object Loading : SpaceXUiState()
-    data class Success(val launches: List<SpaceXLaunch>) : SpaceXUiState()
-    data class Error(val message: String) : SpaceXUiState()
+
+    data class Success(
+        val launches: List<SpaceXLaunch>,
+    ) : SpaceXUiState()
+
+    data class Error(
+        val message: String,
+    ) : SpaceXUiState()
 }
