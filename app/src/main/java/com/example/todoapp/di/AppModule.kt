@@ -57,7 +57,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule =
     module {
-        single {
+        single<OkHttpClient> {
             val loggingInterceptor =
                 HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
@@ -72,17 +72,18 @@ val appModule =
                     .alwaysReadResponseBody(false)
                     .build()
 
-            val okHttpClient =
-                OkHttpClient
-                    .Builder()
-                    .addInterceptor(loggingInterceptor)
-                    .addInterceptor(chuckerInterceptor)
-                    .build()
+            OkHttpClient
+                .Builder()
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(chuckerInterceptor)
+                .build()
+        }
 
+        single<Retrofit> {
             Retrofit
                 .Builder()
                 .baseUrl("https://newsapi.org/")
-                .client(okHttpClient)
+                .client(get<OkHttpClient>())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }
@@ -96,7 +97,7 @@ val appModule =
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
         single<AuthRepository> { AuthRepositoryImpl(get()) }
         single<UserProfileRepository> { UserProfileRepositoryImpl(get()) }
-        single<GraphQLClient> { ApolloGraphQLClient() }
+        single<GraphQLClient> { ApolloGraphQLClient(get()) }
         single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
 
         factory { GetTopHeadlinesUseCase(get()) }

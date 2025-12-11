@@ -2,10 +2,12 @@ package com.example.todoapp.data.remote
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.network.okHttpClient
 import com.example.todoapp.LaunchesQuery
 import com.example.todoapp.RocketQuery
 import com.example.todoapp.data.remote.model.toDomain
 import com.example.todoapp.domain.model.SpaceXLaunch
+import okhttp3.OkHttpClient
 
 interface GraphQLClient {
     suspend fun getLaunches(limit: Int): Result<List<SpaceXLaunch>>
@@ -13,11 +15,14 @@ interface GraphQLClient {
     suspend fun getRocket(rocketId: String): Result<RocketQuery.Rocket?>
 }
 
-class ApolloGraphQLClient : GraphQLClient {
+class ApolloGraphQLClient(
+    okHttpClient: OkHttpClient,
+) : GraphQLClient {
     private val client =
         ApolloClient
             .Builder()
             .serverUrl("https://spacex-production.up.railway.app/")
+            .okHttpClient(okHttpClient)
             .build()
 
     override suspend fun getLaunches(limit: Int): Result<List<SpaceXLaunch>> =
