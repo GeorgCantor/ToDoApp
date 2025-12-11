@@ -15,10 +15,6 @@ class SpaceXViewModel(
     private val _uiState = MutableStateFlow<SpaceXUiState>(SpaceXUiState.Loading)
     val uiState: StateFlow<SpaceXUiState> = _uiState.asStateFlow()
 
-    init {
-        loadLaunches()
-    }
-
     fun loadLaunches(limit: Int = 10) {
         viewModelScope.launch {
             _uiState.value = SpaceXUiState.Loading

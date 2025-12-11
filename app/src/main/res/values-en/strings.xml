@@ -229,4 +229,20 @@
     <string name="undo_move">Undo move</string>
     <string name="new_game">New Game</string>
     <string name="rules">Rules: 3 in a row horizontally, vertically or diagonally</string>
+
+    <!-- SpaceX -->
+    <string name="spacex">SpaceX</string>
+    <string name="launches">Launches</string>
+    <string name="mission">Mission</string>
+    <string name="rocket">Rocket</string>
+    <string name="launch_date">Launch Date</string>
+    <string name="statusX">Status</string>
+    <string name="successful">Successful</string>
+    <string name="failed">Failed</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="no_launches">No launches available</string>
+    <string name="loading_spacex">Loading SpaceX data…</string>
+    <string name="error_loading_spacex">Error loading SpaceX data</string>
+    <string name="details">Details</string>
+    <string name="site">Site</string>
 </resources>

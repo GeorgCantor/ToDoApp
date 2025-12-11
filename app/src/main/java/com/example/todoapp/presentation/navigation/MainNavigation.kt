@@ -37,6 +37,7 @@ import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SignUpScreen
+import com.example.todoapp.presentation.screens.SpaceXScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.screens.TicTacToeScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
@@ -44,6 +45,7 @@ import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
+import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,6 +62,7 @@ fun MainNavigation(
     val chatViewModel: ChatViewModel = koinViewModel()
     val calculatorViewModel: CalculatorViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = koinViewModel()
+    val spaceXViewModel: SpaceXViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -197,6 +200,8 @@ fun MainNavigation(
         composable(NavRoutes.Map.route) { MapScreen() }
 
         composable(NavRoutes.TicTacToe.route) { TicTacToeScreen() }
+
+        composable(NavRoutes.SpaceX.route) { SpaceXScreen(spaceXViewModel) }
 
         composable(
             route = NavRoutes.Search.route,

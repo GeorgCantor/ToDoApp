@@ -46,6 +46,7 @@ import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
+import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -132,4 +133,5 @@ val appModule =
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get(), get()) }
         viewModel { AuthViewModel(get(), get()) }
+        viewModel { SpaceXViewModel(get()) }
     }

@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -177,6 +178,15 @@ fun ProfileScreen(
                         Icon(
                             imageVector = Icons.Default.ThumbUp,
                             contentDescription = stringResource(R.string.tictactoe_title),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { navController.navigate(NavRoutes.SpaceX.route) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = stringResource(R.string.spacex),
                         )
                     }
                 },

@@ -229,4 +229,20 @@
     <string name="undo_move">Отменить ход</string>
     <string name="new_game">Новая игра</string>
     <string name="rules">Правила: 3 в ряд по горизонтали, вертикали или диагонали</string>
+
+    <!-- SpaceX -->
+    <string name="spacex">SpaceX</string>
+    <string name="launches">Запуски</string>
+    <string name="mission">Миссия</string>
+    <string name="rocket">Ракета</string>
+    <string name="launch_date">Дата запуска</string>
+    <string name="statusX">Статус</string>
+    <string name="successful">Успешно</string>
+    <string name="failed">Неудача</string>
+    <string name="upcoming">Предстоящий</string>
+    <string name="no_launches">Нет доступных запусков</string>
+    <string name="loading_spacex">Загрузка данных SpaceX…</string>
+    <string name="error_loading_spacex">Ошибка загрузки данных SpaceX</string>
+    <string name="details">Подробности</string>
+    <string name="site">Площадка</string>
 </resources>
