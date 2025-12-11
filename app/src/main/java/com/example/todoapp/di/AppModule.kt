@@ -3,12 +3,15 @@ package com.example.todoapp.di
 import androidx.datastore.core.DataStore
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.example.todoapp.data.remote.ApolloGraphQLClient
+import com.example.todoapp.data.remote.GraphQLClient
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.data.repository.AuthRepositoryImpl
 import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.data.repository.SpaceXRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
@@ -18,6 +21,7 @@ import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.repository.SpaceXRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
@@ -28,6 +32,7 @@ import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
+import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
@@ -90,6 +95,8 @@ val appModule =
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
         single<AuthRepository> { AuthRepositoryImpl(get()) }
         single<UserProfileRepository> { UserProfileRepositoryImpl(get()) }
+        single<GraphQLClient> { ApolloGraphQLClient() }
+        single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -107,6 +114,7 @@ val appModule =
         factory { SaveUserProfileUseCase(get()) }
         factory { UpdateUserStatisticsUseCase(get()) }
         factory { InitializeUserProfileUseCase(get()) }
+        factory { GetSpaceXLaunchesUseCase(get()) }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {
