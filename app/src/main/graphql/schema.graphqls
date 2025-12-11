@@ -1,0 +1,65 @@
+# GraphQL Schema for SpaceX API
+# This file can be empty, Apollo will download the schema automatically
+
+# Or you can add a basic schema definition:
+schema {
+  query: Query
+}
+
+type Query {
+  launches(limit: Int, offset: Int): [Launch]
+  launch(id: ID!): Launch
+  rockets: [Rocket]
+  rocket(id: ID!): Rocket
+}
+
+type Launch {
+  id: ID
+  mission_name: String
+  launch_date_utc: String
+  rocket: LaunchRocket
+  launch_success: Boolean
+  details: String
+  launch_site: LaunchSite
+  links: LaunchLinks
+  upcoming: Boolean
+}
+
+type LaunchRocket {
+  rocket_name: String
+}
+
+type LaunchSite {
+  site_name: String
+  site_name_long: String
+}
+
+type LaunchLinks {
+  mission_patch: String
+  mission_patch_small: String
+  article_link: String
+  video_link: String
+  wikipedia: String
+  reddit_campaign: String
+}
+
+type Rocket {
+  id: ID
+  name: String
+  description: String
+  height: RocketDimension
+  diameter: RocketDimension
+  mass: RocketMass
+  first_flight: String
+  active: Boolean
+}
+
+type RocketDimension {
+  meters: Float
+  feet: Float
+}
+
+type RocketMass {
+  kg: Int
+  lb: Int
+}

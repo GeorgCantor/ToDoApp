@@ -1,0 +1,21 @@
+query Rocket($rocketId: ID!) {
+    rocket(id: $rocketId) {
+        id
+        name
+        description
+        height {
+            meters
+            feet
+        }
+        diameter {
+            meters
+            feet
+        }
+        mass {
+            kg
+            lb
+        }
+        first_flight
+        active
+    }
+}
