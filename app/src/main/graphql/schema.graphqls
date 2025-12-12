@@ -3,63 +3,369 @@
 
 # Or you can add a basic schema definition:
 schema {
-  query: Query
+    query: Query
 }
 
 type Query {
-  launches(limit: Int, offset: Int): [Launch]
-  launch(id: ID!): Launch
-  rockets: [Rocket]
-  rocket(id: ID!): Rocket
+    launches(
+        limit: Int
+        offset: Int
+        order: String
+        sort: String
+        launch_year: String
+        rocket_id: String
+        mission_name: String
+    ): [Launch]
+
+    launch(id: ID!): Launch
+
+    rockets(
+        limit: Int
+        offset: Int
+    ): [Rocket]
+
+    rocket(id: ID!): Rocket
+
+    ships(
+        limit: Int
+        offset: Int
+    ): [Ship]
+
+    ship(id: ID!): Ship
+
+    capsules(
+        limit: Int
+        offset: Int
+    ): [Capsule]
+
+    capsule(id: ID!): Capsule
+
+    histories(
+        limit: Int
+        offset: Int
+    ): [History]
+
+    history(id: ID!): History
+
+    payloads(
+        limit: Int
+        offset: Int
+    ): [Payload]
+
+    payload(id: ID!): Payload
 }
 
 type Launch {
-  id: ID
-  mission_name: String
-  launch_date_utc: String
-  rocket: LaunchRocket
-  launch_success: Boolean
-  details: String
-  launch_site: LaunchSite
-  links: LaunchLinks
-  upcoming: Boolean
+    id: ID
+    mission_name: String
+    launch_date_utc: String
+    launch_date_local: String
+    launch_date_unix: Int
+    launch_success: Boolean
+    upcoming: Boolean
+    details: String
+    static_fire_date_utc: String
+    static_fire_date_unix: Int
+    timeline: LaunchTimeline
+    launch_window: Int
+    rocket: LaunchRocket
+    launch_site: LaunchSite
+    links: LaunchLinks
+    ships: [Ship]
+    crew: [Crew]
+    capsules: [Capsule]
+    payloads: [Payload]
+    fairings: Fairing
+    mission_id: [String]
+    launch_year: String
+    is_tentative: Boolean
+    tentative_max_precision: String
 }
 
 type LaunchRocket {
-  rocket_name: String
+    rocket_id: String
+    rocket_name: String
+    rocket_type: String
+    first_stage: LaunchRocketFirstStage
+    second_stage: LaunchRocketSecondStage
+    fairings: LaunchRocketFairings
+    rocket: Rocket
+}
+
+type LaunchRocketFirstStage {
+    cores: [LaunchRocketFirstStageCore]
+}
+
+type LaunchRocketFirstStageCore {
+    core_serial: String
+    flight: Int
+    block: Int
+    gridfins: Boolean
+    legs: Boolean
+    reused: Boolean
+    land_success: Boolean
+    landing_intent: Boolean
+    landing_type: String
+    landing_vehicle: String
+}
+
+type LaunchRocketSecondStage {
+    block: Int
+    payloads: [Payload]
+}
+
+type LaunchRocketFairings {
+    reused: Boolean
+    recovery_attempt: Boolean
+    recovered: Boolean
+    ship: String
 }
 
 type LaunchSite {
-  site_name: String
-  site_name_long: String
+    site_id: String
+    site_name: String
+    site_name_long: String
 }
 
 type LaunchLinks {
-  mission_patch: String
-  mission_patch_small: String
-  article_link: String
-  video_link: String
-  wikipedia: String
-  reddit_campaign: String
+    mission_patch: String
+    mission_patch_small: String
+    reddit_campaign: String
+    reddit_launch: String
+    reddit_recovery: String
+    reddit_media: String
+    presskit: String
+    article_link: String
+    wikipedia: String
+    video_link: String
+    youtube_id: String
+    flickr_images: [String]
+}
+
+type LaunchTimeline {
+    webcast_liftoff: Int
+    go_for_prop_loading: Int
+    rp1_loading: Int
+    stage1_lox_loading: Int
+    stage2_lox_loading: Int
+    engine_chill: Int
+    prelaunch_checks: Int
+    propellant_pressurization: Int
+    go_for_launch: Int
+    ignition: Int
+    liftoff: Int
+    maxq: Int
+    meco: Int
+    stage_sep: Int
+    second_stage_ignition: Int
+    fairing_deploy: Int
+    first_stage_entry_burn: Int
+    seco1: Int
+    first_stage_landing: Int
+    second_stage_restart: Int
+    payload_deploy: Int
 }
 
 type Rocket {
-  id: ID
-  name: String
-  description: String
-  height: RocketDimension
-  diameter: RocketDimension
-  mass: RocketMass
-  first_flight: String
-  active: Boolean
+    id: ID
+    name: String
+    type: String
+    active: Boolean
+    stages: Int
+    boosters: Int
+    cost_per_launch: Int
+    success_rate_pct: Int
+    first_flight: String
+    country: String
+    company: String
+    height: Distance
+    diameter: Distance
+    mass: Mass
+    payload_weights: [RocketPayloadWeight]
+    first_stage: RocketFirstStage
+    second_stage: RocketSecondStage
+    engines: RocketEngines
+    landing_legs: LandingLegs
+    flickr_images: [String]
+    wikipedia: String
+    description: String
 }
 
-type RocketDimension {
-  meters: Float
-  feet: Float
+type RocketPayloadWeight {
+    id: String
+    name: String
+    kg: Int
+    lb: Int
 }
 
-type RocketMass {
-  kg: Int
-  lb: Int
+type RocketFirstStage {
+    reusable: Boolean
+    engines: Int
+    fuel_amount_tons: Float
+    burn_time_sec: Int
+    thrust_sea_level: Force
+    thrust_vacuum: Force
+}
+
+type RocketSecondStage {
+    reusable: Boolean
+    engines: Int
+    fuel_amount_tons: Float
+    burn_time_sec: Int
+    thrust: Force
+    payloads: RocketSecondStagePayloads
+}
+
+type RocketSecondStagePayloads {
+    option_1: String
+    composite_fairing: CompositeFairing
+}
+
+type CompositeFairing {
+    height: Distance
+    diameter: Distance
+}
+
+type RocketEngines {
+    number: Int
+    type: String
+    version: String
+    layout: String
+    engine_loss_max: Int
+    propellant_1: String
+    propellant_2: String
+    thrust_sea_level: Force
+    thrust_vacuum: Force
+    thrust_to_weight: Float
+}
+
+type LandingLegs {
+    number: Int
+    material: String
+}
+
+type Ship {
+    id: ID
+    name: String
+    model: String
+    type: String
+    roles: [String]
+    active: Boolean
+    imo: Int
+    mmsi: Int
+    abs: Int
+    class: Int
+    mass_kg: Int
+    mass_lbs: Int
+    year_built: Int
+    home_port: String
+    status: String
+    speed_kn: Int
+    course_deg: Int
+    latitude: Float
+    longitude: Float
+    last_ais_update: String
+    link: String
+    image: String
+    launches: [Launch]
+}
+
+type Crew {
+    id: ID
+    name: String
+    agency: String
+    image: String
+    wikipedia: String
+    launches: [Launch]
+    status: String
+}
+
+type Capsule {
+    id: ID
+    serial: String
+    type: String
+    status: String
+    reuse_count: Int
+    water_landings: Int
+    land_landings: Int
+    last_update: String
+    launches: [Launch]
+}
+
+type Payload {
+    id: ID
+    name: String
+    type: String
+    reused: Boolean
+    launch: String
+    customers: [String]
+    norad_ids: [Int]
+    nationalities: [String]
+    manufacturers: [String]
+    mass_kg: Float
+    mass_lbs: Float
+    orbit: String
+    reference_system: String
+    regime: String
+    longitude: Float
+    semi_major_axis_km: Float
+    eccentricity: Float
+    periapsis_km: Float
+    apoapsis_km: Float
+    inclination_deg: Float
+    period_min: Float
+    lifespan_years: Float
+    epoch: String
+    mean_motion: Float
+    raan: Float
+    arg_of_pericenter: Float
+    mean_anomaly: Float
+    dragon: Dragon
+}
+
+type Dragon {
+    capsule: String
+    mass_returned_kg: Float
+    mass_returned_lbs: Float
+    flight_time_sec: Int
+    manifest: String
+    water_landing: Boolean
+    land_landing: Boolean
+}
+
+type History {
+    id: ID
+    title: String
+    event_date_utc: String
+    event_date_unix: Int
+    details: String
+    links: HistoryLinks
+}
+
+type HistoryLinks {
+    article: String
+    reddit: String
+    wikipedia: String
+}
+
+type Fairing {
+    reused: Boolean
+    recovery_attempt: Boolean
+    recovered: Boolean
+    ships: [String]
+}
+
+type Distance {
+    meters: Float
+    feet: Float
+}
+
+type Mass {
+    kg: Int
+    lb: Int
+}
+
+type Force {
+    kN: Float
+    lbf: Int
 }

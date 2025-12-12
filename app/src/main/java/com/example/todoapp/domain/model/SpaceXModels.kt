@@ -4,47 +4,95 @@ data class SpaceXLaunch(
     val id: String,
     val missionName: String,
     val launchDateUtc: String,
-    val rocketName: String,
     val launchSuccess: Boolean?,
-    val details: String?,
-    val launchSite: LaunchSite,
-    val links: LaunchLinks,
     val upcoming: Boolean,
+    val rocketId: String?,
+    val rocketName: String,
+    val launchSite: LaunchSite,
+    val details: String?,
+    val links: Links,
+    val ships: List<Ship> = emptyList(),
+    val crew: List<CrewMember> = emptyList(),
+    val capsules: List<String> = emptyList(),
+    val payloads: List<Payload> = emptyList(),
+    val launchDateLocal: String? = null,
+    val staticFireDateUtc: String? = null,
+    val launchWindow: Int? = null,
+    val missionId: List<String> = emptyList(),
+    val launchYear: String? = null,
+    val isTentative: Boolean = false,
+    val tentativeMaxPrecision: String? = null,
 )
 
 data class LaunchSite(
+    val siteId: String,
     val siteName: String,
     val siteNameLong: String?,
 )
 
-data class LaunchLinks(
+data class Links(
     val missionPatch: String?,
     val missionPatchSmall: String?,
     val articleLink: String?,
-    val videoLink: String?,
     val wikipedia: String?,
-    val redditCampaign: String?,
+    val videoLink: String?,
+    val youtubeId: String?,
+    val flickrImages: List<String> = emptyList(),
+    val redditCampaign: String? = null,
+    val redditLaunch: String? = null,
+    val redditRecovery: String? = null,
+    val redditMedia: String? = null,
+    val presskit: String? = null,
 )
 
-data class SpaceXRocket(
+data class Ship(
     val id: String,
     val name: String,
-    val description: String,
-    val height: RocketDimension?,
-    val diameter: RocketDimension?,
-    val mass: RocketMass?,
+    val type: String?,
+    val yearBuilt: Int?,
+    val homePort: String?,
+    val image: String?,
+)
+
+data class CrewMember(
+    val id: String,
+    val name: String,
+    val agency: String,
+    val image: String?,
+    val wikipedia: String?,
+    val status: String,
+)
+
+data class Payload(
+    val id: String,
+    val name: String,
+    val type: String?,
+    val orbit: String?,
+    val customers: List<String>,
+    val massKg: Double?,
+)
+
+data class Capsule(
+    val id: String,
+    val type: String?,
+    val status: String?,
+    val serial: String?,
+)
+
+data class RocketDetail(
+    val id: String,
+    val name: String,
+    val type: String?,
+    val company: String?,
+    val country: String?,
+    val description: String?,
+    val heightMeters: Double?,
+    val diameterMeters: Double?,
+    val massKg: Double?,
+    val costPerLaunch: Int?,
+    val successRatePct: Int?,
     val firstFlight: String?,
-    val active: Boolean,
-)
-
-data class RocketDimension(
-    val meters: Float?,
-    val feet: Float?,
-)
-
-data class RocketMass(
-    val kg: Int?,
-    val lb: Int?,
+    val wikipedia: String?,
 )
 
 sealed class SpaceXUiState {

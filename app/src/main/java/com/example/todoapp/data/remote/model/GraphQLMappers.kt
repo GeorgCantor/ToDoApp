@@ -1,8 +1,8 @@
 package com.example.todoapp.data.remote.model
 
 import com.example.todoapp.LaunchesQuery
-import com.example.todoapp.domain.model.LaunchLinks
 import com.example.todoapp.domain.model.LaunchSite
+import com.example.todoapp.domain.model.Links
 import com.example.todoapp.domain.model.SpaceXLaunch
 
 fun LaunchesQuery.Launch.toDomain(): SpaceXLaunch =
@@ -15,17 +15,20 @@ fun LaunchesQuery.Launch.toDomain(): SpaceXLaunch =
         details = details.orEmpty(),
         launchSite =
             LaunchSite(
+                siteId = launch_site?.site_name.hashCode().toString(),
                 siteName = launch_site?.site_name ?: "Unknown Site",
                 siteNameLong = launch_site?.site_name_long,
             ),
         links =
-            LaunchLinks(
+            Links(
                 missionPatch = links?.mission_patch,
                 missionPatchSmall = links?.mission_patch_small,
                 articleLink = links?.article_link,
                 videoLink = links?.video_link,
                 wikipedia = links?.wikipedia,
                 redditCampaign = links?.reddit_campaign,
+                youtubeId = null,
             ),
         upcoming = upcoming ?: false,
+        rocketId = rocket?.rocket_name.hashCode().toString(),
     )
