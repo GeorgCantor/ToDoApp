@@ -1,11 +1,11 @@
 package com.example.todoapp.domain.model
 
 data class SpaceXLaunch(
-    val id: String,
-    val missionName: String,
-    val launchDateUtc: String,
+    val id: String?,
+    val missionName: String?,
+    val launchDateUtc: String?,
     val launchSuccess: Boolean?,
-    val upcoming: Boolean,
+    val upcoming: Boolean?,
     val rocketId: String?,
     val rocketName: String,
     val launchSite: LaunchSite,
@@ -18,9 +18,9 @@ data class SpaceXLaunch(
     val launchDateLocal: String? = null,
     val staticFireDateUtc: String? = null,
     val launchWindow: Int? = null,
-    val missionId: List<String> = emptyList(),
+    val missionId: List<String?>? = emptyList(),
     val launchYear: String? = null,
-    val isTentative: Boolean = false,
+    val isTentative: Boolean? = false,
     val tentativeMaxPrecision: String? = null,
 )
 
@@ -37,7 +37,7 @@ data class Links(
     val wikipedia: String?,
     val videoLink: String?,
     val youtubeId: String?,
-    val flickrImages: List<String> = emptyList(),
+    val flickrImages: List<String?> = emptyList(),
     val redditCampaign: String? = null,
     val redditLaunch: String? = null,
     val redditRecovery: String? = null,
@@ -46,8 +46,8 @@ data class Links(
 )
 
 data class Ship(
-    val id: String,
-    val name: String,
+    val id: String?,
+    val name: String?,
     val type: String?,
     val yearBuilt: Int?,
     val homePort: String?,
@@ -55,20 +55,20 @@ data class Ship(
 )
 
 data class CrewMember(
-    val id: String,
-    val name: String,
-    val agency: String,
+    val id: String?,
+    val name: String?,
+    val agency: String?,
     val image: String?,
     val wikipedia: String?,
-    val status: String,
+    val status: String?,
 )
 
 data class Payload(
-    val id: String,
-    val name: String,
+    val id: String?,
+    val name: String?,
     val type: String?,
     val orbit: String?,
-    val customers: List<String>,
+    val customers: List<String?>?,
     val massKg: Double?,
 )
 
@@ -80,8 +80,8 @@ data class Capsule(
 )
 
 data class RocketDetail(
-    val id: String,
-    val name: String,
+    val id: String?,
+    val name: String?,
     val type: String?,
     val company: String?,
     val country: String?,

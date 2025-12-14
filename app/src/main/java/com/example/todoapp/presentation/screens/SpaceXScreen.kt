@@ -202,7 +202,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = launch.missionName,
+                    text = launch.missionName.orEmpty(),
                     style =
                         MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
@@ -215,7 +215,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
 
                 LaunchStatusBadge(
                     success = launch.launchSuccess,
-                    upcoming = launch.upcoming,
+                    upcoming = launch.upcoming ?: false,
                 )
             }
 
@@ -234,7 +234,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
                     Spacer(modifier = Modifier.height(4.dp))
                     InfoRow(
                         label = stringResource(R.string.launch_date),
-                        value = launch.launchDateUtc.toFormattedDate(),
+                        value = launch.launchDateUtc?.toFormattedDate().orEmpty(),
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     InfoRow(
