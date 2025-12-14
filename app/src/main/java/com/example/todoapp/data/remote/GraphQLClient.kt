@@ -8,6 +8,8 @@ import com.example.todoapp.LaunchesQuery
 import com.example.todoapp.RocketQuery
 import com.example.todoapp.data.remote.model.toDomain
 import com.example.todoapp.data.remote.model.toLaunchDetail
+import com.example.todoapp.data.remote.model.toRocketDetail
+import com.example.todoapp.domain.model.RocketDetail
 import com.example.todoapp.domain.model.SpaceXLaunch
 import okhttp3.OkHttpClient
 
@@ -16,7 +18,7 @@ interface GraphQLClient {
 
     suspend fun getLaunchDetail(id: String): Result<SpaceXLaunch>
 
-    suspend fun getRocket(rocketId: String): Result<RocketQuery.Rocket?>
+    suspend fun getRocketDetail(rocketId: String): Result<RocketDetail>
 }
 
 class ApolloGraphQLClient(
@@ -62,15 +64,19 @@ class ApolloGraphQLClient(
         }
     }
 
-    override suspend fun getRocket(rocketId: String): Result<RocketQuery.Rocket?> =
-        try {
+    override suspend fun getRocketDetail(rocketId: String): Result<RocketDetail> {
+        return try {
             val response = client.query(RocketQuery(rocketId)).execute()
             if (response.hasErrors()) {
                 Result.failure(Exception(response.errors?.first()?.message))
             } else {
-                Result.success(response.data?.rocket)
+                val rocket =
+                    response.data?.rocket?.toRocketDetail()
+                        ?: return Result.failure(Exception("Rocket not found"))
+                Result.success(rocket)
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
 }
