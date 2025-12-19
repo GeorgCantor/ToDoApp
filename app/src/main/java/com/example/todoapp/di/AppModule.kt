@@ -32,6 +32,7 @@ import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
+import com.example.todoapp.domain.usecase.GetLaunchDetailUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
@@ -117,6 +118,7 @@ val appModule =
         factory { UpdateUserStatisticsUseCase(get()) }
         factory { InitializeUserProfileUseCase(get()) }
         factory { GetSpaceXLaunchesUseCase(get()) }
+        factory { GetLaunchDetailUseCase(get()) }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {
@@ -134,5 +136,5 @@ val appModule =
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get(), get()) }
         viewModel { AuthViewModel(get(), get()) }
-        viewModel { SpaceXViewModel(get()) }
+        viewModel { SpaceXViewModel(get(), get()) }
     }
