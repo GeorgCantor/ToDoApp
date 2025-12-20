@@ -245,4 +245,8 @@
     <string name="error_loading_spacex">Error loading SpaceX data</string>
     <string name="details">Details</string>
     <string name="site">Site</string>
+    <string name="loading_details">Loading details…</string>
+    <string name="mission_details">Mission Details</string>
+    <string name="payloads">Payloads</string>
+    <string name="mission_patch">Mission Patch</string>
 </resources>
