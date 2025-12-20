@@ -14,7 +14,6 @@ query LaunchDetail($id: ID!) {
         is_tentative
         tentative_max_precision
         rocket {
-            rocket_id
             rocket_name
             rocket_type
             rocket {

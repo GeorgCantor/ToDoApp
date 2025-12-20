@@ -8,12 +8,13 @@ query LaunchDetailQuery($id: ID!) {
         details
         launch_date_local
         static_fire_date_utc
-        launch_window
         mission_id
         launch_year
         is_tentative
         tentative_max_precision
         rocket {
+            rocket_name
+            rocket_type
             rocket {
                 id
                 name
@@ -52,7 +53,6 @@ query LaunchDetailQuery($id: ID!) {
             article_link
             wikipedia
             video_link
-            youtube_id
             flickr_images
         }
         ships {
@@ -62,28 +62,6 @@ query LaunchDetailQuery($id: ID!) {
             year_built
             home_port
             image
-        }
-        crew {
-            id
-            name
-            agency
-            image
-            wikipedia
-            status
-        }
-        capsules {
-            id
-            type
-            status
-            serial
-        }
-        payloads {
-            id
-            name
-            type
-            orbit
-            customers
-            mass_kg
         }
     }
 }

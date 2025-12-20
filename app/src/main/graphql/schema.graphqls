@@ -13,7 +13,6 @@ type Query {
         order: String
         sort: String
         launch_year: String
-        rocket_id: String
         mission_name: String
     ): [Launch]
 
@@ -83,7 +82,6 @@ type Launch {
 }
 
 type LaunchRocket {
-    rocket_id: String
     rocket_name: String
     rocket_type: String
     first_stage: LaunchRocketFirstStage

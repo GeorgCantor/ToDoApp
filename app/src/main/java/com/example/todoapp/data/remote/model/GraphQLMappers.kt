@@ -3,10 +3,8 @@ package com.example.todoapp.data.remote.model
 import com.example.todoapp.LaunchDetailQuery
 import com.example.todoapp.LaunchesQuery
 import com.example.todoapp.RocketQuery
-import com.example.todoapp.domain.model.CrewMember
 import com.example.todoapp.domain.model.LaunchSite
 import com.example.todoapp.domain.model.Links
-import com.example.todoapp.domain.model.Payload
 import com.example.todoapp.domain.model.RocketDetail
 import com.example.todoapp.domain.model.Ship
 import com.example.todoapp.domain.model.SpaceXLaunch
@@ -33,7 +31,6 @@ fun LaunchesQuery.Launch.toDomain(): SpaceXLaunch =
                 videoLink = links?.video_link,
                 wikipedia = links?.wikipedia,
                 redditCampaign = links?.reddit_campaign,
-                youtubeId = null,
             ),
         upcoming = upcoming ?: false,
         rocketId = rocket?.rocket_name.hashCode().toString(),
@@ -65,7 +62,6 @@ fun LaunchDetailQuery.Launch.toLaunchDetail(): SpaceXLaunch {
                 articleLink = links?.article_link,
                 wikipedia = links?.wikipedia,
                 videoLink = links?.video_link,
-                youtubeId = links?.youtube_id,
                 flickrImages = links?.flickr_images.orEmpty(),
                 redditCampaign = links?.reddit_campaign,
                 redditLaunch = links?.reddit_launch,
@@ -87,38 +83,8 @@ fun LaunchDetailQuery.Launch.toLaunchDetail(): SpaceXLaunch {
                         )
                     }
                 }.orEmpty(),
-        crew =
-            crew
-                ?.mapNotNull { member ->
-                    member?.let {
-                        CrewMember(
-                            id = it.id,
-                            name = it.name,
-                            agency = it.agency,
-                            image = it.image,
-                            wikipedia = it.wikipedia,
-                            status = it.status,
-                        )
-                    }
-                }.orEmpty(),
-        capsules = capsules?.mapNotNull { it?.id }.orEmpty(),
-        payloads =
-            payloads
-                ?.mapNotNull { payload ->
-                    payload?.let {
-                        Payload(
-                            id = it.id,
-                            name = it.name,
-                            type = it.type,
-                            orbit = it.orbit,
-                            customers = it.customers.orEmpty(),
-                            massKg = it.mass_kg,
-                        )
-                    }
-                }.orEmpty(),
         launchDateLocal = launch_date_local,
         staticFireDateUtc = static_fire_date_utc,
-        launchWindow = launch_window,
         missionId = mission_id.orEmpty(),
         launchYear = launch_year,
         isTentative = is_tentative,

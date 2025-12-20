@@ -236,25 +236,6 @@ private fun LaunchDetailContent(launch: SpaceXLaunch) {
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        if (launch.payloads.isNotEmpty()) {
-            DetailCard {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = stringResource(R.string.payloads),
-                        style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "${launch.payloads.size} payload(s)",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-        }
     }
 }
 
