@@ -47,12 +47,12 @@ class SpaceXViewModel(
     fun openLaunchDetail(launchId: String?) {
         launchId ?: return
         viewModelScope.launch {
+            _showDetail.value = true
             _detailLoading.value = true
             _detailError.value = null
             val result = getDetailUseCase(launchId)
             if (result.isSuccess) {
                 _selectedLaunch.value = result.getOrThrow()
-                _showDetail.value = true
                 _detailError.value = null
             } else {
                 _selectedLaunch.value = null
@@ -66,5 +66,6 @@ class SpaceXViewModel(
         _showDetail.value = false
         _selectedLaunch.value = null
         _detailError.value = null
+        _detailLoading.value = false
     }
 }

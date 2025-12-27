@@ -65,15 +65,15 @@ fun SpaceXScreen(
     val detailError = viewModel.detailError.collectAsState()
 
     if (showDetail.value) {
-        selectedLaunch.value?.let { launch ->
-            LaunchDetailDialog(
-                launch = launch,
-                isLoading = detailLoading.value,
-                error = detailError.value,
-                onDismiss = { viewModel.closeLaunchDetail() },
-                onRetry = { viewModel.openLaunchDetail(launch.id) },
-            )
-        }
+        LaunchDetailDialog(
+            launch = selectedLaunch.value,
+            isLoading = detailLoading.value,
+            error = detailError.value,
+            onDismiss = { viewModel.closeLaunchDetail() },
+            onRetry = {
+                viewModel.openLaunchDetail(selectedLaunch.value?.id)
+            },
+        )
     }
 
     LaunchedEffect(Unit) {

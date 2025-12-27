@@ -55,7 +55,7 @@ import com.example.todoapp.utils.toFormattedDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LaunchDetailDialog(
-    launch: SpaceXLaunch,
+    launch: SpaceXLaunch?,
     isLoading: Boolean,
     error: String?,
     onDismiss: () -> Unit,
@@ -81,7 +81,7 @@ fun LaunchDetailDialog(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = launch.missionName.orEmpty(),
+                            text = launch?.missionName.orEmpty(),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -132,7 +132,7 @@ fun LaunchDetailDialog(
                             }
                         }
                     } else {
-                        LaunchDetailContent(launch = launch)
+                        launch?.let { LaunchDetailContent(launch = it) }
                     }
                 }
             }
