@@ -59,6 +59,22 @@ fun SpaceXScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState = viewModel.uiState.collectAsState()
+    val showDetail = viewModel.showDetail.collectAsState()
+    val selectedLaunch = viewModel.selectedLaunch.collectAsState()
+    val detailLoading = viewModel.detailLoading.collectAsState()
+    val detailError = viewModel.detailError.collectAsState()
+
+    if (showDetail.value) {
+        LaunchDetailDialog(
+            launch = selectedLaunch.value,
+            isLoading = detailLoading.value,
+            error = detailError.value,
+            onDismiss = { viewModel.closeLaunchDetail() },
+            onRetry = {
+                viewModel.openLaunchDetail(selectedLaunch.value?.id)
+            },
+        )
+    }
 
     LaunchedEffect(Unit) {
         if (uiState.value is SpaceXUiState.Loading) {
@@ -144,7 +160,10 @@ fun SpaceXScreen(
                                     .PaddingValues(16.dp),
                         ) {
                             items(items = state.launches) { launch ->
-                                LaunchCard(launch = launch)
+                                LaunchCard(
+                                    launch = launch,
+                                    onClick = { viewModel.openLaunchDetail(launch.id) },
+                                )
                             }
                         }
                     }
@@ -186,12 +205,15 @@ fun SpaceXScreen(
 }
 
 @Composable
-fun LaunchCard(launch: SpaceXLaunch) {
+fun LaunchCard(
+    launch: SpaceXLaunch,
+    onClick: () -> Unit,
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp),
-        onClick = {},
+        onClick = onClick,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -202,7 +224,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = launch.missionName,
+                    text = launch.missionName.orEmpty(),
                     style =
                         MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
@@ -215,7 +237,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
 
                 LaunchStatusBadge(
                     success = launch.launchSuccess,
-                    upcoming = launch.upcoming,
+                    upcoming = launch.upcoming ?: false,
                 )
             }
 
@@ -234,7 +256,7 @@ fun LaunchCard(launch: SpaceXLaunch) {
                     Spacer(modifier = Modifier.height(4.dp))
                     InfoRow(
                         label = stringResource(R.string.launch_date),
-                        value = launch.launchDateUtc.toFormattedDate(),
+                        value = launch.launchDateUtc?.toFormattedDate().orEmpty(),
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     InfoRow(

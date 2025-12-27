@@ -17,5 +17,11 @@ query Rocket($rocketId: ID!) {
         }
         first_flight
         active
+        cost_per_launch
+        success_rate_pct
+        company
+        country
+        type
+        wikipedia
     }
 }

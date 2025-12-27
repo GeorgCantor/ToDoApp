@@ -245,4 +245,8 @@
     <string name="error_loading_spacex">Ошибка загрузки данных SpaceX</string>
     <string name="details">Подробности</string>
     <string name="site">Площадка</string>
+    <string name="loading_details">Загружаем инфу…</string>
+    <string name="mission_details">Детали миссии</string>
+    <string name="payloads">Полезные нагрузки</string>
+    <string name="mission_patch">Патч миссии</string>
 </resources>

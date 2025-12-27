@@ -1,0 +1,91 @@
+query LaunchDetail($id: ID!) {
+    launch(id: $id) {
+        id
+        mission_name
+        launch_date_utc
+        launch_success
+        upcoming
+        details
+        launch_date_local
+        static_fire_date_utc
+        launch_window
+        mission_id
+        launch_year
+        is_tentative
+        tentative_max_precision
+        rocket {
+            rocket_name
+            rocket_type
+            rocket {
+                id
+                name
+                type
+                company
+                country
+                description
+                height {
+                    meters
+                }
+                diameter {
+                    meters
+                }
+                mass {
+                    kg
+                }
+                cost_per_launch
+                success_rate_pct
+                first_flight
+                wikipedia
+            }
+        }
+        launch_site {
+            site_id
+            site_name
+            site_name_long
+        }
+        links {
+            mission_patch
+            mission_patch_small
+            reddit_campaign
+            reddit_launch
+            reddit_recovery
+            reddit_media
+            presskit
+            article_link
+            wikipedia
+            video_link
+            youtube_id
+            flickr_images
+        }
+        ships {
+            id
+            name
+            type
+            year_built
+            home_port
+            image
+        }
+        crew {
+            id
+            name
+            agency
+            image
+            wikipedia
+            status
+        }
+        capsules {
+            id
+            type
+            status
+            serial
+        }
+        payloads {
+            id
+            name
+            type
+            orbit
+            customers
+            mass_kg
+        }
+    }
+}
