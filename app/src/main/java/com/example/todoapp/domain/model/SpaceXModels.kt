@@ -101,3 +101,13 @@ sealed class SpaceXUiState {
         val message: String,
     ) : SpaceXUiState()
 }
+
+sealed class StatsUiState {
+    object Loading : StatsUiState()
+
+    object Success : StatsUiState()
+
+    data class Error(
+        val message: String,
+    ) : StatsUiState()
+}

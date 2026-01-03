@@ -46,4 +46,6 @@ sealed class NavRoutes(
     object TicTacToe : NavRoutes("tic_tac_toe_screen")
 
     object SpaceX : NavRoutes("spacex_screen")
+
+    object SpaceXStats : NavRoutes("spacex_stats_screen")
 }
