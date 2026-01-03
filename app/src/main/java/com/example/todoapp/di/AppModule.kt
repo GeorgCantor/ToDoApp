@@ -33,6 +33,7 @@ import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.GetLaunchDetailUseCase
+import com.example.todoapp.domain.usecase.GetLaunchStatisticsUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
@@ -47,7 +48,10 @@ import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
+import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
+import com.example.todoapp.presentation.visualization.SpaceXVisualizerFactory
+import com.example.todoapp.presentation.visualization.VisualizerFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -100,6 +104,7 @@ val appModule =
         single<UserProfileRepository> { UserProfileRepositoryImpl(get()) }
         single<GraphQLClient> { ApolloGraphQLClient(get()) }
         single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
+        single<VisualizerFactory> { SpaceXVisualizerFactory() }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -119,6 +124,8 @@ val appModule =
         factory { InitializeUserProfileUseCase(get()) }
         factory { GetSpaceXLaunchesUseCase(get()) }
         factory { GetLaunchDetailUseCase(get()) }
+        factory { GetLaunchStatisticsUseCase(get()) }
+        factory { SpaceXVisualizerFactory() }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {
@@ -137,4 +144,5 @@ val appModule =
         viewModel { CalculatorViewModel(get(), get(), get()) }
         viewModel { AuthViewModel(get(), get()) }
         viewModel { SpaceXViewModel(get(), get()) }
+        viewModel { SpaceXStatsViewModel(get(), get()) }
     }

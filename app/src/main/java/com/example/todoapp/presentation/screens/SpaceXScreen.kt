@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
@@ -44,17 +45,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.SpaceXLaunch
 import com.example.todoapp.domain.model.SpaceXUiState
+import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
 import com.example.todoapp.utils.toFormattedDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpaceXScreen(
+    navController: NavController,
     viewModel: SpaceXViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -102,12 +106,12 @@ fun SpaceXScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.loadLaunches() },
+                onClick = { navController.navigate(NavRoutes.SpaceXStats.route) },
                 modifier = Modifier.padding(16.dp),
             ) {
                 Icon(
-                    Icons.Filled.Refresh,
-                    contentDescription = stringResource(R.string.retry),
+                    Icons.Filled.List,
+                    contentDescription = stringResource(R.string.statistics),
                 )
             }
         },
