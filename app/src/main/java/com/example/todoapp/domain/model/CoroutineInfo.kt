@@ -1,16 +1,12 @@
 package com.example.todoapp.domain.model
 
-import java.util.UUID
-
 data class CoroutineInfo(
-    val id: String = UUID.randomUUID().toString(),
-    val name: String? = null,
-    val dispatcher: String,
-    val state: CoroutineState,
+    val id: String,
+    var name: String,
+    var state: CoroutineState = CoroutineState.ACTIVE,
+    val dispatcher: String = "Default",
     val startTime: Long = System.currentTimeMillis(),
-    val stackTrace: List<String> = emptyList(),
-    val parentId: String? = null,
-    val childrenCount: Int = 0,
+    var children: Int = 0,
 ) {
     val duration: Long get() = System.currentTimeMillis() - startTime
 }
