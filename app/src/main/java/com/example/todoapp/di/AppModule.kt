@@ -9,6 +9,7 @@ import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.data.repository.AuthRepositoryImpl
 import com.example.todoapp.data.repository.CalculatorRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
+import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
 import com.example.todoapp.data.repository.SpaceXRepositoryImpl
@@ -19,6 +20,7 @@ import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
 import com.example.todoapp.domain.repository.ChatRepository
+import com.example.todoapp.domain.repository.CoroutineMonitorRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
@@ -45,6 +47,7 @@ import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
+import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
@@ -105,6 +108,7 @@ val appModule =
         single<GraphQLClient> { ApolloGraphQLClient(get()) }
         single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
         single<VisualizerFactory> { SpaceXVisualizerFactory() }
+        single<CoroutineMonitorRepository> { CoroutineMonitorRepositoryImpl() }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -145,4 +149,5 @@ val appModule =
         viewModel { AuthViewModel(get(), get()) }
         viewModel { SpaceXViewModel(get(), get()) }
         viewModel { SpaceXStatsViewModel(get(), get()) }
+        viewModel { CoroutineMonitorViewModel(get()) }
     }

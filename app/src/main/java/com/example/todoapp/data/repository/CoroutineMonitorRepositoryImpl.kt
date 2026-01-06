@@ -2,6 +2,7 @@ package com.example.todoapp.data.repository
 
 import com.example.todoapp.domain.model.CoroutineInfo
 import com.example.todoapp.domain.model.CoroutineMonitorData
+import com.example.todoapp.domain.model.CoroutineState
 import com.example.todoapp.domain.model.ThreadInfo
 import com.example.todoapp.domain.repository.CoroutineMonitorRepository
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class CoroutineMonitorRepositoryImpl : CoroutineMonitorRepository {
     private val _monitorData = MutableStateFlow(CoroutineMonitorData())
@@ -37,12 +39,11 @@ class CoroutineMonitorRepositoryImpl : CoroutineMonitorRepository {
     }
 
     override suspend fun stopMonitoring() {
-        TODO("Not yet implemented")
+        monitorJob?.cancel()
+        monitorJob = null
     }
 
-    override fun isMonitoring(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isMonitoring() = monitorJob?.isActive == true
 
     private suspend fun updateMonitorData() {
         val coroutines = captureCoroutines()
@@ -74,5 +75,43 @@ class CoroutineMonitorRepositoryImpl : CoroutineMonitorRepository {
                 priority = it?.priority ?: 0,
             )
         }
+    }
+
+    fun createCoroutine(
+        name: String,
+        dispatcher: String = "Default",
+    ): String {
+        val id = UUID.randomUUID().toString()
+        coroutines[id] =
+            CoroutineInfo(
+                id = id,
+                name = name,
+                dispatcher = dispatcher,
+            )
+
+        monitoringScope.launch {
+            delay((2000..10000).random().toLong())
+            coroutines[id]?.state = CoroutineState.COMPLETED
+            delay(3000)
+            coroutines.remove(id)
+        }
+
+        return id
+    }
+
+    fun cancelCoroutine(id: String) {
+        coroutines[id]?.state = CoroutineState.CANCELLED
+        monitoringScope.launch {
+            delay(3000)
+            coroutines.remove(id)
+        }
+    }
+
+    fun suspendCoroutine(id: String) {
+        coroutines[id]?.state = CoroutineState.SUSPENDED
+    }
+
+    fun resumeCoroutine(id: String) {
+        coroutines[id]?.state = CoroutineState.ACTIVE
     }
 }
