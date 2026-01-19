@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
 import com.example.todoapp.domain.model.CoroutineMonitorData
 import com.example.todoapp.domain.repository.CoroutineMonitorRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,9 +55,21 @@ class CoroutineMonitorViewModel(
 
     fun createCoroutines() {
         clearCoroutines()
+        val repo = repository as CoroutineMonitorRepositoryImpl
         viewModelScope.launch {
-            val id = (repository as CoroutineMonitorRepositoryImpl).createCoroutine("Long task", "Default")
+            val id = repo.createCoroutine("Long task", "Default")
             coroutineIds.add(id)
+        }
+        viewModelScope.launch {
+            val id = repo.createCoroutine("IO task", "IO")
+            coroutineIds.add(id)
+        }
+        repeat(3) {
+            viewModelScope.launch {
+                delay((it * 500).toLong())
+                val id = repo.createCoroutine("Parallel $it", "Default")
+                coroutineIds.add(id)
+            }
         }
     }
 

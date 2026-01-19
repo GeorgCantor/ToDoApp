@@ -1,0 +1,231 @@
+package com.example.todoapp.presentation.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.todoapp.domain.model.CoroutineInfo
+import com.example.todoapp.domain.model.CoroutineState
+import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
+import kotlinx.coroutines.delay
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CoroutineMonitorScreen(
+    navController: NavController,
+    viewModel: CoroutineMonitorViewModel,
+) {
+    val monitorData by viewModel.monitorData.collectAsStateWithLifecycle()
+    val isMonitoring by viewModel.isMonitoring.collectAsStateWithLifecycle()
+    val selectedCoroutineId by viewModel.selectedCoroutineId.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        delay(1000)
+        viewModel.createCoroutines()
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Coroutine Monitor") },
+                actions = {
+                    IconButton(onClick = { viewModel.createCoroutines() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                    }
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) { }
+    }
+}
+
+@Composable
+private fun CoroutineItem(
+    coroutine: CoroutineInfo,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
+        shape = RoundedCornerShape(8.dp),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+            ),
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(14.dp)
+                        .clip(CircleShape)
+                        .background(
+                            color =
+                                when (coroutine.state) {
+                                    CoroutineState.ACTIVE -> Color.Green
+                                    CoroutineState.SUSPENDED -> Color.Yellow
+                                    CoroutineState.CANCELLING -> Color(0xFFFFA500)
+                                    CoroutineState.CANCELLED -> Color.Red
+                                    CoroutineState.COMPLETED -> Color.Gray
+                                },
+                        ),
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = coroutine.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = coroutine.dispatcher,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+
+                    Text(
+                        text = "${coroutine.duration}ms",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontFamily = FontFamily.Monospace,
+                    )
+                }
+            }
+
+            if (coroutine.children > 0) {
+                Box(
+                    modifier =
+                        Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = "👶 ${coroutine.children}",
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CoroutineDetailsCard(coroutine: CoroutineInfo) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = "📋 Детали корутины",
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            DetailRow(title = "ID", value = coroutine.id.take(12))
+            DetailRow(title = "Имя", value = coroutine.name)
+            DetailRow(title = "Диспетчер", value = coroutine.dispatcher)
+            DetailRow(
+                title = "Состояние",
+                value = getStateText(coroutine.state),
+            )
+            DetailRow(title = "Время работы", value = "${coroutine.duration}ms")
+            DetailRow(title = "Дочерние", value = coroutine.children.toString())
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(
+    title: String,
+    value: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontFamily = FontFamily.Monospace,
+        )
+    }
+}
+
+private fun getStateText(state: CoroutineState) =
+    when (state) {
+        CoroutineState.ACTIVE -> "Активна 🟢"
+        CoroutineState.SUSPENDED -> "Ожидает 🟡"
+        CoroutineState.CANCELLING -> "Отменяется 🟠"
+        CoroutineState.CANCELLED -> "Отменена 🔴"
+        CoroutineState.COMPLETED -> "Завершена ⚫"
+    }
