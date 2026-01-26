@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.todoapp.domain.model.CoroutineInfo
 import com.example.todoapp.domain.model.CoroutineState
+import com.example.todoapp.domain.model.ThreadInfo
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import kotlinx.coroutines.delay
 
@@ -76,6 +80,107 @@ fun CoroutineMonitorScreen(
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) { }
+    }
+}
+
+@Composable
+private fun ThreadRow(thread: ThreadInfo) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(
+                        color =
+                            when (thread.state) {
+                                Thread.State.RUNNABLE -> Color.Green
+                                Thread.State.BLOCKED -> Color.Red
+                                Thread.State.WAITING -> Color.Yellow
+                                Thread.State.TIMED_WAITING -> Color(0xFFFFA500)
+                                Thread.State.TERMINATED -> Color.Gray
+                                else -> Color.LightGray
+                            },
+                    ),
+        )
+
+        Text(
+            text = thread.name.take(20),
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Text(
+            text = thread.state.toString().replace("Thread.State.", ""),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun CoroutinesListSection(
+    coroutines: List<CoroutineInfo>,
+    selectedCoroutineId: String?,
+    onCoroutineClick: (String) -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Корутины (${coroutines.size})",
+                    style = MaterialTheme.typography.titleSmall,
+                )
+
+                if (coroutines.isNotEmpty()) {
+                    Text(
+                        text = "Нажмите для деталей",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            if (coroutines.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(80.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "Нет активных корутин",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(coroutines, key = { it.id }) { coroutine ->
+                        CoroutineItem(
+                            coroutine = coroutine,
+                            isSelected = coroutine.id == selectedCoroutineId,
+                            onClick = { onCoroutineClick(coroutine.id) },
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
