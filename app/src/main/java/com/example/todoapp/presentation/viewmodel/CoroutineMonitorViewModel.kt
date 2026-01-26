@@ -1,0 +1,90 @@
+package com.example.todoapp.presentation.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
+import com.example.todoapp.domain.model.CoroutineMonitorData
+import com.example.todoapp.domain.repository.CoroutineMonitorRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+class CoroutineMonitorViewModel(
+    private val repository: CoroutineMonitorRepository,
+) : ViewModel() {
+    private val _monitorData = MutableStateFlow(CoroutineMonitorData())
+    val monitorData: StateFlow<CoroutineMonitorData> = _monitorData.asStateFlow()
+
+    private val _isMonitoring = MutableStateFlow(false)
+    val isMonitoring: StateFlow<Boolean> = _isMonitoring.asStateFlow()
+
+    private val _selectedCoroutineId = MutableStateFlow<String?>(null)
+    val selectedCoroutineId: StateFlow<String?> = _selectedCoroutineId.asStateFlow()
+
+    private val coroutineIds = mutableListOf<String>()
+
+    init {
+        startMonitoring()
+        observeMonitorData()
+    }
+
+    private fun startMonitoring() {
+        viewModelScope.launch {
+            repository.startMonitoring()
+            _isMonitoring.value = true
+        }
+    }
+
+    private fun stopMonitoring() {
+        viewModelScope.launch {
+            repository.stopMonitoring()
+            _isMonitoring.value = false
+        }
+    }
+
+    fun toggleMonitoring() {
+        if (_isMonitoring.value) stopMonitoring() else startMonitoring()
+    }
+
+    fun selectCoroutine(id: String?) {
+        _selectedCoroutineId.value = id
+    }
+
+    fun createCoroutines() {
+        clearCoroutines()
+        val repo = repository as CoroutineMonitorRepositoryImpl
+        viewModelScope.launch {
+            val id = repo.createCoroutine("Long task", "Default")
+            coroutineIds.add(id)
+        }
+        viewModelScope.launch {
+            val id = repo.createCoroutine("IO task", "IO")
+            coroutineIds.add(id)
+        }
+        repeat(3) {
+            viewModelScope.launch {
+                delay((it * 500).toLong())
+                val id = repo.createCoroutine("Parallel $it", "Default")
+                coroutineIds.add(id)
+            }
+        }
+    }
+
+    private fun clearCoroutines() {
+        coroutineIds.clear()
+    }
+
+    private fun observeMonitorData() {
+        viewModelScope.launch {
+            repository.getMonitorData().collectLatest { _monitorData.value = it }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopMonitoring()
+    }
+}
