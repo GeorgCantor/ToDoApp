@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,9 +38,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.todoapp.domain.model.CoroutineInfo
 import com.example.todoapp.domain.model.CoroutineState
 import com.example.todoapp.domain.model.ThreadInfo
@@ -47,10 +49,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoroutineMonitorScreen(
-    navController: NavController,
-    viewModel: CoroutineMonitorViewModel,
-) {
+fun CoroutineMonitorScreen(viewModel: CoroutineMonitorViewModel) {
     val monitorData by viewModel.monitorData.collectAsStateWithLifecycle()
     val isMonitoring by viewModel.isMonitoring.collectAsStateWithLifecycle()
     val selectedCoroutineId by viewModel.selectedCoroutineId.collectAsStateWithLifecycle()
@@ -60,6 +59,8 @@ fun CoroutineMonitorScreen(
         viewModel.createCoroutines()
     }
 
+    val selectedCoroutine = monitorData.activeCoroutines.find { it.id == selectedCoroutineId }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,6 +68,12 @@ fun CoroutineMonitorScreen(
                 actions = {
                     IconButton(onClick = { viewModel.createCoroutines() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                    }
+                    IconButton(onClick = { viewModel.toggleMonitoring() }) {
+                        Icon(
+                            if (isMonitoring) Icons.Default.Warning else Icons.Default.PlayArrow,
+                            contentDescription = if (isMonitoring) "Pause" else "Resume",
+                        )
                     }
                 },
             )
@@ -79,7 +86,135 @@ fun CoroutineMonitorScreen(
                     .padding(paddingValues)
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) { }
+        ) {
+            MonitoringStatusCard(isMonitoring = isMonitoring)
+
+            if (monitorData.threads.isNotEmpty()) {
+                ThreadsListSection(threads = monitorData.threads)
+            }
+
+            CoroutinesListSection(
+                coroutines = monitorData.activeCoroutines,
+                selectedCoroutineId = selectedCoroutineId,
+                onCoroutineClick = { viewModel.selectCoroutine(it) },
+            )
+
+            if (selectedCoroutine != null) {
+                CoroutineDetailsCard(coroutine = selectedCoroutine)
+            }
+
+            SystemInfoCard(
+                threadCount = monitorData.threads.size,
+                coroutineCount = monitorData.activeCoroutines.size,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MonitoringStatusCard(isMonitoring: Boolean) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isMonitoring) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+            ),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isMonitoring) Color.Green else Color.Gray,
+                            ),
+                )
+                Text(
+                    text = if (isMonitoring) "Мониторинг активен" else "Мониторинг приостановлен",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Text(
+                text = if (isMonitoring) "🟢" else "⏸️",
+                fontSize = 20.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ThreadsListSection(threads: List<ThreadInfo>) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = "Потоки (${threads.size})",
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.height(min(200.dp, (threads.size * 30).dp)),
+            ) {
+                items(threads) { thread ->
+                    ThreadRow(thread = thread)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SystemInfoCard(
+    threadCount: Int,
+    coroutineCount: Int,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            ),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = "📊 Статистика системы",
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            DetailRow(title = "Всего потоков", value = "$threadCount")
+            DetailRow(title = "Всего корутин", value = "$coroutineCount")
+            DetailRow(
+                title = "Активных корутин",
+                value = "TODO", // Можно добавить подсчет в ViewModel
+            )
+            DetailRow(
+                title = "Память",
+                value = "${Runtime.getRuntime().totalMemory() / 1024 / 1024} MB",
+            )
+        }
     }
 }
 

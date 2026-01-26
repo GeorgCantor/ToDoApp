@@ -31,14 +31,14 @@ class CoroutineMonitorViewModel(
         observeMonitorData()
     }
 
-    fun startMonitoring() {
+    private fun startMonitoring() {
         viewModelScope.launch {
             repository.startMonitoring()
             _isMonitoring.value = true
         }
     }
 
-    fun stopMonitoring() {
+    private fun stopMonitoring() {
         viewModelScope.launch {
             repository.stopMonitoring()
             _isMonitoring.value = false
