@@ -102,6 +102,8 @@ class ExoPlayerManager(
         exoPlayer?.shuffleModeEnabled = enabled
     }
 
+    fun getCurrentPosition() = exoPlayer?.currentPosition ?: 0L
+
     fun getDuration() = exoPlayer?.duration ?: 0L
 
     fun release() {
