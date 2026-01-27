@@ -1,5 +1,7 @@
 package com.example.todoapp.domain.model
 
+import androidx.core.net.toUri
+import androidx.media3.common.MediaMetadata
 import java.util.UUID
 
 data class MediaItem(
@@ -25,5 +27,19 @@ data class MediaItem(
             uri = uri,
             mediaType = if (".mp4" in uri) MediaType.VIDEO else MediaType.AUDIO,
         )
+
+        fun MediaItem.toExoMediaItem() =
+            androidx.media3.common.MediaItem
+                .fromUri(this.uri)
+                .buildUpon()
+                .setMediaMetadata(
+                    MediaMetadata
+                        .Builder()
+                        .setTitle(this.title)
+                        .setArtist(this.artist)
+                        .setAlbumTitle(this.album)
+                        .setArtworkUri(this.artworkUri?.toUri())
+                        .build(),
+                ).build()
     }
 }

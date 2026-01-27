@@ -2,11 +2,11 @@ package com.example.todoapp.domain.manager
 
 import android.content.Context
 import androidx.annotation.OptIn
-import androidx.core.net.toUri
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.todoapp.domain.model.MediaItem
+import com.example.todoapp.domain.model.MediaItem.Companion.toExoMediaItem
 import com.example.todoapp.domain.model.PlaybackState
 import com.example.todoapp.domain.model.PlayerState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ class ExoPlayerManager(
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
-    private val currentPlaylist: List<MediaItem> = emptyList()
+    private var currentPlaylist: List<MediaItem> = emptyList()
     private var currentIndex = -1
 
     init {
@@ -40,25 +40,13 @@ class ExoPlayerManager(
                 .setSeekForwardIncrementMs(10000)
                 .build()
                 .apply {
+                    addListener(playerListener)
+                    playWhenReady = true
                 }
     }
 
-    fun play(mediaItem: com.example.todoapp.domain.model.MediaItem) {
-        val exoMediaItem =
-            MediaItem
-                .fromUri(mediaItem.uri)
-                .buildUpon()
-                .setMediaMetadata(
-                    MediaMetadata
-                        .Builder()
-                        .setTitle(mediaItem.title)
-                        .setArtist(mediaItem.artist)
-                        .setAlbumTitle(mediaItem.album)
-                        .setArtworkUri(mediaItem.artworkUri?.toUri())
-                        .build(),
-                ).build()
-
-        exoPlayer?.setMediaItem(exoMediaItem)
+    fun play(mediaItem: MediaItem) {
+        exoPlayer?.setMediaItem(mediaItem.toExoMediaItem())
         exoPlayer?.prepare()
 
         _playerState.value =
@@ -67,4 +55,105 @@ class ExoPlayerManager(
                 isPlaying = true,
             )
     }
+
+    fun playPlaylist(
+        playlist: List<MediaItem>,
+        startIndex: Int = 0,
+    ) {
+        val mediaItems = playlist.map { it.toExoMediaItem() }
+        currentPlaylist = playlist
+        currentIndex = startIndex
+        exoPlayer?.setMediaItems(mediaItems)
+        exoPlayer?.prepare()
+        exoPlayer?.seekTo(startIndex, 0L)
+        exoPlayer?.play()
+    }
+
+    fun playPause() {
+        if (exoPlayer?.isPlaying == true) {
+            exoPlayer?.pause()
+            _playerState.value = _playerState.value.copy(isPlaying = false)
+        } else {
+            exoPlayer?.play()
+            _playerState.value = _playerState.value.copy(isPlaying = true)
+        }
+    }
+
+    fun seekTo(position: Long) {
+        exoPlayer?.seekTo(position)
+        _playerState.value = _playerState.value.copy(currentPosition = position)
+    }
+
+    fun next() {
+        exoPlayer?.seekToNextMediaItem()
+        updateCurrentMediaItem()
+    }
+
+    fun previous() {
+        exoPlayer?.seekToPreviousMediaItem()
+        updateCurrentMediaItem()
+    }
+
+    fun setRepeatMode(repeatMode: Int) {
+        exoPlayer?.repeatMode = repeatMode
+    }
+
+    fun setShuffleEnabled(enabled: Boolean) {
+        exoPlayer?.shuffleModeEnabled = enabled
+    }
+
+    fun getDuration() = exoPlayer?.duration ?: 0L
+
+    fun release() {
+        exoPlayer?.release()
+        exoPlayer = null
+    }
+
+    private fun updateCurrentMediaItem() {
+        currentIndex = exoPlayer?.currentMediaItemIndex ?: -1
+        if (currentIndex in currentPlaylist.indices) {
+            _playerState.value =
+                _playerState.value.copy(
+                    currentMediaItem = currentPlaylist.getOrNull(currentIndex),
+                )
+        }
+    }
+
+    private val playerListener =
+        object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                _playbackState.value =
+                    when (playbackState) {
+                        Player.STATE_IDLE -> PlaybackState.IDLE
+                        Player.STATE_BUFFERING -> PlaybackState.BUFFERING
+                        Player.STATE_READY -> PlaybackState.READY
+                        Player.STATE_ENDED -> PlaybackState.ENDED
+                        else -> PlaybackState.IDLE
+                    }
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                _playerState.value = _playerState.value.copy(isPlaying = isPlaying)
+            }
+
+            override fun onPositionDiscontinuity(
+                oldPosition: Player.PositionInfo,
+                newPosition: Player.PositionInfo,
+                reason: Int,
+            ) {
+                updateCurrentMediaItem()
+            }
+
+            override fun onEvents(
+                player: Player,
+                events: Player.Events,
+            ) {
+                _playerState.value =
+                    _playerState.value.copy(
+                        currentPosition = player.currentPosition,
+                        duration = player.duration,
+                        bufferedPercentage = player.bufferedPercentage,
+                    )
+            }
+        }
 }
