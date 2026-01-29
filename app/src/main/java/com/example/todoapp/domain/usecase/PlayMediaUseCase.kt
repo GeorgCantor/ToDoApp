@@ -10,7 +10,7 @@ class PlayMediaUseCase(
         manager.play(mediaItem)
     }
 
-    fun invoke(
+    operator fun invoke(
         mediaItems: List<MediaItem>,
         startIndex: Int = 0,
     ) {
