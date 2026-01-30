@@ -179,6 +179,17 @@ fun MainNavigation(
             )
         }
 
+        composable(NavRoutes.NewsList.route) {
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                authViewModel = authViewModel,
+                playerViewModel = playerViewModel,
+                profileViewModel = profileViewModel,
+            )
+        }
+
         composable(NavRoutes.Chat.route) {
             MainScreen(
                 navController = navController,
