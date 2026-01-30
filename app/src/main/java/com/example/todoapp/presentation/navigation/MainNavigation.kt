@@ -27,7 +27,6 @@ import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.domain.model.WidgetIntentData
 import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.BiometricAuthScreen
-import com.example.todoapp.presentation.screens.CalculatorScreen
 import com.example.todoapp.presentation.screens.CoroutineMonitorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
@@ -43,10 +42,10 @@ import com.example.todoapp.presentation.screens.SpaceXStatsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.screens.TicTacToeScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
-import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
@@ -64,7 +63,7 @@ fun MainNavigation(
     val isBiometricAvailable = remember { authViewModel.isBiometricAvailable() }
     val newsViewModel: NewsViewModel = koinViewModel()
     val chatViewModel: ChatViewModel = koinViewModel()
-    val calculatorViewModel: CalculatorViewModel = koinViewModel()
+    val playerViewModel: PlayerViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = koinViewModel()
     val spaceXViewModel: SpaceXViewModel = koinViewModel()
     val spaceXStatsViewModel: SpaceXStatsViewModel = koinViewModel()
@@ -162,10 +161,21 @@ fun MainNavigation(
             SplashScreen(
                 isLoading = isLoading,
                 onLoaded = {
-                    navController.navigate(NavRoutes.NewsList.route) {
+                    navController.navigate(NavRoutes.Player.route) {
                         popUpTo(NavRoutes.Splash.route) { inclusive = true }
                     }
                 },
+            )
+        }
+
+        composable(NavRoutes.Player.route) {
+            MainScreen(
+                navController = navController,
+                viewModel = newsViewModel,
+                chatViewModel = chatViewModel,
+                authViewModel = authViewModel,
+                playerViewModel = playerViewModel,
+                profileViewModel = profileViewModel,
             )
         }
 
@@ -175,7 +185,7 @@ fun MainNavigation(
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
+                playerViewModel = playerViewModel,
                 profileViewModel = profileViewModel,
             )
         }
@@ -186,13 +196,9 @@ fun MainNavigation(
                 viewModel = newsViewModel,
                 chatViewModel = chatViewModel,
                 authViewModel = authViewModel,
-                calculatorViewModel = calculatorViewModel,
+                playerViewModel = playerViewModel,
                 profileViewModel = profileViewModel,
             )
-        }
-
-        composable(NavRoutes.Calculator.route) {
-            CalculatorScreen(navController = navController, viewModel = calculatorViewModel)
         }
 
         composable(NavRoutes.Profile.route) {

@@ -12,10 +12,12 @@ import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.data.repository.PlayerRepositoryImpl
 import com.example.todoapp.data.repository.SpaceXRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
+import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
@@ -23,12 +25,14 @@ import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.CoroutineMonitorRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.repository.PlayerRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
 import com.example.todoapp.domain.usecase.ClearCalculatorUseCase
+import com.example.todoapp.domain.usecase.DeleteMediaItemUseCase
 import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
@@ -36,11 +40,17 @@ import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
 import com.example.todoapp.domain.usecase.GetLaunchDetailUseCase
 import com.example.todoapp.domain.usecase.GetLaunchStatisticsUseCase
+import com.example.todoapp.domain.usecase.GetLocalMediaUseCase
+import com.example.todoapp.domain.usecase.GetMediaItemsUseCase
+import com.example.todoapp.domain.usecase.GetRecentMediaUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
+import com.example.todoapp.domain.usecase.ManagePlayerUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
+import com.example.todoapp.domain.usecase.PlayMediaUseCase
+import com.example.todoapp.domain.usecase.SaveMediaItemUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
@@ -50,6 +60,7 @@ import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
@@ -97,6 +108,7 @@ val appModule =
         }
 
         single<NewsApiService> { get<Retrofit>().create(NewsApiService::class.java) }
+        single<ExoPlayerManager> { ExoPlayerManager(androidContext()) }
         single<BiometricAuthManager> { BiometricAuthManagerImpl(androidContext()) }
         single<DataStore<UserProfile>> { androidContext().userProfileDataStore }
         single<NewsRepository> { NewsRepositoryImpl(get()) }
@@ -109,6 +121,7 @@ val appModule =
         single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
         single<VisualizerFactory> { SpaceXVisualizerFactory() }
         single<CoroutineMonitorRepository> { CoroutineMonitorRepositoryImpl() }
+        single<PlayerRepository> { PlayerRepositoryImpl(androidContext()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -130,6 +143,13 @@ val appModule =
         factory { GetLaunchDetailUseCase(get()) }
         factory { GetLaunchStatisticsUseCase(get()) }
         factory { SpaceXVisualizerFactory() }
+        factory { PlayMediaUseCase(get()) }
+        factory { ManagePlayerUseCase(get()) }
+        factory { GetMediaItemsUseCase(get<PlayerRepository>()) }
+        factory { GetRecentMediaUseCase(get<PlayerRepository>()) }
+        factory { SaveMediaItemUseCase(get<PlayerRepository>()) }
+        factory { DeleteMediaItemUseCase(get<PlayerRepository>()) }
+        factory { GetLocalMediaUseCase(get<PlayerRepository>()) }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {
@@ -141,6 +161,17 @@ val appModule =
                 audioToBase64UseCase = get(),
                 base64ToAudioFileUseCase = get(),
                 updateUserStatisticsUseCase = get(),
+            )
+        }
+        viewModel {
+            PlayerViewModel(
+                managePlayerUseCase = get(),
+                playMediaUseCase = get(),
+                getMediaItemsUseCase = get(),
+                getRecentMediaUseCase = get(),
+                saveMediaItemUseCase = get(),
+                deleteMediaItemUseCase = get(),
+                getLocalMediaUseCase = get(),
             )
         }
         viewModel { ProfileViewModel(get(), get()) }

@@ -252,4 +252,7 @@
 
     <!-- Coroutine monitor -->
     <string name="coroutine_monitor">Coroutine monitor</string>
+
+    <!-- Player -->
+    <string name="player">Player</string>
 </resources>

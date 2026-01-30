@@ -118,6 +118,10 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.apollo.runtime)
     implementation(libs.apollo.normalized.cache)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.session)
+    implementation(libs.media3.common)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)

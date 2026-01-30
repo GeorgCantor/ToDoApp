@@ -252,4 +252,7 @@
 
     <!-- Coroutine monitor -->
     <string name="coroutine_monitor">Монитор корутин</string>
+
+    <!-- Player -->
+    <string name="player">Плеер</string>
 </resources>
