@@ -3,11 +3,11 @@ package com.example.todoapp.presentation.screens
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -28,9 +28,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.todoapp.R
 import com.example.todoapp.presentation.navigation.NavRoutes
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
-import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 
 @Composable
@@ -39,14 +39,14 @@ fun MainScreen(
     viewModel: NewsViewModel,
     chatViewModel: ChatViewModel,
     authViewModel: AuthViewModel,
-    calculatorViewModel: CalculatorViewModel,
+    playerViewModel: PlayerViewModel,
     profileViewModel: ProfileViewModel,
 ) {
     val items =
         listOf(
+            NavRoutes.Player,
             NavRoutes.NewsList,
             NavRoutes.Chat,
-            NavRoutes.Calculator,
             NavRoutes.Profile,
             NavRoutes.NewsCategories,
         )
@@ -65,9 +65,15 @@ fun MainScreen(
                     NavigationBarItem(
                         icon = {
                             when (item) {
+                                NavRoutes.Player ->
+                                    Icon(
+                                        Icons.Filled.PlayArrow,
+                                        contentDescription = stringResource(R.string.player),
+                                    )
+
                                 NavRoutes.NewsList ->
                                     Icon(
-                                        Icons.Filled.Home,
+                                        Icons.Filled.List,
                                         contentDescription = stringResource(R.string.news),
                                     )
 
@@ -75,12 +81,6 @@ fun MainScreen(
                                     Icon(
                                         Icons.Filled.MailOutline,
                                         contentDescription = stringResource(R.string.chat),
-                                    )
-
-                                NavRoutes.Calculator ->
-                                    Icon(
-                                        Icons.Filled.AddCircle,
-                                        contentDescription = stringResource(R.string.calculator),
                                     )
 
                                 NavRoutes.Profile ->
@@ -95,15 +95,15 @@ fun MainScreen(
                                         contentDescription = stringResource(R.string.categories),
                                     )
 
-                                else -> Icon(Icons.Filled.Home, contentDescription = item.route)
+                                else -> Icon(Icons.Filled.PlayArrow, contentDescription = item.route)
                             }
                         },
                         label = {
                             Text(
                                 when (item) {
+                                    NavRoutes.Player -> stringResource(R.string.player)
                                     NavRoutes.NewsList -> stringResource(R.string.news)
                                     NavRoutes.Chat -> stringResource(R.string.chat)
-                                    NavRoutes.Calculator -> stringResource(R.string.calculator)
                                     NavRoutes.Profile -> stringResource(R.string.profile)
                                     NavRoutes.NewsCategories -> stringResource(R.string.categories)
                                     else -> item.route
@@ -131,6 +131,8 @@ fun MainScreen(
         },
     ) { innerPadding ->
         when (currentRoute) {
+            NavRoutes.Player.route -> PlayerScreen(playerViewModel)
+
             NavRoutes.NewsList.route ->
                 NewsListScreen(
                     navController = navController,
@@ -140,12 +142,6 @@ fun MainScreen(
                 )
 
             NavRoutes.Chat.route -> ChatScreen(chatViewModel)
-
-            NavRoutes.Calculator.route ->
-                CalculatorScreen(
-                    navController = navController,
-                    viewModel = calculatorViewModel,
-                )
 
             NavRoutes.Profile.route -> ProfileScreen(navController = navController, viewModel = profileViewModel)
 

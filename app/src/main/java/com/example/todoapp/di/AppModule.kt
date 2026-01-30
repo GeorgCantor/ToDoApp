@@ -145,11 +145,11 @@ val appModule =
         factory { SpaceXVisualizerFactory() }
         factory { PlayMediaUseCase(get()) }
         factory { ManagePlayerUseCase(get()) }
-        factory { GetMediaItemsUseCase(get()) }
-        factory { GetRecentMediaUseCase(get()) }
-        factory { SaveMediaItemUseCase(get()) }
-        factory { DeleteMediaItemUseCase(get()) }
-        factory { GetLocalMediaUseCase(get()) }
+        factory { GetMediaItemsUseCase(get<PlayerRepository>()) }
+        factory { GetRecentMediaUseCase(get<PlayerRepository>()) }
+        factory { SaveMediaItemUseCase(get<PlayerRepository>()) }
+        factory { DeleteMediaItemUseCase(get<PlayerRepository>()) }
+        factory { GetLocalMediaUseCase(get<PlayerRepository>()) }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {

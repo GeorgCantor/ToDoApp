@@ -5,6 +5,8 @@ sealed class NavRoutes(
 ) {
     object Splash : NavRoutes("splash_screen")
 
+    object Player : NavRoutes("player_screen")
+
     object NewsList : NavRoutes("news_list")
 
     object NewsCategories : NavRoutes("news_categories")
