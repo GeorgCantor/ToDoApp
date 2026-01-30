@@ -29,16 +29,16 @@ class PlayerViewModel(
     private val getLocalMediaUseCase: GetLocalMediaUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlayerUiState())
-    private val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
     val playerState: StateFlow<PlayerState> = managePlayerUseCase.playerState
     val playbackState: StateFlow<PlaybackState> = managePlayerUseCase.playbackState
 
     private val _mediaItems = MutableStateFlow<List<MediaItem>>(emptyList())
-    private val mediaItems: StateFlow<List<MediaItem>> = _mediaItems.asStateFlow()
+    val mediaItems: StateFlow<List<MediaItem>> = _mediaItems.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
-    private val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -143,7 +143,7 @@ class PlayerViewModel(
     fun deleteMediaItem(id: String) {
         viewModelScope.launch {
             try {
-                deleteMediaItem(id)
+                deleteMediaItemUseCase(id)
                 _mediaItems.value = _mediaItems.value.filter { it.id != id }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = e.message)
