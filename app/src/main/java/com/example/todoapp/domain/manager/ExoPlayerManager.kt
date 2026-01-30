@@ -72,8 +72,9 @@ class ExoPlayerManager(
     }
 
     fun seekTo(position: Long) {
-        exoPlayer.seekTo(position)
-        _playerState.value = _playerState.value.copy(currentPosition = position)
+        val safePosition = position.coerceIn(0, exoPlayer.duration)
+        exoPlayer.seekTo(position.coerceIn(0, exoPlayer.duration))
+        _playerState.value = _playerState.value.copy(currentPosition = safePosition)
     }
 
     fun next() {

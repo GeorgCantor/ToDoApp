@@ -454,8 +454,10 @@ fun PlayerProgressBar(
 
         Slider(
             value = currentPosition.toFloat(),
-            onValueChange = { newValue -> onSeekTo(newValue.toLong()) },
-            valueRange = 0f..duration.toFloat(),
+            onValueChange = { newValue ->
+                onSeekTo(newValue.coerceAtLeast(0F).toLong())
+            },
+            valueRange = 0f..maxOf(duration, 0).toFloat(),
             modifier = Modifier.fillMaxWidth(),
         )
 
