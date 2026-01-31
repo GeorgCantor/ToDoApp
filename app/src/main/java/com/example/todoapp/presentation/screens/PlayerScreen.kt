@@ -73,6 +73,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -244,7 +245,7 @@ fun PlayerContent(
                 Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
         )
 
         MediaListSection(
@@ -277,20 +278,18 @@ fun CurrentPlayerSection(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         if (currentMedia != null) {
             MediaArtwork(
                 mediaItem = currentMedia,
                 modifier =
                     Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.8f)
                         .aspectRatio(1f)
-                        .padding(32.dp)
-                        .shadow(16.dp, RoundedCornerShape(16.dp)),
+                        .padding(8.dp)
+                        .shadow(8.dp, RoundedCornerShape(12.dp)),
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -298,36 +297,26 @@ fun CurrentPlayerSection(
             ) {
                 Text(
                     text = currentMedia.title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
                     text = currentMedia.artist ?: "Unknown Artist",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
                 )
-
-                if (currentMedia.album != null) {
-                    Text(
-                        text = currentMedia.album,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             PlayerProgressBar(
                 currentPosition = playerState.currentPosition,
@@ -336,8 +325,6 @@ fun CurrentPlayerSection(
                 onSeekTo = onSeekTo,
                 modifier = Modifier.fillMaxWidth(),
             )
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             PlayerControls(
                 isPlaying = playerState.isPlaying,
@@ -349,13 +336,14 @@ fun CurrentPlayerSection(
             )
         } else {
             Column(
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.widget_preview),
                     contentDescription = "No music",
-                    modifier = Modifier.size(120.dp),
+                    modifier = Modifier.size(80.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
@@ -363,14 +351,16 @@ fun CurrentPlayerSection(
 
                 Text(
                     text = "No Media Playing",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = "Select a song to start playing",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline,
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -621,10 +611,10 @@ fun MediaListSection(
                     Icon(
                         painter = painterResource(id = R.drawable.widget_preview),
                         contentDescription = "No media",
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "No media found",
                         style = MaterialTheme.typography.bodyMedium,
@@ -646,7 +636,7 @@ fun MediaListSection(
                         isPlaying = currentMediaItem?.id == mediaItem.id,
                         onClick = { onPlayMedia(mediaItem) },
                         onDelete = { onDeleteMedia(mediaItem.id) },
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                     )
                 }
             }
@@ -666,6 +656,7 @@ fun MediaItemCard(
         modifier =
             modifier
                 .fillMaxWidth()
+                .height(72.dp)
                 .animateContentSize(),
         shape = RoundedCornerShape(8.dp),
         colors =
@@ -678,16 +669,16 @@ fun MediaItemCard(
         Row(
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .clickable(onClick = onClick)
-                    .padding(12.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier =
                     Modifier
-                        .size(56.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(6.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center,
             ) {
@@ -699,7 +690,7 @@ fun MediaItemCard(
                                 .Builder(LocalContext.current)
                                 .data(mediaItem.artworkUri)
                                 .crossfade(true)
-                                .size(with(density) { 56.dp.roundToPx() })
+                                .size(with(density) { 48.dp.roundToPx() })
                                 .build(),
                         contentDescription = "Album art",
                         contentScale = ContentScale.Crop,
@@ -709,16 +700,17 @@ fun MediaItemCard(
                     Icon(
                         painter = painterResource(id = R.drawable.widget_preview),
                         contentDescription = "No album art",
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Column(
                 modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = mediaItem.title,
@@ -728,44 +720,37 @@ fun MediaItemCard(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
-
                 Text(
                     text = mediaItem.artist ?: "Unknown Artist",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+            }
 
-                if (mediaItem.album != null) {
-                    Text(
-                        text = mediaItem.album,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = mediaItem.duration.formatTime(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 8.dp),
+                )
+
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(32.dp),
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.error,
                     )
                 }
             }
-        }
-
-        Text(
-            text = mediaItem.duration.formatTime(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
-
-        IconButton(
-            onClick = onDelete,
-            modifier = Modifier.size(36.dp),
-        ) {
-            Icon(
-                Icons.Default.Delete,
-                contentDescription = "Delete",
-                tint = MaterialTheme.colorScheme.error,
-            )
         }
     }
 }
