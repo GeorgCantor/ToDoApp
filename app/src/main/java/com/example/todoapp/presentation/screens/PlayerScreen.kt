@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -51,7 +51,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -101,59 +100,62 @@ fun PlayerScreen(viewModel: PlayerViewModel) {
     var showPlaylistSheet by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
-    val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
+    if (showPlaylistSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showPlaylistSheet = false },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+        ) {
             PlaylistBottomSheet(
                 currentPlaylist = playerState.currentMediaItem?.let { listOf(it) }.orEmpty(),
-                onClose = { scope.launch { scaffoldState.bottomSheetState.partialExpand() } },
-            )
-        },
-        sheetPeekHeight = 80.dp,
-        sheetContainerColor = MaterialTheme.colorScheme.surface,
-        sheetShadowElevation = 16.dp,
-    ) { paddingValues ->
-        Scaffold(
-            modifier = Modifier.padding(paddingValues),
-            topBar = {
-                PlayerTopAppBar(
-                    showSearchBar = showSearchBar,
-                    onSearchClicked = { showSearchBar = !showSearchBar },
-                    onSearchQueryChanged = viewModel::search,
-                    onClearSearch = viewModel::clearSearch,
-                    searchQuery = searchQuery,
-                )
-            },
-            floatingActionButton = {
-                if (uiState.currentMediaItem != null) {
-                    FloatingActionButton(
-                        onClick = { showPlaylistSheet = true },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add to playlist")
-                    }
-                }
-            },
-        ) { innerPadding ->
-            PlayerContent(
-                modifier = Modifier.padding(innerPadding),
-                uiState = uiState,
-                mediaItems = mediaItems,
-                isLoading = isLoading,
-                playerState = playerState,
-                playbackState = playbackState,
-                onPlayMedia = viewModel::playMedia,
-                onPlayPause = viewModel::togglePlayPause,
-                onNext = viewModel::next,
-                onPrevious = viewModel::previous,
-                onSeekTo = viewModel::seekTo,
-                onDeleteMedia = viewModel::deleteMediaItem,
+                onClose = { scope.launch { sheetState.hide() }.invokeOnCompletion { showPlaylistSheet = false } },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
             )
         }
+    }
+
+    Scaffold(
+        topBar = {
+            PlayerTopAppBar(
+                showSearchBar = showSearchBar,
+                onSearchClicked = { showSearchBar = !showSearchBar },
+                onSearchQueryChanged = viewModel::search,
+                onClearSearch = viewModel::clearSearch,
+                searchQuery = searchQuery,
+            )
+        },
+        floatingActionButton = {
+            if (uiState.currentMediaItem != null) {
+                FloatingActionButton(
+                    onClick = { showPlaylistSheet = true },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(bottom = 70.dp),
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add to playlist")
+                }
+            }
+        },
+    ) { innerPadding ->
+        PlayerContent(
+            modifier = Modifier.padding(innerPadding),
+            uiState = uiState,
+            mediaItems = mediaItems,
+            isLoading = isLoading,
+            playerState = playerState,
+            playbackState = playbackState,
+            onPlayMedia = viewModel::playMedia,
+            onPlayPause = viewModel::togglePlayPause,
+            onNext = viewModel::next,
+            onPrevious = viewModel::previous,
+            onSeekTo = viewModel::seekTo,
+            onDeleteMedia = viewModel::deleteMediaItem,
+        )
     }
 }
 
@@ -761,12 +763,7 @@ fun PlaylistBottomSheet(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-    ) {
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
