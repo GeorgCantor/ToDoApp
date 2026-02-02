@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -74,28 +75,45 @@ class PlayerService : MediaSessionService() {
         notificationManager =
             PlayerNotificationManager
                 .Builder(this, NOTIFICATION_ID, CHANNEL_ID)
-                .apply {
-                    setNotificationListener(
-                        object : PlayerNotificationManager.NotificationListener {
-                            override fun onNotificationPosted(
-                                notificationId: Int,
-                                notification: Notification,
-                                ongoing: Boolean,
-                            ) {
-                                if (ongoing) {
-                                    startForeground(notificationId, notification)
-                                }
-                            }
+                .setMediaDescriptionAdapter(
+                    object : PlayerNotificationManager.MediaDescriptionAdapter {
+                        override fun getCurrentContentTitle(player: Player): CharSequence {
+                            val metadata = player.mediaMetadata
+                            return metadata.title?.toString() ?: "Unknown Title"
+                        }
 
-                            override fun onNotificationCancelled(
-                                notificationId: Int,
-                                dismissedByUser: Boolean,
-                            ) {
-                                stopSelf()
+                        override fun createCurrentContentIntent(player: Player) = pendingIntent
+
+                        override fun getCurrentContentText(player: Player): CharSequence? {
+                            val metadata = player.mediaMetadata
+                            return metadata.artist?.toString() ?: metadata.albumTitle?.toString()
+                        }
+
+                        override fun getCurrentLargeIcon(
+                            player: Player,
+                            callback: PlayerNotificationManager.BitmapCallback,
+                        ) = null
+                    },
+                ).setNotificationListener(
+                    object : PlayerNotificationManager.NotificationListener {
+                        override fun onNotificationPosted(
+                            notificationId: Int,
+                            notification: Notification,
+                            ongoing: Boolean,
+                        ) {
+                            if (ongoing) {
+                                startForeground(notificationId, notification)
                             }
-                        },
-                    )
-                }.build()
+                        }
+
+                        override fun onNotificationCancelled(
+                            notificationId: Int,
+                            dismissedByUser: Boolean,
+                        ) {
+                            stopSelf()
+                        }
+                    },
+                ).build()
                 .apply {
                     setPlayer(player)
                 }
