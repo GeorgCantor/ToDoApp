@@ -1,6 +1,10 @@
 package com.example.todoapp.domain.manager
 
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.os.Build
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -8,6 +12,7 @@ import com.example.todoapp.domain.model.MediaItem
 import com.example.todoapp.domain.model.MediaItem.Companion.toExoMediaItem
 import com.example.todoapp.domain.model.PlaybackState
 import com.example.todoapp.domain.model.PlayerState
+import com.example.todoapp.service.PlayerService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -101,6 +106,64 @@ class ExoPlayerManager(
 
     fun release() {
         exoPlayer.release()
+    }
+
+    fun startForegroundService() {
+        PlayerService.startService(context)
+    }
+
+    fun stopForegroundService() {
+        PlayerService.stopService(context)
+    }
+
+    fun setupAudioFocus() {
+        val manager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioFocusRequest =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                AudioFocusRequest
+                    .Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(
+                        AudioAttributes
+                            .Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build(),
+                    ).setAcceptsDelayedFocusGain(true)
+                    .setOnAudioFocusChangeListener { focusChange ->
+                        when (focusChange) {
+                            AudioManager.AUDIOFOCUS_GAIN -> {
+                                exoPlayer.play()
+                                exoPlayer.volume = 1.0F
+                            }
+
+                            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> exoPlayer.pause()
+
+                            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> exoPlayer.volume = 0.2F
+                        }
+                    }.build()
+            } else {
+                null
+            }
+
+        val result =
+            if (audioFocusRequest != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                manager.requestAudioFocus(audioFocusRequest)
+            } else {
+                manager.requestAudioFocus(
+                    { _ -> },
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN,
+                )
+            }
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            // TODO
+        }
+    }
+
+    fun releaseAudioFocus() {
+        val manager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        manager.abandonAudioFocus(null)
     }
 
     private fun updateCurrentMediaItem() {
