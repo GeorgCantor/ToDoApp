@@ -1,0 +1,154 @@
+package com.example.todoapp.service
+
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaSessionService
+import androidx.media3.ui.PlayerNotificationManager
+import com.example.todoapp.R
+import com.example.todoapp.TodoApp
+import com.example.todoapp.presentation.MainActivity
+
+@UnstableApi
+class PlayerService : MediaSessionService() {
+    private var _mediaSession: MediaSession? = null
+    private val mediaSession: MediaSession?
+        get() = _mediaSession
+
+    private var notificationManager: PlayerNotificationManager? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+
+        val app = application as? TodoApp
+        val exoPlayerManager = app?.exoPlayerManager
+        val exoPlayer = exoPlayerManager?.getPlayer()
+
+        if (exoPlayer != null) {
+            _mediaSession = MediaSession.Builder(this, exoPlayer).build()
+            setupNotification(exoPlayer)
+            startForeground(NOTIFICATION_ID, createNotification())
+        } else {
+            stopSelf()
+        }
+    }
+
+    override fun onGetSession(info: MediaSession.ControllerInfo) = mediaSession
+
+    override fun onDestroy() {
+        notificationManager?.setPlayer(null)
+        _mediaSession?.release()
+        _mediaSession = null
+        notificationManager = null
+        super.onDestroy()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel(
+                    CHANNEL_ID,
+                    "Music player",
+                    NotificationManager.IMPORTANCE_LOW,
+                ).apply {
+                    description = "Music player is running"
+                    setSound(null, null)
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                }
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun setupNotification(player: Player) {
+        val pendingIntent =
+            PendingIntent.getActivity(
+                this,
+                0,
+                Intent(this, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE,
+            )
+        notificationManager =
+            PlayerNotificationManager
+                .Builder(this, NOTIFICATION_ID, CHANNEL_ID)
+                .setMediaDescriptionAdapter(
+                    object : PlayerNotificationManager.MediaDescriptionAdapter {
+                        override fun getCurrentContentTitle(player: Player): CharSequence {
+                            val metadata = player.mediaMetadata
+                            return metadata.title?.toString() ?: "Unknown Title"
+                        }
+
+                        override fun createCurrentContentIntent(player: Player) = pendingIntent
+
+                        override fun getCurrentContentText(player: Player): CharSequence? {
+                            val metadata = player.mediaMetadata
+                            return metadata.artist?.toString() ?: metadata.albumTitle?.toString()
+                        }
+
+                        override fun getCurrentLargeIcon(
+                            player: Player,
+                            callback: PlayerNotificationManager.BitmapCallback,
+                        ) = null
+                    },
+                ).setNotificationListener(
+                    object : PlayerNotificationManager.NotificationListener {
+                        override fun onNotificationPosted(
+                            notificationId: Int,
+                            notification: Notification,
+                            ongoing: Boolean,
+                        ) {
+                            if (ongoing) {
+                                startForeground(notificationId, notification)
+                            }
+                        }
+
+                        override fun onNotificationCancelled(
+                            notificationId: Int,
+                            dismissedByUser: Boolean,
+                        ) {
+                            stopSelf()
+                        }
+                    },
+                ).build()
+                .apply {
+                    setPlayer(player)
+                }
+    }
+
+    private fun createNotification() =
+        NotificationCompat
+            .Builder(this, CHANNEL_ID)
+            .setContentTitle("Music Player")
+            .setSmallIcon(R.drawable.widget_preview)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .build()
+
+    companion object {
+        private const val CHANNEL_ID = "player_channel"
+        private const val NOTIFICATION_ID = 1001
+
+        fun startService(context: Context) {
+            val intent = Intent(context, PlayerService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        }
+
+        fun stopService(context: Context) {
+            val intent = Intent(context, PlayerService::class.java)
+            context.stopService(intent)
+        }
+    }
+}

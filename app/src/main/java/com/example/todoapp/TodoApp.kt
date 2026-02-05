@@ -3,14 +3,20 @@ package com.example.todoapp
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
+import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.data.cache.NewsCache
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
+import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.manager.SessionTracker
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
+@UnstableApi
 class TodoApp : Application() {
+    lateinit var exoPlayerManager: ExoPlayerManager
+        private set
+
     override fun onCreate() {
         super.onCreate()
         setupStrictMode()
@@ -22,6 +28,7 @@ class TodoApp : Application() {
 
         NewsCache.init(this)
         SessionTracker(this)
+        exoPlayerManager = ExoPlayerManager(applicationContext)
     }
 
     private fun setupStrictMode() {

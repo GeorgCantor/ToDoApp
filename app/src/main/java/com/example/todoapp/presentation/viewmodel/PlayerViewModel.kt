@@ -1,7 +1,9 @@
 package com.example.todoapp.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.domain.model.MediaItem
 import com.example.todoapp.domain.model.PlaybackState
 import com.example.todoapp.domain.model.PlayerState
@@ -13,13 +15,16 @@ import com.example.todoapp.domain.usecase.GetRecentMediaUseCase
 import com.example.todoapp.domain.usecase.ManagePlayerUseCase
 import com.example.todoapp.domain.usecase.PlayMediaUseCase
 import com.example.todoapp.domain.usecase.SaveMediaItemUseCase
+import com.example.todoapp.service.PlayerService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
+@UnstableApi
 class PlayerViewModel(
+    application: Application,
     private val managePlayerUseCase: ManagePlayerUseCase,
     private val playMediaUseCase: PlayMediaUseCase,
     private val getMediaItemsUseCase: GetMediaItemsUseCase,
@@ -27,7 +32,7 @@ class PlayerViewModel(
     private val saveMediaItemUseCase: SaveMediaItemUseCase,
     private val deleteMediaItemUseCase: DeleteMediaItemUseCase,
     private val getLocalMediaUseCase: GetLocalMediaUseCase,
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
@@ -43,10 +48,13 @@ class PlayerViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private var isServiceRunning = false
+
     init {
         loadMediaItems()
         observePlayerState()
         observeRecentMedia()
+        startPlayerService()
     }
 
     private fun loadMediaItems() {
@@ -166,5 +174,44 @@ class PlayerViewModel(
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    private fun startPlayerService() {
+        if (!isServiceRunning) {
+            viewModelScope.launch {
+                try {
+                    PlayerService.startService(getApplication())
+                    isServiceRunning = true
+                    managePlayerUseCase.setupAudioFocus()
+                } catch (e: Exception) {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            error = "Failed to start background service: ${e.message}",
+                        )
+                }
+            }
+        }
+    }
+
+    private fun stopPlayerService() {
+        viewModelScope.launch {
+            try {
+                PlayerService.stopService(getApplication())
+                isServiceRunning = false
+                managePlayerUseCase.releaseAudioFocus()
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value.copy(
+                        error = "Failed to stop background service: ${e.message}",
+                    )
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            if (isServiceRunning) stopPlayerService()
+        }
     }
 }
