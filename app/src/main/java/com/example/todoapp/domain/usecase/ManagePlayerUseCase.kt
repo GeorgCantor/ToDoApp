@@ -28,11 +28,7 @@ class ManagePlayerUseCase(
 
     fun getDuration(): Long = manager.getDuration()
 
-    fun setupAudioFocus() {
-        manager.setupAudioFocus()
-    }
+    fun setupAudioFocus() = manager.setupAudioFocus()
 
-    fun releaseAudioFocus() {
-        manager.releaseAudioFocus()
-    }
+    fun releaseAudioFocus() = manager.releaseAudioFocus()
 }

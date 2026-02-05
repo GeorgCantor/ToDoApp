@@ -54,6 +54,7 @@ class PlayerViewModel(
         loadMediaItems()
         observePlayerState()
         observeRecentMedia()
+        startPlayerService()
     }
 
     private fun loadMediaItems() {
@@ -86,12 +87,6 @@ class PlayerViewModel(
                 )
             }.collect {
                 _uiState.value = it
-                when {
-                    it.isPlaying && !isServiceRunning -> startPlayerService()
-                    !it.isPlaying && isServiceRunning && it.playbackState == PlaybackState.IDLE -> {
-                        stopPlayerService()
-                    }
-                }
             }
         }
     }
@@ -182,16 +177,18 @@ class PlayerViewModel(
     }
 
     private fun startPlayerService() {
-        viewModelScope.launch {
-            try {
-                PlayerService.startService(getApplication())
-                isServiceRunning = true
-                managePlayerUseCase.setupAudioFocus()
-            } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value.copy(
-                        error = "Failed to start background service: ${e.message}",
-                    )
+        if (!isServiceRunning) {
+            viewModelScope.launch {
+                try {
+                    PlayerService.startService(getApplication())
+                    isServiceRunning = true
+                    managePlayerUseCase.setupAudioFocus()
+                } catch (e: Exception) {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            error = "Failed to start background service: ${e.message}",
+                        )
+                }
             }
         }
     }

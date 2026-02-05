@@ -10,39 +10,44 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
 import com.example.todoapp.R
+import com.example.todoapp.TodoApp
 import com.example.todoapp.presentation.MainActivity
 
 @UnstableApi
 class PlayerService : MediaSessionService() {
-    private var mediaSession: MediaSession? = null
+    private var _mediaSession: MediaSession? = null
+    private val mediaSession: MediaSession?
+        get() = _mediaSession
+
     private var notificationManager: PlayerNotificationManager? = null
-    private var player: ExoPlayer? = null
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        player =
-            ExoPlayer.Builder(this).build().apply {
-                mediaSession = MediaSession.Builder(this@PlayerService, this).build()
-                setupNotification(this)
-            }
-        startForeground(NOTIFICATION_ID, createNotification())
+
+        val app = application as? TodoApp
+        val exoPlayerManager = app?.exoPlayerManager
+        val exoPlayer = exoPlayerManager?.getPlayer()
+
+        if (exoPlayer != null) {
+            _mediaSession = MediaSession.Builder(this, exoPlayer).build()
+            setupNotification(exoPlayer)
+            startForeground(NOTIFICATION_ID, createNotification())
+        } else {
+            stopSelf()
+        }
     }
 
     override fun onGetSession(info: MediaSession.ControllerInfo) = mediaSession
 
     override fun onDestroy() {
-        mediaSession?.let {
-            player?.release()
-            it.release()
-            mediaSession = null
-        }
         notificationManager?.setPlayer(null)
+        _mediaSession?.release()
+        _mediaSession = null
         notificationManager = null
         super.onDestroy()
     }
@@ -64,7 +69,7 @@ class PlayerService : MediaSessionService() {
         }
     }
 
-    private fun setupNotification(player: ExoPlayer) {
+    private fun setupNotification(player: Player) {
         val pendingIntent =
             PendingIntent.getActivity(
                 this,

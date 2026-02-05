@@ -3,6 +3,7 @@ package com.example.todoapp.di
 import androidx.datastore.core.DataStore
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.example.todoapp.TodoApp
 import com.example.todoapp.data.remote.ApolloGraphQLClient
 import com.example.todoapp.data.remote.GraphQLClient
 import com.example.todoapp.data.remote.api.NewsApiService
@@ -17,7 +18,6 @@ import com.example.todoapp.data.repository.SpaceXRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
-import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
@@ -68,6 +68,7 @@ import com.example.todoapp.presentation.visualization.SpaceXVisualizerFactory
 import com.example.todoapp.presentation.visualization.VisualizerFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -108,7 +109,6 @@ val appModule =
         }
 
         single<NewsApiService> { get<Retrofit>().create(NewsApiService::class.java) }
-        single<ExoPlayerManager> { ExoPlayerManager(androidContext()) }
         single<BiometricAuthManager> { BiometricAuthManagerImpl(androidContext()) }
         single<DataStore<UserProfile>> { androidContext().userProfileDataStore }
         single<NewsRepository> { NewsRepositoryImpl(get()) }
@@ -143,13 +143,21 @@ val appModule =
         factory { GetLaunchDetailUseCase(get()) }
         factory { GetLaunchStatisticsUseCase(get()) }
         factory { SpaceXVisualizerFactory() }
-        factory { PlayMediaUseCase(get()) }
-        factory { ManagePlayerUseCase(get()) }
         factory { GetMediaItemsUseCase(get<PlayerRepository>()) }
         factory { GetRecentMediaUseCase(get<PlayerRepository>()) }
         factory { SaveMediaItemUseCase(get<PlayerRepository>()) }
         factory { DeleteMediaItemUseCase(get<PlayerRepository>()) }
         factory { GetLocalMediaUseCase(get<PlayerRepository>()) }
+
+        factory<PlayMediaUseCase> {
+            val app = androidApplication() as TodoApp
+            PlayMediaUseCase(app.exoPlayerManager)
+        }
+
+        factory<ManagePlayerUseCase> {
+            val app = androidApplication() as TodoApp
+            ManagePlayerUseCase(app.exoPlayerManager)
+        }
 
         viewModel { NewsViewModel(get(), get()) }
         viewModel {
@@ -165,6 +173,7 @@ val appModule =
         }
         viewModel {
             PlayerViewModel(
+                application = androidApplication(),
                 managePlayerUseCase = get(),
                 playMediaUseCase = get(),
                 getMediaItemsUseCase = get(),
