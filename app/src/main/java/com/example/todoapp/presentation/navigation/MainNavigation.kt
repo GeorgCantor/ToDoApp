@@ -27,12 +27,12 @@ import com.example.todoapp.domain.model.AuthUiState
 import com.example.todoapp.domain.model.WidgetIntentData
 import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.BiometricAuthScreen
+import com.example.todoapp.presentation.screens.CartScreen
 import com.example.todoapp.presentation.screens.CoroutineMonitorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.MapScreen
-import com.example.todoapp.presentation.screens.NewsCategoriesScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
@@ -42,6 +42,7 @@ import com.example.todoapp.presentation.screens.SpaceXStatsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
 import com.example.todoapp.presentation.screens.TicTacToeScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
+import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -68,6 +69,7 @@ fun MainNavigation(
     val spaceXViewModel: SpaceXViewModel = koinViewModel()
     val spaceXStatsViewModel: SpaceXStatsViewModel = koinViewModel()
     val monitorViewModel: CoroutineMonitorViewModel = koinViewModel()
+    val cartViewModel: CartViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -205,8 +207,8 @@ fun MainNavigation(
             ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
 
-        composable(NavRoutes.NewsCategories.route) {
-            NewsCategoriesScreen(navController = navController, viewModel = newsViewModel)
+        composable(NavRoutes.Cart.route) {
+            CartScreen(viewModel = cartViewModel, onCheckout = {})
         }
 
         composable(NavRoutes.Map.route) { MapScreen() }

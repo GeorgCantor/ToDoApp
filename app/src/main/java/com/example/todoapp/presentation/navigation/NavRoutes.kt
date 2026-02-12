@@ -52,4 +52,6 @@ sealed class NavRoutes(
     object SpaceXStats : NavRoutes("spacex_stats_screen")
 
     object CoroutineMonitor : NavRoutes("coroutine_monitor_screen")
+
+    object Cart : NavRoutes("cart_screen")
 }

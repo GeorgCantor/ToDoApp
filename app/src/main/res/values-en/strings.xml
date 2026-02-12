@@ -255,4 +255,6 @@
 
     <!-- Player -->
     <string name="player">Player</string>
+
+    <string name="cart">Cart</string>
 </resources>

@@ -255,4 +255,6 @@
 
     <!-- Player -->
     <string name="player">Плеер</string>
+
+    <string name="cart">Корзина</string>
 </resources>
