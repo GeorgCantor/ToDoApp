@@ -62,6 +62,7 @@ import com.example.todoapp.domain.usecase.UpdateQuantityUseCase
 import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CalculatorViewModel
+import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
@@ -200,6 +201,14 @@ val appModule =
                 saveMediaItemUseCase = get(),
                 deleteMediaItemUseCase = get(),
                 getLocalMediaUseCase = get(),
+            )
+        }
+        viewModel {
+            CartViewModel(
+                getCartItemsUseCase = get(),
+                updateQuantityUseCase = get(),
+                removeFromCartUseCase = get(),
+                calculateTotalUseCase = get()
             )
         }
         viewModel { ProfileViewModel(get(), get()) }
