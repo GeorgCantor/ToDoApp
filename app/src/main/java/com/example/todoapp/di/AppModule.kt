@@ -208,7 +208,7 @@ val appModule =
                 getCartItemsUseCase = get(),
                 updateQuantityUseCase = get(),
                 removeFromCartUseCase = get(),
-                calculateTotalUseCase = get()
+                calculateTotalUseCase = get(),
             )
         }
         viewModel { ProfileViewModel(get(), get()) }

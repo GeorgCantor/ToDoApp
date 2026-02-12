@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 class CartViewModel(
     private val getCartItemsUseCase: GetCartItemsUseCase,
@@ -93,4 +95,6 @@ class CartViewModel(
             }
         }
     }
+
+    fun formatPrice(price: Double): String = NumberFormat.getNumberInstance(Locale("ru", "RU")).format(price) + " ₽"
 }
