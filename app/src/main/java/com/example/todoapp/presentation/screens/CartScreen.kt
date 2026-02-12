@@ -1,15 +1,20 @@
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,15 +42,22 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,6 +68,8 @@ import com.example.todoapp.domain.model.CartEvent
 import com.example.todoapp.domain.model.CartItem
 import com.example.todoapp.domain.usecase.CalculateTotalUseCase
 import com.example.todoapp.presentation.viewmodel.CartViewModel
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -189,21 +203,27 @@ fun CartScreen(
                     items = state.items,
                     key = { it.id },
                 ) { item ->
-                    CartItemCard(
+                    SwipeToDeleteContainer(
                         item = item,
-                        onIncrement = {
-                            viewModel.onEvent(CartEvent.IncrementQuantity(item.id, item.quantity))
+                        onDelete = {
+                            viewModel.onEvent(CartEvent.RemoveItem(it.id))
                         },
-                        onDecrement = {
-                            viewModel.onEvent(CartEvent.DecrementQuantity(item.id, item.quantity))
-                        },
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        thickness = 1.dp,
-                    )
+                    ) { cartItem ->
+                        CartItemCard(
+                            item = cartItem,
+                            onIncrement = {
+                                viewModel.onEvent(CartEvent.IncrementQuantity(cartItem.id, cartItem.quantity))
+                            },
+                            onDecrement = {
+                                viewModel.onEvent(CartEvent.DecrementQuantity(cartItem.id, cartItem.quantity))
+                            },
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            thickness = 1.dp,
+                        )
+                    }
                 }
             }
         }
@@ -417,6 +437,76 @@ fun CartSummary(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
             )
+        }
+    }
+}
+
+@Composable
+fun <T> SwipeToDeleteContainer(
+    item: T,
+    onDelete: (T) -> Unit,
+    content: @Composable (T) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val deleteOffset = with(LocalDensity.current) { 80.dp.toPx() }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var isSwiped by remember { mutableStateOf(false) }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clipToBounds(),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .padding(end = 16.dp)
+                    .align(Alignment.CenterEnd),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(80.dp)
+                        .background(MaterialTheme.colorScheme.error)
+                        .align(Alignment.CenterEnd),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Удалить",
+                    tint = Color.White,
+                )
+            }
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset { IntOffset(offsetX.roundToInt(), 0) }
+                    .draggable(
+                        orientation = Orientation.Horizontal,
+                        state =
+                            rememberDraggableState { delta ->
+                                if (!isSwiped) {
+                                    offsetX = (offsetX + delta).coerceIn(-deleteOffset, 0f)
+                                }
+                            },
+                        onDragStopped = {
+                            scope.launch {
+                                if (offsetX < -deleteOffset / 2) {
+                                    onDelete(item)
+                                    isSwiped = true
+                                }
+                                offsetX = 0f
+                                isSwiped = false
+                            }
+                        },
+                    ),
+        ) {
+            content(item)
         }
     }
 }
