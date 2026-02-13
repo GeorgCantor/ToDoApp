@@ -1,6 +1,7 @@
 package com.example.todoapp.presentation.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -22,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -211,10 +211,20 @@ fun CartScreen(
                         CartItemCard(
                             item = cartItem,
                             onIncrement = {
-                                viewModel.onEvent(CartEvent.IncrementQuantity(cartItem.id, cartItem.quantity))
+                                viewModel.onEvent(
+                                    CartEvent.IncrementQuantity(
+                                        cartItem.id,
+                                        cartItem.quantity,
+                                    ),
+                                )
                             },
                             onDecrement = {
-                                viewModel.onEvent(CartEvent.DecrementQuantity(cartItem.id, cartItem.quantity))
+                                viewModel.onEvent(
+                                    CartEvent.DecrementQuantity(
+                                        cartItem.id,
+                                        cartItem.quantity,
+                                    ),
+                                )
                             },
                         )
                     }
@@ -256,40 +266,58 @@ fun QuantitySelector(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                .padding(horizontal = 4.dp, vertical = 2.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        IconButton(
-            onClick = onDecrement,
-            modifier = Modifier.size(24.dp),
+        Box(
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF92CBF8))
+                    .clickable { onDecrement() },
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Уменьшить",
-                tint = if (quantity > 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+            Text(
+                text = "−",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1634F0),
             )
         }
 
-        Text(
-            text = quantity.toString(),
-            fontSize = 14.sp,
-            modifier = Modifier.width(24.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        )
-
-        IconButton(
-            onClick = onIncrement,
-            modifier = Modifier.size(24.dp),
+        Box(
+            modifier =
+                Modifier
+                    .height(36.dp)
+                    .width(60.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFF5F5F5)),
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Увеличить",
-                tint = MaterialTheme.colorScheme.primary,
+            Text(
+                text = "$quantity",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black,
+            )
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF92CBF8))
+                    .clickable { onIncrement() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "+",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1634F0),
             )
         }
     }
@@ -356,7 +384,7 @@ fun CartItemCard(
                     text = calculateTotalUseCase.formatPrice(item.price * item.quantity),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = Color.Black,
                 )
 
                 QuantitySelector(
