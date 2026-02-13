@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -357,7 +356,7 @@ fun CartItemCard(
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
             contentScale = ContentScale.Crop,
-            error = painterResource(id = R.drawable.ic_launcher_foreground),
+            error = painterResource(id = R.drawable.ic_product),
         )
 
         Column(
@@ -472,7 +471,7 @@ fun <T> SwipeToDeleteContainer(
     content: @Composable (T) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val deleteOffset = with(LocalDensity.current) { 80.dp.toPx() }
+    val deleteThreshold = with(LocalDensity.current) { 80.dp.toPx() }
     var offsetX by remember { mutableFloatStateOf(0f) }
     var isSwiped by remember { mutableStateOf(false) }
 
@@ -486,22 +485,24 @@ fun <T> SwipeToDeleteContainer(
             modifier =
                 Modifier
                     .matchParentSize()
-                    .padding(end = 16.dp)
-                    .align(Alignment.CenterEnd),
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
         ) {
             Box(
                 modifier =
                     Modifier
                         .fillMaxHeight()
                         .width(80.dp)
-                        .background(MaterialTheme.colorScheme.error)
-                        .align(Alignment.CenterEnd),
+                        .background(
+                            color = Color(0xFFFFE8EC),
+                            shape = RoundedCornerShape(12.dp),
+                        ).align(Alignment.CenterEnd),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Удалить",
-                    tint = Color.White,
+                Text(
+                    text = "Удалить",
+                    color = Color(0xFFFF113C),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
                 )
             }
         }
@@ -515,12 +516,12 @@ fun <T> SwipeToDeleteContainer(
                         state =
                             rememberDraggableState { delta ->
                                 if (!isSwiped) {
-                                    offsetX = (offsetX + delta).coerceIn(-deleteOffset, 0f)
+                                    offsetX = (offsetX + delta).coerceIn(-deleteThreshold, 0f)
                                 }
                             },
                         onDragStopped = {
                             scope.launch {
-                                if (offsetX < -deleteOffset / 2) {
+                                if (offsetX < -deleteThreshold / 2) {
                                     onDelete(item)
                                     isSwiped = true
                                 }
