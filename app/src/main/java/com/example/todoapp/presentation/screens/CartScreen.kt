@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -218,11 +217,6 @@ fun CartScreen(
                                 viewModel.onEvent(CartEvent.DecrementQuantity(cartItem.id, cartItem.quantity))
                             },
                         )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            thickness = 1.dp,
-                        )
                     }
                 }
             }
@@ -313,7 +307,10 @@ fun CartItemCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         AsyncImage(
@@ -347,33 +344,25 @@ fun CartItemCard(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
-                modifier = Modifier.padding(bottom = 4.dp),
+                modifier = Modifier.padding(bottom = 8.dp),
             )
-
-            Text(
-                text = "${calculateTotalUseCase.formatPrice(item.price)}/шт",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                QuantitySelector(
-                    quantity = item.quantity,
-                    onIncrement = onIncrement,
-                    onDecrement = onDecrement,
-                )
-
                 Text(
                     text = calculateTotalUseCase.formatPrice(item.price * item.quantity),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
+                )
+
+                QuantitySelector(
+                    quantity = item.quantity,
+                    onIncrement = onIncrement,
+                    onDecrement = onDecrement,
                 )
             }
         }
