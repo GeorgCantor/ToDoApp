@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,7 +51,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -159,24 +159,59 @@ fun CartScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .background(Color(0xFF1634F0))
                         .padding(paddingValues),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ShoppingCart,
+                        painter = painterResource(id = R.drawable.ic_cart_empty),
                         contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        modifier = Modifier.size(80.dp),
+                        tint = Color.White,
                     )
-                    Text(
-                        text = "Корзина пуста",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cart),
+                            fontSize = 28.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text = stringResource(id = R.string.cart_empty),
+                            fontSize = 16.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+
+                    Button(
+                        onClick = { },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color(0xFF1634F0),
+                            ),
+                    ) {
+                        Text(
+                            text = "Каталог товаров",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
             }
         } else {
