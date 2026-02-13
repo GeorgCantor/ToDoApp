@@ -255,4 +255,7 @@
 
     <!-- Player -->
     <string name="player">Player</string>
+
+    <string name="cart">Cart</string>
+    <string name="cart_empty">Your cart is currently empty. Go to the catalog, add items to your cart, and return to place your order.</string>
 </resources>

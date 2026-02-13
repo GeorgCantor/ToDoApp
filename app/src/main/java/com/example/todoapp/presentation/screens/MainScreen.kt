@@ -48,7 +48,7 @@ fun MainScreen(
             NavRoutes.NewsList,
             NavRoutes.Chat,
             NavRoutes.Profile,
-            NavRoutes.NewsCategories,
+            NavRoutes.Cart,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -89,10 +89,10 @@ fun MainScreen(
                                         contentDescription = stringResource(R.string.profile),
                                     )
 
-                                NavRoutes.NewsCategories ->
+                                NavRoutes.Cart ->
                                     Icon(
                                         Icons.Filled.Build,
-                                        contentDescription = stringResource(R.string.categories),
+                                        contentDescription = stringResource(R.string.cart),
                                     )
 
                                 else -> Icon(Icons.Filled.PlayArrow, contentDescription = item.route)
@@ -105,7 +105,7 @@ fun MainScreen(
                                     NavRoutes.NewsList -> stringResource(R.string.news)
                                     NavRoutes.Chat -> stringResource(R.string.chat)
                                     NavRoutes.Profile -> stringResource(R.string.profile)
-                                    NavRoutes.NewsCategories -> stringResource(R.string.categories)
+                                    NavRoutes.Cart -> stringResource(R.string.cart)
                                     else -> item.route
                                 },
                                 maxLines = 1,
