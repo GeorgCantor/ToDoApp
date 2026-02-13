@@ -38,6 +38,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -215,25 +216,27 @@ fun CartScreen(
                             viewModel.onEvent(CartEvent.RemoveItem(it.id))
                         },
                     ) { cartItem ->
-                        CartItemCard(
-                            item = cartItem,
-                            onIncrement = {
-                                viewModel.onEvent(
-                                    CartEvent.IncrementQuantity(
-                                        cartItem.id,
-                                        cartItem.quantity,
-                                    ),
-                                )
-                            },
-                            onDecrement = {
-                                viewModel.onEvent(
-                                    CartEvent.DecrementQuantity(
-                                        cartItem.id,
-                                        cartItem.quantity,
-                                    ),
-                                )
-                            },
-                        )
+                        key(cartItem.id) {
+                            CartItemCard(
+                                item = cartItem,
+                                onIncrement = {
+                                    viewModel.onEvent(
+                                        CartEvent.IncrementQuantity(
+                                            cartItem.id,
+                                            cartItem.quantity,
+                                        ),
+                                    )
+                                },
+                                onDecrement = {
+                                    viewModel.onEvent(
+                                        CartEvent.DecrementQuantity(
+                                            cartItem.id,
+                                            cartItem.quantity,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
             }

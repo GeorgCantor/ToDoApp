@@ -3,6 +3,7 @@ package com.example.todoapp.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.model.CartEvent
+import com.example.todoapp.domain.model.CartItem
 import com.example.todoapp.domain.model.CartState
 import com.example.todoapp.domain.usecase.CalculateTotalUseCase
 import com.example.todoapp.domain.usecase.GetCartItemsUseCase
@@ -51,15 +52,7 @@ class CartViewModel(
             _state.update { it.copy(isLoading = true) }
             try {
                 val items = getCartItemsUseCase()
-                val total = calculateTotalUseCase(items)
-                _state.update {
-                    it.copy(
-                        items = items,
-                        totalPrice = total,
-                        itemsCount = items.sumOf { item -> item.quantity },
-                        isLoading = false,
-                    )
-                }
+                updateState(items)
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
@@ -73,12 +66,29 @@ class CartViewModel(
 
     private fun updateQuantity(
         itemId: Int,
-        quantity: Int,
+        newQuantity: Int,
     ) {
         viewModelScope.launch {
             try {
-                updateQuantityUseCase(itemId, quantity)
-                loadCart()
+                updateQuantityUseCase(itemId, newQuantity)
+
+                _state.update { currentState ->
+                    val updatedItems =
+                        currentState.items
+                            .map { item ->
+                                if (item.id == itemId) {
+                                    item.copy(quantity = newQuantity)
+                                } else {
+                                    item
+                                }
+                            }.filter { it.quantity > 0 }
+
+                    currentState.copy(
+                        items = updatedItems,
+                        totalPrice = calculateTotalUseCase(updatedItems),
+                        itemsCount = updatedItems.sumOf { it.quantity },
+                    )
+                }
             } catch (e: Exception) {
                 _state.update { it.copy(error = "Не удалось обновить количество") }
             }
@@ -89,10 +99,31 @@ class CartViewModel(
         viewModelScope.launch {
             try {
                 removeFromCartUseCase(itemId)
-                loadCart()
+
+                _state.update { currentState ->
+                    val updatedItems = currentState.items.filter { it.id != itemId }
+
+                    currentState.copy(
+                        items = updatedItems,
+                        totalPrice = calculateTotalUseCase(updatedItems),
+                        itemsCount = updatedItems.sumOf { it.quantity },
+                    )
+                }
             } catch (e: Exception) {
                 _state.update { it.copy(error = "Не удалось удалить товар") }
             }
+        }
+    }
+
+    private fun updateState(items: List<CartItem>) {
+        _state.update {
+            it.copy(
+                items = items,
+                totalPrice = calculateTotalUseCase(items),
+                itemsCount = items.sumOf { item -> item.quantity },
+                isLoading = false,
+                error = null,
+            )
         }
     }
 
