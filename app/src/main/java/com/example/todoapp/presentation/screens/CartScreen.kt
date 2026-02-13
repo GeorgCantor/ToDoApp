@@ -91,11 +91,11 @@ fun CartScreen(
             TopAppBar(
                 title = {
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     ) {
                         Text(
                             text = "Корзина",
-                            fontSize = 24.sp,
+                            fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                         )
 
@@ -229,7 +229,7 @@ fun CartScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 12.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFE6E6E6))
+                                .background(Color(0xFFD7D7D7))
                                 .padding(horizontal = 16.dp, vertical = 12.dp),
                     ) {
                         Text(
@@ -311,14 +311,18 @@ fun QuantitySelector(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier =
+            modifier
+                .width(120.dp)
+                .height(36.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Box(
             modifier =
                 Modifier
-                    .size(36.dp)
+                    .weight(1f)
+                    .fillMaxHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFF92CBF8))
                     .clickable { onDecrement() },
@@ -335,8 +339,8 @@ fun QuantitySelector(
         Box(
             modifier =
                 Modifier
-                    .height(36.dp)
-                    .width(60.dp)
+                    .weight(1f)
+                    .fillMaxHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFFF5F5F5)),
             contentAlignment = Alignment.Center,
@@ -352,7 +356,8 @@ fun QuantitySelector(
         Box(
             modifier =
                 Modifier
-                    .size(36.dp)
+                    .weight(1f)
+                    .fillMaxHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFF92CBF8))
                     .clickable { onIncrement() },
