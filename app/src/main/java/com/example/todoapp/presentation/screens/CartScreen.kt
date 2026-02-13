@@ -111,7 +111,7 @@ fun CartScreen(
                     Box(
                         modifier =
                             Modifier
-                                .clip(RoundedCornerShape(20.dp))
+                                .clip(RoundedCornerShape(12.dp))
                                 .background(Color(0xFFF0F0F0))
                                 .clickable {}
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -187,16 +187,22 @@ fun CartScreen(
                 contentPadding = PaddingValues(bottom = 16.dp),
             ) {
                 item {
-                    Text(
-                        text = "Товары (${state.itemsCount})",
+                    Box(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFE6E6E6))
                                 .padding(horizontal = 16.dp, vertical = 12.dp),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                    )
+                    ) {
+                        Text(
+                            text = "Товары (${state.itemsCount})",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black.copy(alpha = 0.8f),
+                        )
+                    }
                 }
 
                 items(
