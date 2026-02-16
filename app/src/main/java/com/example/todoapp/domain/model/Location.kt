@@ -1,6 +1,5 @@
 package com.example.todoapp.domain.model
 
-import com.google.android.gms.maps.LocationSource
 import java.util.UUID
 
 sealed class LocationResult {
