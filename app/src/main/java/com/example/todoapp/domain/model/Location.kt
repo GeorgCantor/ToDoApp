@@ -35,3 +35,20 @@ data class LocationData(
     val source: LocationSource,
     val timestamp: Long,
 )
+
+fun LocationResult.Success.toLocationData() =
+    LocationData(
+        latitude = latitude,
+        longitude = longitude,
+        source = source,
+        timestamp = timestamp,
+    )
+
+fun LocationResult.Success.toLocationPoint() =
+    LocationPoint(
+        latitude = latitude,
+        longitude = longitude,
+        source = source,
+        accuracy = accuracy,
+        timestamp = timestamp,
+    )
