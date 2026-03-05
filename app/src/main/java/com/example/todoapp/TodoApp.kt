@@ -7,6 +7,7 @@ import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.data.cache.NewsCache
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
+import com.example.todoapp.di.locationModule
 import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.manager.SessionTracker
 import org.koin.android.ext.koin.androidContext
@@ -23,7 +24,7 @@ class TodoApp : Application() {
 
         startKoin {
             androidContext(this@TodoApp)
-            modules(appModule, dataStoreModule)
+            modules(appModule, dataStoreModule, locationModule)
         }
 
         NewsCache.init(this)
