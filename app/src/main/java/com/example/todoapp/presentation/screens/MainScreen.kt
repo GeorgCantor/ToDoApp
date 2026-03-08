@@ -3,8 +3,8 @@ package com.example.todoapp.presentation.screens
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
@@ -48,7 +48,7 @@ fun MainScreen(
             NavRoutes.NewsList,
             NavRoutes.Chat,
             NavRoutes.Profile,
-            NavRoutes.Cart,
+            NavRoutes.Map,
         )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -89,10 +89,10 @@ fun MainScreen(
                                         contentDescription = stringResource(R.string.profile),
                                     )
 
-                                NavRoutes.Cart ->
+                                NavRoutes.Map ->
                                     Icon(
-                                        Icons.Filled.Build,
-                                        contentDescription = stringResource(R.string.cart),
+                                        Icons.Filled.LocationOn,
+                                        contentDescription = stringResource(R.string.map),
                                     )
 
                                 else -> Icon(Icons.Filled.PlayArrow, contentDescription = item.route)
@@ -105,7 +105,7 @@ fun MainScreen(
                                     NavRoutes.NewsList -> stringResource(R.string.news)
                                     NavRoutes.Chat -> stringResource(R.string.chat)
                                     NavRoutes.Profile -> stringResource(R.string.profile)
-                                    NavRoutes.Cart -> stringResource(R.string.cart)
+                                    NavRoutes.Map -> stringResource(R.string.map)
                                     else -> item.route
                                 },
                                 maxLines = 1,

@@ -45,6 +45,7 @@ import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
+import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
@@ -70,6 +71,7 @@ fun MainNavigation(
     val spaceXStatsViewModel: SpaceXStatsViewModel = koinViewModel()
     val monitorViewModel: CoroutineMonitorViewModel = koinViewModel()
     val cartViewModel: CartViewModel = koinViewModel()
+    val mapViewModel: MapViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -211,7 +213,7 @@ fun MainNavigation(
             CartScreen(viewModel = cartViewModel, onCheckout = {})
         }
 
-        composable(NavRoutes.Map.route) { MapScreen() }
+        composable(NavRoutes.Map.route) { MapScreen(mapViewModel) }
 
         composable(NavRoutes.TicTacToe.route) { TicTacToeScreen() }
 

@@ -135,6 +135,14 @@
     <string name="map_type">Map type</string>
     <string name="change_map_type">Change map type</string>
     <string name="selected">Selected</string>
+    <string name="map">Map</string>
+    <string name="history">History</string>
+    <string name="location_history">Location History</string>
+    <string name="get_exact_location">Get exact location</string>
+    <string name="no_history_points">No saved points</string>
+    <string name="location_disabled">Location disabled</string>
+    <string name="location_disabled_message">To get an accurate location, you need to enable location services in the device settings</string>
+    <string name="open_settings">Open settings</string>
 
     <!-- Main Screen -->
     <string name="news">News</string>
