@@ -23,6 +23,7 @@ class MapViewModel(
 
     init {
         loadHistory()
+        getCurrentLocation()
     }
 
     fun loadHistory() {

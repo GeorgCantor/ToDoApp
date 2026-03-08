@@ -135,6 +135,14 @@
     <string name="map_type">Тип карты</string>
     <string name="change_map_type">Изменить тип карты</string>
     <string name="selected">Выбрано</string>
+    <string name="map">Карта</string>
+    <string name="history">История</string>
+    <string name="location_history">История местоположений</string>
+    <string name="get_exact_location">Точное местоположение</string>
+    <string name="no_history_points">Нет сохраненных точек</string>
+    <string name="location_disabled">Геолокация отключена</string>
+    <string name="location_disabled_message">Для получения точного местоположения необходимо включить геолокацию в настройках устройства</string>
+    <string name="open_settings">Открыть настройки</string>
 
     <!-- Main Screen -->
     <string name="news">Новости</string>

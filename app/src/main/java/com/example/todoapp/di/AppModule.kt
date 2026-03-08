@@ -66,6 +66,7 @@ import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
+import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
@@ -211,6 +212,7 @@ val appModule =
                 calculateTotalUseCase = get(),
             )
         }
+        viewModel { MapViewModel(get(), get(), get()) }
         viewModel { ProfileViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CalculatorViewModel(get(), get(), get()) }
