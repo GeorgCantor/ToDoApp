@@ -35,4 +35,13 @@ object ValueFormatter {
                 }
             }
         }
+
+    fun isPrimitiveOrSimple(obj: Any?) =
+        when (obj) {
+            is String, is Char, is Number, is Boolean, is Date, is Enum<*>, null -> true
+            else -> {
+                val name = obj.javaClass.name
+                name.startsWith("java.") || name.startsWith("kotlin.") || obj.javaClass.isPrimitive
+            }
+        }
 }
