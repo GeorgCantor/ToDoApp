@@ -30,4 +30,18 @@ data class InspectionNode(
 ) {
     val hasChildren: Boolean
         get() = children.isNotEmpty()
+
+    companion object {
+        fun empty(name: String) =
+            InspectionNode(
+                id = IdGenerator.generateId(),
+                name = name,
+                type = "null",
+                fullType = "null",
+                value = "null",
+                isPrimitive = true,
+                isNull = true,
+                modifiers = emptyList(),
+            )
+    }
 }
