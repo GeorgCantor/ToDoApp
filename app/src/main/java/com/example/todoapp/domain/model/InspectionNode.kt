@@ -1,4 +1,6 @@
-package com.example.todoapp.data.objectinspector.core
+package com.example.todoapp.domain.model
+
+import com.example.todoapp.data.objectinspector.core.IdGenerator
 
 /**
  * Узел дерева инспекции объектов.

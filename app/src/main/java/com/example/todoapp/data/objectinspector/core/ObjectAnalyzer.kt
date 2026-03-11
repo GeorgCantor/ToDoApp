@@ -1,6 +1,7 @@
 package com.example.todoapp.data.objectinspector.core
 
 import android.annotation.SuppressLint
+import com.example.todoapp.domain.model.InspectionNode
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
