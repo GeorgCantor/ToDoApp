@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.todoapp.TodoApp
+import com.example.todoapp.data.objectinspector.core.ObjectAnalyzer
 import com.example.todoapp.data.remote.ApolloGraphQLClient
 import com.example.todoapp.data.remote.GraphQLClient
 import com.example.todoapp.data.remote.api.NewsApiService
@@ -14,6 +15,7 @@ import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
+import com.example.todoapp.data.repository.ObjectInspectorRepositoryImpl
 import com.example.todoapp.data.repository.PlayerRepositoryImpl
 import com.example.todoapp.data.repository.SpaceXRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
@@ -27,6 +29,7 @@ import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.CoroutineMonitorRepository
 import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
+import com.example.todoapp.domain.repository.ObjectInspectorRepository
 import com.example.todoapp.domain.repository.PlayerRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
@@ -46,11 +49,13 @@ import com.example.todoapp.domain.usecase.GetLaunchDetailUseCase
 import com.example.todoapp.domain.usecase.GetLaunchStatisticsUseCase
 import com.example.todoapp.domain.usecase.GetLocalMediaUseCase
 import com.example.todoapp.domain.usecase.GetMediaItemsUseCase
+import com.example.todoapp.domain.usecase.GetNodeByIdUseCase
 import com.example.todoapp.domain.usecase.GetRecentMediaUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
+import com.example.todoapp.domain.usecase.InspectObjectUseCase
 import com.example.todoapp.domain.usecase.ManagePlayerUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.PlayMediaUseCase
@@ -68,6 +73,7 @@ import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
@@ -139,6 +145,8 @@ val appModule =
         single<VisualizerFactory> { SpaceXVisualizerFactory() }
         single<CoroutineMonitorRepository> { CoroutineMonitorRepositoryImpl() }
         single<PlayerRepository> { PlayerRepositoryImpl(androidContext()) }
+        single { ObjectAnalyzer() }
+        single<ObjectInspectorRepository> { ObjectInspectorRepositoryImpl(get()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -169,6 +177,8 @@ val appModule =
         factory { UpdateQuantityUseCase(get()) }
         factory { RemoveFromCartUseCase(get()) }
         factory { CalculateTotalUseCase() }
+        factory { InspectObjectUseCase(get()) }
+        factory { GetNodeByIdUseCase(get()) }
 
         factory<PlayMediaUseCase> {
             val app = androidApplication() as TodoApp
@@ -212,6 +222,7 @@ val appModule =
                 calculateTotalUseCase = get(),
             )
         }
+        viewModel { ObjectInspectorViewModel(get(), get()) }
         viewModel { MapViewModel(get(), get(), get()) }
         viewModel { ProfileViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get(), get()) }
