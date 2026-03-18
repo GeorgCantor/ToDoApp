@@ -54,4 +54,6 @@ sealed class NavRoutes(
     object CoroutineMonitor : NavRoutes("coroutine_monitor_screen")
 
     object Cart : NavRoutes("cart_screen")
+
+    object Inspector : NavRoutes("inspector_screen")
 }

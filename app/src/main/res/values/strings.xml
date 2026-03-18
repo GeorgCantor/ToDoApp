@@ -261,6 +261,9 @@
     <!-- Coroutine monitor -->
     <string name="coroutine_monitor">Монитор корутин</string>
 
+    <!-- Object inspector -->
+    <string name="object_inspector">Инспектор объектов</string>
+
     <!-- Player -->
     <string name="player">Плеер</string>
 
