@@ -34,6 +34,7 @@ import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.MapScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
+import com.example.todoapp.presentation.screens.ObjectInspectorScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
 import com.example.todoapp.presentation.screens.SearchNewsScreen
 import com.example.todoapp.presentation.screens.SignUpScreen
@@ -47,6 +48,7 @@ import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
+import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
@@ -72,6 +74,7 @@ fun MainNavigation(
     val monitorViewModel: CoroutineMonitorViewModel = koinViewModel()
     val cartViewModel: CartViewModel = koinViewModel()
     val mapViewModel: MapViewModel = koinViewModel()
+    val inspectorViewModel: ObjectInspectorViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -222,6 +225,8 @@ fun MainNavigation(
         composable(NavRoutes.SpaceXStats.route) { SpaceXStatsScreen(spaceXStatsViewModel) }
 
         composable(NavRoutes.CoroutineMonitor.route) { CoroutineMonitorScreen(monitorViewModel) }
+
+        composable(NavRoutes.Inspector.route) { ObjectInspectorScreen(inspectorViewModel) }
 
         composable(
             route = NavRoutes.Search.route,

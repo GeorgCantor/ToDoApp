@@ -44,11 +44,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.InspectionNode
 import com.example.todoapp.presentation.utils.TestData
 import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
@@ -62,7 +64,7 @@ fun ObjectInspectorScreen(viewModel: ObjectInspectorViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Object Inspector") },
+                title = { Text(stringResource(R.string.object_inspector)) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,

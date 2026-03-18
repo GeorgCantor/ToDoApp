@@ -192,11 +192,11 @@ fun ProfileScreen(
                     }
 
                     IconButton(
-                        onClick = { navController.navigate(NavRoutes.CoroutineMonitor.route) },
+                        onClick = { navController.navigate(NavRoutes.Inspector.route) },
                     ) {
                         Icon(
                             imageVector = Icons.Default.List,
-                            contentDescription = stringResource(R.string.coroutine_monitor),
+                            contentDescription = stringResource(R.string.object_inspector),
                         )
                     }
                 },
