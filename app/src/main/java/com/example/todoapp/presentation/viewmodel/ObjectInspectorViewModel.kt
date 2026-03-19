@@ -3,6 +3,7 @@ package com.example.todoapp.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.model.ObjectInspectorState
+import com.example.todoapp.domain.usecase.FetchDataForInspectorUseCase
 import com.example.todoapp.domain.usecase.GetNodeByIdUseCase
 import com.example.todoapp.domain.usecase.InspectObjectUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 class ObjectInspectorViewModel(
     private val inspectObjectUseCase: InspectObjectUseCase,
     private val getNodeByIdUseCase: GetNodeByIdUseCase,
+    private val fetchUseCase: FetchDataForInspectorUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ObjectInspectorState())
     val state: StateFlow<ObjectInspectorState> = _state.asStateFlow()
@@ -21,25 +23,40 @@ class ObjectInspectorViewModel(
     private val _expandedNodes = MutableStateFlow<Set<String>>(mutableSetOf())
     val expandedNodes: StateFlow<Set<String>> = _expandedNodes.asStateFlow()
 
-    fun inspectObject(
-        obj: Any?,
-        name: String = "Root",
-    ) {
+    fun fetchDataFromApi() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            inspectObjectUseCase(obj, name).fold(
-                onSuccess = { node ->
+
+            fetchUseCase().fold(
+                onSuccess = { response ->
+                    inspectObjectUseCase(response, "SpaceX Launches API Response").fold(
+                        onSuccess = { node ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    rootNode = node,
+                                    currentNode = node,
+                                )
+                            }
+                            toggleNode(node.id, true)
+                        },
+                        onFailure = { error ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = "Failed to inspect data: ${error.message}",
+                                )
+                            }
+                        },
+                    )
+                },
+                onFailure = { error ->
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            rootNode = node,
-                            currentNode = node,
+                            error = "Failed to load data from API: ${error.message}",
                         )
                     }
-                    toggleNode(node.id, true)
-                },
-                onFailure = { error ->
-                    _state.update { it.copy(isLoading = false, error = error.message) }
                 },
             )
         }
