@@ -5,6 +5,7 @@ import com.example.todoapp.domain.model.InspectionNode
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
+import java.util.IdentityHashMap
 
 class ObjectAnalyzer {
     /**
@@ -17,13 +18,30 @@ class ObjectAnalyzer {
     fun analyze(
         obj: Any?,
         name: String = "Root",
-    ) = analyzeInternal(obj, name)
+    ) = analyzeInternal(obj, name, IdentityHashMap())
 
     private fun analyzeInternal(
         obj: Any?,
         name: String,
+        visited: IdentityHashMap<Any, String>,
     ): InspectionNode {
         if (obj == null) return InspectionNode.empty(name)
+
+        visited[obj]?.let {
+            return InspectionNode(
+                id = IdGenerator.generateId(),
+                name = name,
+                type = obj.javaClass.simpleName,
+                fullType = obj.javaClass.name,
+                value = null,
+                isPrimitive = false,
+                isNull = false,
+                modifiers = emptyList(),
+                children = emptyList(),
+                isRecursive = true,
+                recursiveId = it,
+            )
+        }
 
         val objClass = obj.javaClass
 
@@ -39,6 +57,9 @@ class ObjectAnalyzer {
             )
         }
 
+        val currentNodeId = IdGenerator.generateId()
+        val newVisited = IdentityHashMap(visited).apply { put(obj, currentNodeId) }
+
         val fields = getAllFields(objClass)
         val children = mutableListOf<InspectionNode>()
 
@@ -49,7 +70,7 @@ class ObjectAnalyzer {
                 val modifiers = getModifiersList(field.modifiers)
                 val typeInfo = getTypeInfo(field)
                 val childNode =
-                    analyzeInternal(fieldValue, field.name).copy(
+                    analyzeInternal(fieldValue, field.name, newVisited).copy(
                         modifiers = modifiers,
                         fullType = typeInfo,
                     )
