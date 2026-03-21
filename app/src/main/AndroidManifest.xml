@@ -83,6 +83,12 @@
         </service>
 
         <provider
+            android:name=".data.provider.MessageContentProvider"
+            android:authorities="${applicationId}.messages"
+            android:exported="false"
+            android:enabled="true" />
+
+        <provider
             android:name=".provider.NotesProvider"
             android:authorities="com.example.todoapp.provider"
             android:enabled="true"
