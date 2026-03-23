@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.data.cache.NewsCache
+import com.example.todoapp.data.sync.SyncManager
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
 import com.example.todoapp.di.locationModule
@@ -16,6 +17,9 @@ import org.koin.core.context.startKoin
 @UnstableApi
 class TodoApp : Application() {
     lateinit var exoPlayerManager: ExoPlayerManager
+        private set
+
+    lateinit var syncManager: SyncManager
         private set
 
     override fun onCreate() {
@@ -30,6 +34,7 @@ class TodoApp : Application() {
         NewsCache.init(this)
         SessionTracker(this)
         exoPlayerManager = ExoPlayerManager(applicationContext)
+        syncManager = SyncManager(applicationContext).apply { start() }
     }
 
     private fun setupStrictMode() {
