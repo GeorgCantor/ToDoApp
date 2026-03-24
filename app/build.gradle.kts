@@ -122,6 +122,7 @@ dependencies {
     implementation(libs.media3.ui)
     implementation(libs.media3.session)
     implementation(libs.media3.common)
+    implementation(libs.play.services.nearby)
 
     debugImplementation(libs.leakcanary.android)
     debugImplementation(libs.chucker)
