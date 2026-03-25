@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.data.cache.NewsCache
+import com.example.todoapp.data.sync.P2PManager
 import com.example.todoapp.data.sync.SyncManager
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
@@ -21,6 +22,8 @@ class TodoApp : Application() {
 
     lateinit var syncManager: SyncManager
         private set
+    lateinit var p2PManager: P2PManager
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -34,7 +37,8 @@ class TodoApp : Application() {
         NewsCache.init(this)
         SessionTracker(this)
         exoPlayerManager = ExoPlayerManager(applicationContext)
-        syncManager = SyncManager(applicationContext).apply { start() }
+        p2PManager = P2PManager(applicationContext)
+        syncManager = SyncManager(applicationContext, p2PManager).apply { start() }
     }
 
     private fun setupStrictMode() {
