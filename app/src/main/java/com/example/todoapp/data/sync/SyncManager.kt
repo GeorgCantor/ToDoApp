@@ -13,7 +13,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,6 +29,17 @@ class SyncManager(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val _syncState = MutableStateFlow(SyncState.IDLE)
     private val syncState = _syncState.asStateFlow()
+
+    val uiState =
+        combine(_syncState, p2PManager.connectionStatus) { sync, connection ->
+            when {
+                connection == ConnectionStatus.CONNECTED && sync == SyncState.SYNCING -> "Синхронизация"
+                connection == ConnectionStatus.CONNECTED -> "Подключено"
+                connection == ConnectionStatus.ADVERTISING -> "Ожидание подключения"
+                connection == ConnectionStatus.DISCOVERING -> "Поиск устройств"
+                else -> "Не подключено"
+            }
+        }.stateIn(scope, SharingStarted.Eagerly, "Не подключено")
 
     init {
         scope.launch {
@@ -45,6 +59,22 @@ class SyncManager(
                 checkAndSync()
             }
         }
+
+    fun startAdvertising(
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
+        p2PManager.startAdvertising(onSuccess, onFailure)
+    }
+
+    fun startDiscovery(
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
+        p2PManager.startDiscovery(onSuccess, onFailure)
+    }
+
+    fun stopP2P() = p2PManager.stop()
 
     fun start() {
         context.contentResolver.registerContentObserver(

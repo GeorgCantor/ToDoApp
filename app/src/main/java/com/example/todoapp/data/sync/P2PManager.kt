@@ -20,15 +20,27 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.json.Json
 import java.util.UUID
+
+enum class ConnectionStatus {
+    IDLE,
+    ADVERTISING,
+    DISCOVERING,
+    CONNECTED,
+}
 
 class P2PManager(
     context: Context,
 ) {
     private val connectionsClient = Nearby.getConnectionsClient(context)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private val _connectionStatus = MutableStateFlow(ConnectionStatus.IDLE)
+    val connectionStatus = _connectionStatus.asStateFlow()
 
     private val _incomingMessages = Channel<Message>(Channel.BUFFERED)
     val incomingMessages: Flow<Message> = _incomingMessages.receiveAsFlow()
@@ -46,6 +58,7 @@ class P2PManager(
                 info: ConnectionInfo,
             ) {
                 connectionsClient.acceptConnection(endpointId, payloadCallback)
+                _connectionStatus.value = ConnectionStatus.CONNECTED
             }
 
             override fun onConnectionResult(
@@ -67,7 +80,10 @@ class P2PManager(
             }
 
             override fun onDisconnected(endpointId: String) {
-                if (endpointId == currentEndpointId) currentEndpointId = null
+                if (endpointId == currentEndpointId) {
+                    currentEndpointId = null
+                    _connectionStatus.value = ConnectionStatus.IDLE
+                }
             }
         }
 
@@ -98,6 +114,7 @@ class P2PManager(
         onFailure: (Exception) -> Unit,
     ) {
         if (isAdvertising) return
+        _connectionStatus.value = ConnectionStatus.ADVERTISING
         val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build()
         connectionsClient
             .startAdvertising(
@@ -109,6 +126,7 @@ class P2PManager(
                 isAdvertising = true
                 onSuccess()
             }.addOnFailureListener {
+                _connectionStatus.value = ConnectionStatus.IDLE
                 onFailure(it)
             }
     }
@@ -118,6 +136,7 @@ class P2PManager(
         onFailure: (Exception) -> Unit,
     ) {
         if (isDiscovering) return
+        _connectionStatus.value = ConnectionStatus.DISCOVERING
         connectionsClient
             .startDiscovery(
                 serviceId,
@@ -137,6 +156,7 @@ class P2PManager(
                 isDiscovering = true
                 onSuccess()
             }.addOnFailureListener {
+                _connectionStatus.value = ConnectionStatus.IDLE
                 onFailure(it)
             }
     }
@@ -150,18 +170,10 @@ class P2PManager(
     }
 
     fun stop() {
-        if (isAdvertising) {
-            connectionsClient.stopAdvertising()
-            isAdvertising = false
-        }
-        if (isDiscovering) {
-            connectionsClient.stopDiscovery()
-            isDiscovering = false
-        }
-        currentEndpointId?.let {
-            connectionsClient.disconnectFromEndpoint(it)
-            currentEndpointId = null
-        }
+        connectionsClient.stopAdvertising()
+        connectionsClient.stopDiscovery()
+        currentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
+        _connectionStatus.value = ConnectionStatus.IDLE
         scope.cancel()
     }
 }
