@@ -1,6 +1,7 @@
 package com.example.todoapp.presentation.viewmodel
 
 import android.content.ContentResolver
+import android.content.ContentValues
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.provider.MessageContentProvider
@@ -10,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import java.util.UUID
 
 class SyncViewModel(
     private val syncManager: SyncManager,
@@ -54,6 +56,28 @@ class SyncViewModel(
                 delay(500)
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun sendMessage(text: String) {
+        val message =
+            Message(
+                id = UUID.randomUUID().toString(),
+                text = text,
+                sender = android.os.Build.MODEL,
+                timestamp = System.currentTimeMillis(),
+                synced = false,
+            )
+
+        val values =
+            ContentValues().apply {
+                put(MessageContentProvider.COLUMN_ID, message.id)
+                put(MessageContentProvider.COLUMN_TEXT, message.text)
+                put(MessageContentProvider.COLUMN_SENDER, message.sender)
+                put(MessageContentProvider.COLUMN_TIMESTAMP, message.timestamp)
+                put(MessageContentProvider.COLUMN_SYNCED, 0)
+            }
+
+        contentResolver.insert(MessageContentProvider.contentUri, values)
+    }
 
     fun startAdvertising() {
         syncManager.startAdvertising({}, {})
