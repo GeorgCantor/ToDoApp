@@ -5,11 +5,10 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.media3.common.util.UnstableApi
 import com.example.todoapp.data.cache.NewsCache
-import com.example.todoapp.data.sync.P2PManager
-import com.example.todoapp.data.sync.SyncManager
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
 import com.example.todoapp.di.locationModule
+import com.example.todoapp.di.syncModule
 import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.manager.SessionTracker
 import org.koin.android.ext.koin.androidContext
@@ -20,25 +19,18 @@ class TodoApp : Application() {
     lateinit var exoPlayerManager: ExoPlayerManager
         private set
 
-    lateinit var syncManager: SyncManager
-        private set
-    lateinit var p2PManager: P2PManager
-        private set
-
     override fun onCreate() {
         super.onCreate()
         setupStrictMode()
 
         startKoin {
             androidContext(this@TodoApp)
-            modules(appModule, dataStoreModule, locationModule)
+            modules(appModule, dataStoreModule, locationModule, syncModule)
         }
 
         NewsCache.init(this)
         SessionTracker(this)
         exoPlayerManager = ExoPlayerManager(applicationContext)
-        p2PManager = P2PManager(applicationContext)
-        syncManager = SyncManager(applicationContext, p2PManager).apply { start() }
     }
 
     private fun setupStrictMode() {
