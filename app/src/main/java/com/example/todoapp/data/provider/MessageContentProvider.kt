@@ -11,9 +11,7 @@ import com.example.todoapp.BuildConfig
 import com.example.todoapp.data.datasource.MessageDataSource
 import com.example.todoapp.data.datasource.MessageDataSourceImpl
 import com.example.todoapp.domain.model.Message
-import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
-import org.koin.java.KoinJavaComponent.get
 
 class MessageContentProvider : ContentProvider() {
     private lateinit var dataSource: MessageDataSource
@@ -76,10 +74,7 @@ class MessageContentProvider : ContentProvider() {
     }
 
     override fun onCreate(): Boolean {
-        context?.let {
-            val gson: Gson = get(Gson::class.java)
-            dataSource = MessageDataSourceImpl(it.applicationContext, gson)
-        }
+        context?.let { dataSource = MessageDataSourceImpl(it.applicationContext) }
         return true
     }
 

@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val syncModule =
     module {
-        single<MessageDataSource> { MessageDataSourceImpl(androidContext(), get()) }
+        single<MessageDataSource> { MessageDataSourceImpl(androidContext()) }
         single { P2PManager(androidContext()) }
         single { SyncManager(androidContext(), get()) }
         single<ContentResolver> { androidContext().contentResolver }

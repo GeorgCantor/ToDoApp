@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.todoapp.domain.model.Message
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val Context.messageDatastore: DataStore<Preferences> by preferencesDataStore("messages")
@@ -25,7 +25,6 @@ interface MessageDataSource {
 
 class MessageDataSourceImpl(
     private val context: Context,
-    private val gson: Gson,
 ) : MessageDataSource {
     private val messageKey = stringPreferencesKey("messages_list")
 
@@ -50,8 +49,10 @@ class MessageDataSourceImpl(
     }
 
     override suspend fun saveMessages(messages: List<Message>) {
-        val json = gson.toJson(messages)
-        context.messageDatastore.edit { it[messageKey] = json }
+        val json = Json.encodeToString(messages)
+        context.messageDatastore.edit { prefs ->
+            prefs[messageKey] = json
+        }
     }
 
     override suspend fun clearAllMessages() {
