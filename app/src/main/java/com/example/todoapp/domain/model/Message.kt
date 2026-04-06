@@ -12,4 +12,5 @@ data class Message(
     val sender: String,
     val timestamp: Long,
     val synced: Boolean = false,
+    val isEncrypted: Boolean = true,
 ) : Parcelable

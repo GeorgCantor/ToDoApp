@@ -1,6 +1,7 @@
 package com.example.todoapp.data.sync
 
 import android.content.Context
+import com.example.todoapp.domain.crypto.EncryptionManager
 import com.example.todoapp.domain.model.Message
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
@@ -24,7 +25,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.json.Json
+import java.security.KeyPair
+import java.security.PublicKey
 import java.util.UUID
+import javax.crypto.SecretKey
 
 enum class ConnectionStatus {
     IDLE,
@@ -51,12 +55,26 @@ class P2PManager(
     private var isAdvertising = false
     private var isDiscovering = false
 
+    private var keyPair: KeyPair? = null
+    private var sessionKey: SecretKey? = null
+    private var remotePublicKey: PublicKey? = null
+    private var isKeyExchangeComplete = false
+
+    init {
+        keyPair = EncryptionManager.generateKeyPair()
+    }
+
     private val connectionLifecycleCallback =
         object : ConnectionLifecycleCallback() {
             override fun onConnectionInitiated(
                 endpointId: String,
                 info: ConnectionInfo,
             ) {
+                keyPair?.let {
+                    val publicKey = EncryptionManager.publicKeyToString(it.public)
+                    val keyPayload = Payload.fromBytes(publicKey.toByteArray())
+                    connectionsClient.sendPayload(endpointId, keyPayload)
+                }
                 connectionsClient.acceptConnection(endpointId, payloadCallback)
                 _connectionStatus.value = ConnectionStatus.CONNECTED
             }
@@ -67,21 +85,15 @@ class P2PManager(
             ) {
                 if (resolution.status.isSuccess) {
                     currentEndpointId = endpointId
-                    sendMessage(
-                        Message(
-                            id = UUID.randomUUID().toString(),
-                            text = "SYNC_REQUEST",
-                            sender = localEndpointName,
-                            timestamp = System.currentTimeMillis(),
-                            synced = false,
-                        ),
-                    )
                 }
             }
 
             override fun onDisconnected(endpointId: String) {
                 if (endpointId == currentEndpointId) {
                     currentEndpointId = null
+                    sessionKey = null
+                    remotePublicKey = null
+                    isKeyExchangeComplete = false
                     _connectionStatus.value = ConnectionStatus.IDLE
                 }
             }
@@ -94,10 +106,41 @@ class P2PManager(
                 payload: Payload,
             ) {
                 if (payload.type == Payload.Type.BYTES) {
-                    payload.asBytes()?.let {
-                        try {
-                            _incomingMessages.trySend(Json.decodeFromString<Message>(String(it)))
-                        } catch (e: Exception) {
+                    payload.asBytes()?.let { data ->
+                        val dataString = String(data)
+                        when {
+                            !isKeyExchangeComplete && remotePublicKey == null -> {
+                                try {
+                                    remotePublicKey = EncryptionManager.stringToPublicKey(dataString)
+                                    keyPair?.let {
+                                        val sharedSecret = EncryptionManager.computeSharedSecret(it.private, remotePublicKey!!)
+                                        sessionKey = EncryptionManager.deriveAesKey(sharedSecret)
+                                        isKeyExchangeComplete = true
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+
+                                sendMessage(
+                                    Message(
+                                        id = UUID.randomUUID().toString(),
+                                        text = "SYNC_REQUEST",
+                                        sender = localEndpointName,
+                                        timestamp = System.currentTimeMillis(),
+                                        synced = false,
+                                        isEncrypted = true,
+                                    ),
+                                )
+                            }
+                            else -> {
+                                try {
+                                    sessionKey?.let { EncryptionManager.decrypt(dataString, it) }?.let {
+                                        _incomingMessages.trySend(Json.decodeFromString<Message>(it))
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                         }
                     }
                 }
@@ -163,16 +206,36 @@ class P2PManager(
 
     fun sendMessage(message: Message): Boolean {
         currentEndpointId ?: return false
+        if (!isKeyExchangeComplete) return false
+
         val json = Json.encodeToString(Message.serializer(), message)
-        val payload = Payload.fromBytes(json.toByteArray())
+        val payloadData =
+            if (sessionKey != null) {
+                EncryptionManager.encrypt(json, sessionKey!!)
+            } else {
+                json
+            }
+        val payload = Payload.fromBytes(payloadData.toByteArray())
         connectionsClient.sendPayload(currentEndpointId!!, payload)
         return true
     }
 
     fun stop() {
-        connectionsClient.stopAdvertising()
-        connectionsClient.stopDiscovery()
-        currentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
+        if (isAdvertising) {
+            connectionsClient.stopAdvertising()
+            isAdvertising = false
+        }
+        if (isDiscovering) {
+            connectionsClient.stopDiscovery()
+            isDiscovering = false
+        }
+        currentEndpointId?.let {
+            connectionsClient.disconnectFromEndpoint(it)
+            currentEndpointId = null
+        }
+        sessionKey = null
+        remotePublicKey = null
+        isKeyExchangeComplete = false
         _connectionStatus.value = ConnectionStatus.IDLE
         scope.cancel()
     }
