@@ -92,6 +92,7 @@ class SyncManager(
 
     private suspend fun saveReceivedMessage(message: Message) =
         withContext(Dispatchers.IO) {
+            if (message.text == "SYNC_REQUEST") return@withContext
             try {
                 val values =
                     ContentValues().apply {

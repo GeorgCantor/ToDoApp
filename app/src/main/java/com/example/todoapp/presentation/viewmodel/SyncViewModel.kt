@@ -90,7 +90,7 @@ class SyncViewModel(
     fun stopP2P() = syncManager.stopP2P()
 
     override fun onCleared() {
-        syncManager.stopP2P()
+        syncManager.stop()
         super.onCleared()
     }
 }

@@ -7,6 +7,7 @@ import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
+import java.security.spec.ECGenParameterSpec
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 import javax.crypto.KeyAgreement
@@ -15,7 +16,6 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 object EncryptionManager {
-    private const val AES_KEY_SIZE = 256
     private const val GCM_NONCE_LENGTH = 12
     private const val GCM_TAG_LENGTH = 128
     private const val AES_GCM = "AES/GCM/NoPadding"
@@ -24,8 +24,8 @@ object EncryptionManager {
     // Генерирует пару ключей для ECDH
     fun generateKeyPair(): KeyPair {
         val generator = KeyPairGenerator.getInstance(EC)
-        generator.initialize(AES_KEY_SIZE)
-        return generator.genKeyPair()
+        generator.initialize(ECGenParameterSpec("secp256r1"))
+        return generator.generateKeyPair()
     }
 
     // Вычисляет общий секрет из своего приватного ключа и публичного ключа собеседника
