@@ -41,6 +41,7 @@ import com.example.todoapp.presentation.screens.SignUpScreen
 import com.example.todoapp.presentation.screens.SpaceXScreen
 import com.example.todoapp.presentation.screens.SpaceXStatsScreen
 import com.example.todoapp.presentation.screens.SplashScreen
+import com.example.todoapp.presentation.screens.SyncScreen
 import com.example.todoapp.presentation.screens.TicTacToeScreen
 import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CartViewModel
@@ -53,6 +54,7 @@ import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
+import com.example.todoapp.presentation.viewmodel.SyncViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,6 +77,7 @@ fun MainNavigation(
     val cartViewModel: CartViewModel = koinViewModel()
     val mapViewModel: MapViewModel = koinViewModel()
     val inspectorViewModel: ObjectInspectorViewModel = koinViewModel()
+    val syncViewModel: SyncViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -227,6 +230,8 @@ fun MainNavigation(
         composable(NavRoutes.CoroutineMonitor.route) { CoroutineMonitorScreen(monitorViewModel) }
 
         composable(NavRoutes.Inspector.route) { ObjectInspectorScreen(inspectorViewModel) }
+
+        composable(NavRoutes.Sync.route) { SyncScreen(syncViewModel) }
 
         composable(
             route = NavRoutes.Search.route,

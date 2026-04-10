@@ -21,8 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
@@ -192,11 +192,11 @@ fun ProfileScreen(
                     }
 
                     IconButton(
-                        onClick = { navController.navigate(NavRoutes.Inspector.route) },
+                        onClick = { navController.navigate(NavRoutes.Sync.route) },
                     ) {
                         Icon(
-                            imageVector = Icons.Default.List,
-                            contentDescription = stringResource(R.string.object_inspector),
+                            imageVector = Icons.Default.MailOutline,
+                            contentDescription = stringResource(R.string.p2p_messenger),
                         )
                     }
                 },

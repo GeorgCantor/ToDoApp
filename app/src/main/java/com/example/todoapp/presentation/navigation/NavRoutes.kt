@@ -56,4 +56,6 @@ sealed class NavRoutes(
     object Cart : NavRoutes("cart_screen")
 
     object Inspector : NavRoutes("inspector_screen")
+
+    object Sync : NavRoutes("sync_screen")
 }

@@ -8,6 +8,7 @@ import com.example.todoapp.data.cache.NewsCache
 import com.example.todoapp.di.appModule
 import com.example.todoapp.di.dataStoreModule
 import com.example.todoapp.di.locationModule
+import com.example.todoapp.di.syncModule
 import com.example.todoapp.domain.manager.ExoPlayerManager
 import com.example.todoapp.domain.manager.SessionTracker
 import org.koin.android.ext.koin.androidContext
@@ -24,7 +25,7 @@ class TodoApp : Application() {
 
         startKoin {
             androidContext(this@TodoApp)
-            modules(appModule, dataStoreModule, locationModule)
+            modules(appModule, dataStoreModule, locationModule, syncModule)
         }
 
         NewsCache.init(this)

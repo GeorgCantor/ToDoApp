@@ -78,6 +78,7 @@ import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
+import com.example.todoapp.presentation.viewmodel.SyncViewModel
 import com.example.todoapp.presentation.visualization.SpaceXVisualizerFactory
 import com.example.todoapp.presentation.visualization.VisualizerFactory
 import com.google.gson.Gson
@@ -231,4 +232,5 @@ val appModule =
         viewModel { SpaceXViewModel(get(), get()) }
         viewModel { SpaceXStatsViewModel(get(), get()) }
         viewModel { CoroutineMonitorViewModel(get()) }
+        viewModel { SyncViewModel(get(), get()) }
     }
