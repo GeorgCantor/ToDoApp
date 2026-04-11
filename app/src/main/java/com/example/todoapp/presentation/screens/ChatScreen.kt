@@ -144,7 +144,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
         LazyColumn(
             modifier = Modifier.weight(1f),
-            reverseLayout = !isSearching,
+            reverseLayout = true,
             contentPadding = PaddingValues(vertical = 8.dp),
         ) {
             if (isSearching && searchQuery.isNotBlank() && searchResults.isEmpty()) {
@@ -157,7 +157,6 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 }
             } else {
                 groupsToShow.forEach { group ->
-                    item(key = "header_${group.timestamp}") { DateHeader(group.header) }
                     items(
                         items = group.messages,
                         key = { it.id },
@@ -193,6 +192,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                             searchQuery = if (isSearching) searchQuery else "",
                         )
                     }
+                    item(key = "header_${group.timestamp}") { DateHeader(group.header) }
                 }
             }
 
@@ -200,19 +200,14 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 item {
                     EmptySearchState(
                         searchQuery = searchQuery,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
                     )
                 }
             }
         }
 
         Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = 74.dp),
+            Modifier.fillMaxWidth().padding(bottom = 74.dp),
         ) {
             if (isRecording) {
                 Row(
@@ -315,10 +310,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
             ) {
                 Text(
                     text = stringResource(R.string.edit_message),
@@ -329,10 +321,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 TextField(
                     value = editText,
                     onValueChange = { editText = it },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     placeholder = { Text(stringResource(R.string.enter_message)) },
                     singleLine = false,
                     maxLines = 4,
@@ -518,9 +507,7 @@ fun MessageBubble(
         }
 
         Text(
-            text =
-                SimpleDateFormat("HH:mm", Locale.getDefault())
-                    .format(Date(message.timestamp)),
+            text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(message.timestamp)),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 2.dp),
             color = textColor.copy(alpha = 0.6f),

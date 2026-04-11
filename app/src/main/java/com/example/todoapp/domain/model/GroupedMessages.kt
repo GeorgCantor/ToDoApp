@@ -14,14 +14,6 @@ data class MessageGroup(
     val messages: List<ChatMessage>,
 )
 
-enum class DateGroupType {
-    TODAY,
-    YESTERDAY,
-    THIS_WEEK,
-    THIS_MONTH,
-    OLDER,
-}
-
 object MessageGrouper {
     fun groupMessages(messages: List<ChatMessage>): List<MessageGroup> {
         if (messages.isEmpty()) return emptyList()
