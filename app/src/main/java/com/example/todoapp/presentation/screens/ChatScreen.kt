@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -59,12 +60,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.ChatMessage
+import com.example.todoapp.domain.model.MessageGrouper
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.utils.showToast
 import java.text.SimpleDateFormat
@@ -91,6 +95,11 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
     var isSearching by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
+
+    val groupedMessages by remember(messages) {
+        derivedStateOf { MessageGrouper.groupMessages(messages) }
+    }
+
     val searchResults by remember(messages, searchQuery) {
         derivedStateOf {
             if (searchQuery.isBlank()) {
@@ -102,6 +111,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 }
             }
         }
+    }
+
+    val groupedSearchResults by remember(searchResults) {
+        derivedStateOf { MessageGrouper.groupMessages(searchResults) }
     }
 
     DisposableEffect(Unit) {
@@ -127,14 +140,14 @@ fun ChatScreen(viewModel: ChatViewModel) {
             )
         }
 
-        val itemsToShow = if (isSearching && searchQuery.isNotBlank()) searchResults else messages
+        val groupsToShow = if (isSearching && searchQuery.isNotBlank()) groupedSearchResults else groupedMessages
 
         LazyColumn(
             modifier = Modifier.weight(1f),
             reverseLayout = !isSearching,
             contentPadding = PaddingValues(vertical = 8.dp),
         ) {
-            if (isSearching && searchQuery.isNotBlank()) {
+            if (isSearching && searchQuery.isNotBlank() && searchResults.isEmpty()) {
                 item {
                     SearchResultsHeader(
                         resultsCount = searchResults.size,
@@ -142,42 +155,45 @@ fun ChatScreen(viewModel: ChatViewModel) {
                         modifier = Modifier.padding(16.dp),
                     )
                 }
-            }
-
-            items(
-                items = itemsToShow,
-                key = { it.id },
-            ) { message ->
-                MessageBubble(
-                    message = message,
-                    onEditClick = {
-                        messageToEdit = it
-                        editText = it.text
-                        showBottomSheet = true
-                    },
-                    onDeleteClick = { viewModel.deleteMessage(it.id) },
-                    onPlayAudio = { base64 ->
-                        currentPlayer?.release()
-                        try {
-                            val audioFile = viewModel.base64ToAudioFile(base64, context.cacheDir)
-                            MediaPlayer().apply {
-                                setDataSource(audioFile.absolutePath)
-                                prepare()
-                                start()
-                                setOnCompletionListener {
-                                    release()
-                                    audioFile.delete()
+            } else {
+                groupsToShow.forEach { group ->
+                    item(key = "header_${group.timestamp}") { DateHeader(group.header) }
+                    items(
+                        items = group.messages,
+                        key = { it.id },
+                    ) { message ->
+                        MessageBubble(
+                            message = message,
+                            onEditClick = {
+                                messageToEdit = it
+                                editText = it.text
+                                showBottomSheet = true
+                            },
+                            onDeleteClick = { viewModel.deleteMessage(it.id) },
+                            onPlayAudio = { base64 ->
+                                currentPlayer?.release()
+                                try {
+                                    val audioFile = viewModel.base64ToAudioFile(base64, context.cacheDir)
+                                    MediaPlayer().apply {
+                                        setDataSource(audioFile.absolutePath)
+                                        prepare()
+                                        start()
+                                        setOnCompletionListener {
+                                            release()
+                                            audioFile.delete()
+                                            currentPlayer = null
+                                        }
+                                        currentPlayer = this
+                                    }
+                                } catch (e: Exception) {
+                                    context.showToast(e.message.orEmpty())
                                     currentPlayer = null
                                 }
-                                currentPlayer = this
-                            }
-                        } catch (e: Exception) {
-                            context.showToast(e.message.orEmpty())
-                            currentPlayer = null
-                        }
-                    },
-                    searchQuery = if (isSearching) searchQuery else "",
-                )
+                            },
+                            searchQuery = if (isSearching) searchQuery else "",
+                        )
+                    }
+                }
             }
 
             if (isSearching && searchQuery.isNotBlank() && searchResults.isEmpty()) {
@@ -351,6 +367,32 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
                 Spacer(modifier = Modifier.padding(bottom = 16.dp))
             }
+        }
+    }
+}
+
+@Composable
+fun DateHeader(header: String) {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
+            shadowElevation = 2.dp,
+        ) {
+            Text(
+                text = header,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                style =
+                    MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 12.sp,
+                    ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
