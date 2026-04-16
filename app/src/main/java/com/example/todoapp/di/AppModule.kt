@@ -18,6 +18,7 @@ import com.example.todoapp.data.repository.NewsRepositoryImpl
 import com.example.todoapp.data.repository.ObjectInspectorRepositoryImpl
 import com.example.todoapp.data.repository.PlayerRepositoryImpl
 import com.example.todoapp.data.repository.SpaceXRepositoryImpl
+import com.example.todoapp.data.repository.ThemeRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
@@ -32,6 +33,7 @@ import com.example.todoapp.domain.repository.NewsRepository
 import com.example.todoapp.domain.repository.ObjectInspectorRepository
 import com.example.todoapp.domain.repository.PlayerRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
+import com.example.todoapp.domain.repository.ThemeRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
@@ -52,6 +54,7 @@ import com.example.todoapp.domain.usecase.GetMediaItemsUseCase
 import com.example.todoapp.domain.usecase.GetNodeByIdUseCase
 import com.example.todoapp.domain.usecase.GetRecentMediaUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
+import com.example.todoapp.domain.usecase.GetThemeColorUseCase
 import com.example.todoapp.domain.usecase.GetTopHeadlinesUseCase
 import com.example.todoapp.domain.usecase.GetUserProfileUseCase
 import com.example.todoapp.domain.usecase.InitializeUserProfileUseCase
@@ -61,6 +64,7 @@ import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.PlayMediaUseCase
 import com.example.todoapp.domain.usecase.RemoveFromCartUseCase
 import com.example.todoapp.domain.usecase.SaveMediaItemUseCase
+import com.example.todoapp.domain.usecase.SaveThemeColorUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.domain.usecase.UpdateQuantityUseCase
@@ -79,6 +83,7 @@ import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
 import com.example.todoapp.presentation.viewmodel.SyncViewModel
+import com.example.todoapp.presentation.viewmodel.ThemeViewModel
 import com.example.todoapp.presentation.visualization.SpaceXVisualizerFactory
 import com.example.todoapp.presentation.visualization.VisualizerFactory
 import com.google.gson.Gson
@@ -148,6 +153,7 @@ val appModule =
         single<PlayerRepository> { PlayerRepositoryImpl(androidContext()) }
         single { ObjectAnalyzer() }
         single<ObjectInspectorRepository> { ObjectInspectorRepositoryImpl(get()) }
+        single<ThemeRepository> { ThemeRepositoryImpl(androidContext()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -180,6 +186,8 @@ val appModule =
         factory { CalculateTotalUseCase() }
         factory { InspectObjectUseCase(get()) }
         factory { GetNodeByIdUseCase(get()) }
+        factory { GetThemeColorUseCase(get()) }
+        factory { SaveThemeColorUseCase(get()) }
 
         factory<PlayMediaUseCase> {
             val app = androidApplication() as TodoApp
@@ -233,4 +241,5 @@ val appModule =
         viewModel { SpaceXStatsViewModel(get(), get()) }
         viewModel { CoroutineMonitorViewModel(get()) }
         viewModel { SyncViewModel(get(), get()) }
+        viewModel { ThemeViewModel(get(), get()) }
     }
