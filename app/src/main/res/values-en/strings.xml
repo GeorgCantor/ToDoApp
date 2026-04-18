@@ -270,6 +270,10 @@
     <!-- Player -->
     <string name="player">Player</string>
 
+    <!-- Color picker -->
+    <string name="color_picker">Color picker</string>
+
+    <!-- Cart -->
     <string name="cart">Cart</string>
     <string name="cart_empty">Your cart is currently empty. Go to the catalog, add items to your cart, and return to place your order.</string>
 </resources>

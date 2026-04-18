@@ -58,4 +58,6 @@ sealed class NavRoutes(
     object Inspector : NavRoutes("inspector_screen")
 
     object Sync : NavRoutes("sync_screen")
+
+    object Theme : NavRoutes("theme_screen")
 }

@@ -10,14 +10,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.domain.model.WidgetIntentData
 import com.example.todoapp.domain.model.WidgetIntentType
 import com.example.todoapp.presentation.navigation.MainNavigation
 import com.example.todoapp.presentation.theme.YourAppTheme
+import com.example.todoapp.presentation.viewmodel.ThemeViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+    private val themeViewModel: ThemeViewModel by viewModel()
     private var widgetIntentData: WidgetIntentData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +32,10 @@ class MainActivity : AppCompatActivity() {
         widgetIntentData = processWidgetIntent()
 
         setContent {
-            YourAppTheme {
+            val themeColorInt by themeViewModel.themeColor.collectAsStateWithLifecycle()
+            val primaryColor = Color(themeColorInt)
+
+            YourAppTheme(primaryColor = primaryColor) {
                 Surface(
                     modifier =
                         Modifier
