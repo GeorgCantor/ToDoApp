@@ -1,17 +1,26 @@
 package com.example.todoapp.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,8 +28,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,6 +54,9 @@ fun ColorPickerScreen(
     navController: NavController,
     viewModel: ThemeViewModel,
 ) {
+    val currentColorInt by viewModel.themeColor.collectAsState()
+    val currentColor = Color(currentColorInt)
+
     val colors =
         listOf(
             Color(0xFF6200EE),
@@ -47,6 +70,15 @@ fun ColorPickerScreen(
             Color(0xFFFFEB3B),
             Color(0xFF795548),
         )
+
+    val visibleStates = remember { MutableList(colors.size) { false }.toMutableStateList() }
+
+    LaunchedEffect(Unit) {
+        colors.forEachIndexed { index, _ ->
+            kotlinx.coroutines.delay(50L)
+            visibleStates[index] = true
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -65,27 +97,97 @@ fun ColorPickerScreen(
     ) { paddingValues ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            items(colors.size) { index ->
-                val color = colors[index]
-                Card(
-                    modifier =
-                        Modifier
-                            .size(100.dp)
-                            .clickable {
-                                viewModel.updateThemeColor(color.toArgb())
-                                navController.popBackStack()
-                            },
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = color),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            itemsIndexed(colors) { index, color ->
+                val isSelected = color == currentColor
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed by interactionSource.collectIsPressedAsState()
+                val scale by animateFloatAsState(
+                    targetValue = if (isPressed) 0.92f else 1f,
+                    animationSpec = tween(100),
+                    label = "scale",
+                )
+
+                AnimatedVisibility(
+                    visible = visibleStates[index],
+                    enter =
+                        fadeIn(animationSpec = tween(300)) +
+                            scaleIn(initialScale = 0.6f, animationSpec = tween(300)),
                 ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(110.dp)
+                                .scale(scale)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
+                                ) {
+                                    viewModel.updateThemeColor(color.toArgb())
+                                    navController.popBackStack()
+                                }.shadow(
+                                    elevation = if (isSelected) 12.dp else 6.dp,
+                                    shape = CircleShape,
+                                    spotColor = color.copy(alpha = 0.6f),
+                                    ambientColor = color.copy(alpha = 0.3f),
+                                ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        androidx.compose.foundation.Canvas(
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        ) {
+                            drawCircle(
+                                brush =
+                                    Brush.radialGradient(
+                                        colors = listOf(color, color.copy(alpha = 0.8f)),
+                                        radius = size.minDimension / 2,
+                                    ),
+                                radius = size.minDimension / 2,
+                            )
+                        }
+
+                        if (isSelected) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape)
+                                        .background(
+                                            brush =
+                                                Brush.sweepGradient(
+                                                    colors =
+                                                        listOf(
+                                                            Color.White.copy(alpha = 0.8f),
+                                                            Color.White.copy(alpha = 0.2f),
+                                                            Color.White.copy(alpha = 0.8f),
+                                                        ),
+                                                ),
+                                        ),
+                            )
+                        }
+
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = stringResource(R.string.selected),
+                                tint = if (color.luminance() > 0.5) Color.Black else Color.White,
+                                modifier = Modifier.size(40.dp),
+                            )
+                        } else {
+                            if (isPressed) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                            .background(Color.White.copy(alpha = 0.2f)),
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
