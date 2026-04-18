@@ -45,6 +45,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -82,6 +83,7 @@ import com.example.todoapp.domain.model.MediaItem
 import com.example.todoapp.domain.model.PlaybackState
 import com.example.todoapp.domain.model.PlayerState
 import com.example.todoapp.domain.model.PlayerUiState
+import com.example.todoapp.presentation.theme.LocalThemeColor
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
 import com.example.todoapp.utils.formatTime
 import kotlinx.coroutines.launch
@@ -168,10 +170,12 @@ fun PlayerTopAppBar(
     onClearSearch: () -> Unit,
     searchQuery: String,
 ) {
+    val themeColor = LocalThemeColor.current
+
     if (showSearchBar) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.primaryContainer,
+            color = themeColor.copy(alpha = 0.1f),
             shadowElevation = 4.dp,
         ) {
             Row(
@@ -187,6 +191,11 @@ fun PlayerTopAppBar(
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("Search media...") },
                     singleLine = true,
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = themeColor,
+                            focusedLabelColor = themeColor,
+                        ),
                     trailingIcon = {
                         IconButton(onClick = onClearSearch) {
                             Icon(Icons.Default.Close, contentDescription = "Clear search")
@@ -204,8 +213,10 @@ fun PlayerTopAppBar(
             title = { Text("Music Player", fontWeight = FontWeight.Bold) },
             colors =
                 TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = themeColor,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White,
                 ),
             actions = {
                 IconButton(onClick = onSearchClicked) {
