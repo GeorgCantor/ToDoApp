@@ -270,6 +270,11 @@
     <!-- Player -->
     <string name="player">Плеер</string>
 
+    <!-- Color picker -->
+    <string name="color_picker">Смена темы</string>
+    <string name="select_theme_color">Выберите цвет темы</string>
+
+    <!-- Cart -->
     <string name="cart">Корзина</string>
     <string name="cart_empty">Сейчас в вашей корзине пусто, перейдите в каталог, добавьте товары в корзину и возвращайтесь чтобы оформить заказ</string>
 </resources>

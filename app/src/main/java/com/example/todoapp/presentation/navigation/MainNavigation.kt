@@ -28,6 +28,7 @@ import com.example.todoapp.domain.model.WidgetIntentData
 import com.example.todoapp.presentation.screens.AuthScreen
 import com.example.todoapp.presentation.screens.BiometricAuthScreen
 import com.example.todoapp.presentation.screens.CartScreen
+import com.example.todoapp.presentation.screens.ColorPickerScreen
 import com.example.todoapp.presentation.screens.CoroutineMonitorScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
@@ -55,6 +56,7 @@ import com.example.todoapp.presentation.viewmodel.ProfileViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXStatsViewModel
 import com.example.todoapp.presentation.viewmodel.SpaceXViewModel
 import com.example.todoapp.presentation.viewmodel.SyncViewModel
+import com.example.todoapp.presentation.viewmodel.ThemeViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -78,6 +80,7 @@ fun MainNavigation(
     val mapViewModel: MapViewModel = koinViewModel()
     val inspectorViewModel: ObjectInspectorViewModel = koinViewModel()
     val syncViewModel: SyncViewModel = koinViewModel()
+    val themeViewModel: ThemeViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -232,6 +235,8 @@ fun MainNavigation(
         composable(NavRoutes.Inspector.route) { ObjectInspectorScreen(inspectorViewModel) }
 
         composable(NavRoutes.Sync.route) { SyncScreen(syncViewModel) }
+
+        composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
 
         composable(
             route = NavRoutes.Search.route,
