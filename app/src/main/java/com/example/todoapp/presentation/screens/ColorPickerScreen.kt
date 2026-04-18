@@ -22,14 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.todoapp.R
 import com.example.todoapp.presentation.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPickerScreen(
-    themeViewModel: ThemeViewModel,
-    onBack: () -> Unit,
+    navController: NavController,
+    viewModel: ThemeViewModel,
 ) {
     val colors =
         listOf(
@@ -48,10 +51,13 @@ fun ColorPickerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Выберите цвет темы") },
+                title = { Text(stringResource(R.string.select_theme_color)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                        )
                     }
                 },
             )
@@ -59,7 +65,10 @@ fun ColorPickerScreen(
     ) { paddingValues ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -70,8 +79,8 @@ fun ColorPickerScreen(
                         Modifier
                             .size(100.dp)
                             .clickable {
-                                themeViewModel.updateThemeColor(color.toArgb())
-                                onBack()
+                                viewModel.updateThemeColor(color.toArgb())
+                                navController.popBackStack()
                             },
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor = color),

@@ -236,7 +236,7 @@ fun MainNavigation(
 
         composable(NavRoutes.Sync.route) { SyncScreen(syncViewModel) }
 
-        composable(NavRoutes.Theme.route) { ColorPickerScreen(themeViewModel) {} }
+        composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
 
         composable(
             route = NavRoutes.Search.route,
