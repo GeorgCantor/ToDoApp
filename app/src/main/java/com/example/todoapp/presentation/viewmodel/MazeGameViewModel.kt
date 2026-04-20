@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class MazeGameViewModel(
     private val repository: SensorRepository,
-    private val useCase: GameUseCase
+    private val useCase: GameUseCase,
 ) : ViewModel() {
     val gameState: StateFlow<MazeGameState> = useCase.state
 
