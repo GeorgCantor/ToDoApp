@@ -270,6 +270,9 @@
     <!-- Player -->
     <string name="player">Player</string>
 
+    <!-- MazeGame -->
+    <string name="maze_game">MazeGame</string>
+
     <!-- Color picker -->
     <string name="color_picker">Color picker</string>
     <string name="select_theme_color">Select theme color</string>

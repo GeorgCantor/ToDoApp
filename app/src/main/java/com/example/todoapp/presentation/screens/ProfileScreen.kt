@@ -23,10 +23,10 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -192,11 +192,11 @@ fun ProfileScreen(
                     }
 
                     IconButton(
-                        onClick = { navController.navigate(NavRoutes.Sync.route) },
+                        onClick = { navController.navigate(NavRoutes.MazeGame.route) },
                     ) {
                         Icon(
-                            imageVector = Icons.Default.MailOutline,
-                            contentDescription = stringResource(R.string.p2p_messenger),
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = stringResource(R.string.maze_game),
                         )
                     }
                 },
