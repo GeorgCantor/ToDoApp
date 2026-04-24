@@ -60,4 +60,6 @@ sealed class NavRoutes(
     object Sync : NavRoutes("sync_screen")
 
     object Theme : NavRoutes("theme_screen")
+
+    object MazeGame : NavRoutes("maze_game_screen")
 }

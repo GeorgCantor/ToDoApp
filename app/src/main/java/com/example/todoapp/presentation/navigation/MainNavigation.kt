@@ -34,6 +34,7 @@ import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.MapScreen
+import com.example.todoapp.presentation.screens.MazeGameScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.ObjectInspectorScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
@@ -49,6 +50,7 @@ import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
+import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
@@ -81,6 +83,7 @@ fun MainNavigation(
     val inspectorViewModel: ObjectInspectorViewModel = koinViewModel()
     val syncViewModel: SyncViewModel = koinViewModel()
     val themeViewModel: ThemeViewModel = koinViewModel()
+    val mazeGameViewModel: MazeGameViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -223,20 +226,14 @@ fun MainNavigation(
         }
 
         composable(NavRoutes.Map.route) { MapScreen(mapViewModel) }
-
         composable(NavRoutes.TicTacToe.route) { TicTacToeScreen() }
-
         composable(NavRoutes.SpaceX.route) { SpaceXScreen(navController = navController, viewModel = spaceXViewModel) }
-
         composable(NavRoutes.SpaceXStats.route) { SpaceXStatsScreen(spaceXStatsViewModel) }
-
         composable(NavRoutes.CoroutineMonitor.route) { CoroutineMonitorScreen(monitorViewModel) }
-
         composable(NavRoutes.Inspector.route) { ObjectInspectorScreen(inspectorViewModel) }
-
         composable(NavRoutes.Sync.route) { SyncScreen(syncViewModel) }
-
         composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
+        composable(NavRoutes.MazeGame.route) { MazeGameScreen(mazeGameViewModel) }
 
         composable(
             route = NavRoutes.Search.route,

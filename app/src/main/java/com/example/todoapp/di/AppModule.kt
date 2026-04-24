@@ -17,6 +17,7 @@ import com.example.todoapp.data.repository.DocumentRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
 import com.example.todoapp.data.repository.ObjectInspectorRepositoryImpl
 import com.example.todoapp.data.repository.PlayerRepositoryImpl
+import com.example.todoapp.data.repository.SensorRepositoryImpl
 import com.example.todoapp.data.repository.SpaceXRepositoryImpl
 import com.example.todoapp.data.repository.ThemeRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
@@ -32,6 +33,7 @@ import com.example.todoapp.domain.repository.DocumentRepository
 import com.example.todoapp.domain.repository.NewsRepository
 import com.example.todoapp.domain.repository.ObjectInspectorRepository
 import com.example.todoapp.domain.repository.PlayerRepository
+import com.example.todoapp.domain.repository.SensorRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
 import com.example.todoapp.domain.repository.ThemeRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
@@ -44,6 +46,7 @@ import com.example.todoapp.domain.usecase.DeleteMediaItemUseCase
 import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
+import com.example.todoapp.domain.usecase.GameUseCase
 import com.example.todoapp.domain.usecase.GetAvailableDocumentsUseCase
 import com.example.todoapp.domain.usecase.GetCartItemsUseCase
 import com.example.todoapp.domain.usecase.GetChatMessagesUseCase
@@ -76,6 +79,7 @@ import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
+import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
@@ -154,6 +158,7 @@ val appModule =
         single { ObjectAnalyzer() }
         single<ObjectInspectorRepository> { ObjectInspectorRepositoryImpl(get()) }
         single<ThemeRepository> { ThemeRepositoryImpl(androidContext()) }
+        single<SensorRepository> { SensorRepositoryImpl(androidContext()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -188,6 +193,7 @@ val appModule =
         factory { GetNodeByIdUseCase(get()) }
         factory { GetThemeColorUseCase(get()) }
         factory { SaveThemeColorUseCase(get()) }
+        factory { GameUseCase() }
 
         factory<PlayMediaUseCase> {
             val app = androidApplication() as TodoApp
@@ -242,4 +248,5 @@ val appModule =
         viewModel { CoroutineMonitorViewModel(get()) }
         viewModel { SyncViewModel(get(), get()) }
         viewModel { ThemeViewModel(get(), get()) }
+        viewModel { MazeGameViewModel(get(), get()) }
     }
