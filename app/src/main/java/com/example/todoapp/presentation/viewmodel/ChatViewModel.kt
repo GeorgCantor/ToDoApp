@@ -10,11 +10,13 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.domain.model.ChatMessage
+import com.example.todoapp.domain.usecase.AddReactionUseCase
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.EditMessageUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
+import com.example.todoapp.domain.usecase.RemoveReactionUseCase
 import com.example.todoapp.domain.usecase.SendMessageUseCase
 import com.example.todoapp.domain.usecase.UpdateUserStatisticsUseCase
 import com.example.todoapp.utils.showToast
@@ -33,6 +35,8 @@ class ChatViewModel(
     private val audioToBase64UseCase: AudioToBase64UseCase,
     private val base64ToAudioFileUseCase: Base64ToAudioFileUseCase,
     private val updateUserStatisticsUseCase: UpdateUserStatisticsUseCase,
+    private val addReactionUseCase: AddReactionUseCase,
+    private val removeReactionUseCase: RemoveReactionUseCase,
 ) : ViewModel() {
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> get() = _messages
@@ -172,6 +176,32 @@ class ChatViewModel(
         base64: String,
         cacheDir: File,
     ): File = base64ToAudioFileUseCase(base64, cacheDir)
+
+    fun addReaction(
+        messageId: String,
+        reaction: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                addReactionUseCase(messageId, reaction, "1")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun removeReaction(
+        messageId: String,
+        reaction: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                removeReactionUseCase(messageId, reaction, "1")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     private suspend fun sendAudioMessage(
         audioBase64: String,

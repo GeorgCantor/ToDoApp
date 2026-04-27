@@ -121,7 +121,7 @@ class ChatRepositoryImpl : ChatRepository {
 
                 override fun onComplete(
                     error: DatabaseError?,
-                    commited: Boolean,
+                    committed: Boolean,
                     data: DataSnapshot?,
                 ) {
                 }
@@ -134,7 +134,33 @@ class ChatRepositoryImpl : ChatRepository {
         reaction: String,
         userId: String,
     ) {
-        TODO("Not yet implemented")
+        val messageRef = database.child(messageId)
+        messageRef.child("reactions").runTransaction(
+            object : Transaction.Handler {
+                override fun doTransaction(data: MutableData): Transaction.Result {
+                    val reactions = data.getValue<Map<String, List<String>>>().orEmpty()
+                    val currentList = reactions[reaction]?.toMutableList() ?: mutableListOf()
+                    if (currentList.contains(userId)) {
+                        currentList.remove(userId)
+                        val updatedReactions = reactions.toMutableMap()
+                        if (currentList.isEmpty()) {
+                            updatedReactions.remove(reaction)
+                        } else {
+                            updatedReactions[reaction] = currentList
+                        }
+                        data.value = updatedReactions
+                    }
+                    return Transaction.success(data)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    data: DataSnapshot?,
+                ) {
+                }
+            },
+        )
     }
 
     private suspend fun getAudioDuration(file: File): Long =
