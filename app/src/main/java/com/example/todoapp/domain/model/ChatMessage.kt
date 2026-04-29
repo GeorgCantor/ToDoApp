@@ -8,4 +8,5 @@ data class ChatMessage(
     val timestamp: Long = System.currentTimeMillis(),
     val audioBase64: String? = null,
     val durationMs: Long? = null,
+    val reactions: Map<String, List<String>> = emptyMap(),
 )

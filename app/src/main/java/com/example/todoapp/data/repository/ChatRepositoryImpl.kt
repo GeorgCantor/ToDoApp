@@ -7,8 +7,11 @@ import com.example.todoapp.domain.repository.ChatRepository
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.database.getValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -90,6 +93,74 @@ class ChatRepositoryImpl : ChatRepository {
         val tempFile = File.createTempFile("audio", ".mp3", cacheDir)
         FileOutputStream(tempFile).use { it.write(bytes) }
         return tempFile
+    }
+
+    override suspend fun addReaction(
+        messageId: String,
+        reaction: String,
+        userId: String,
+    ) {
+        val messageRef = database.child(messageId)
+        messageRef.child("reactions").runTransaction(
+            object : Transaction.Handler {
+                override fun doTransaction(data: MutableData): Transaction.Result {
+                    val reactions = data.getValue<Map<String, List<String>>>().orEmpty()
+                    val currentList = reactions[reaction]?.toMutableList() ?: mutableListOf()
+                    if (userId in currentList) {
+                        currentList.remove(userId)
+                        val updatedReactions = reactions.toMutableMap()
+                        if (currentList.isEmpty()) {
+                            updatedReactions.remove(reaction)
+                        } else {
+                            updatedReactions[reaction] = currentList
+                        }
+                        data.value = updatedReactions
+                    }
+                    return Transaction.success(data)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    data: DataSnapshot?,
+                ) {
+                }
+            },
+        )
+    }
+
+    override suspend fun removeReaction(
+        messageId: String,
+        reaction: String,
+        userId: String,
+    ) {
+        val messageRef = database.child(messageId)
+        messageRef.child("reactions").runTransaction(
+            object : Transaction.Handler {
+                override fun doTransaction(data: MutableData): Transaction.Result {
+                    val reactions = data.getValue<Map<String, List<String>>>().orEmpty()
+                    val currentList = reactions[reaction]?.toMutableList() ?: mutableListOf()
+                    if (currentList.contains(userId)) {
+                        currentList.remove(userId)
+                        val updatedReactions = reactions.toMutableMap()
+                        if (currentList.isEmpty()) {
+                            updatedReactions.remove(reaction)
+                        } else {
+                            updatedReactions[reaction] = currentList
+                        }
+                        data.value = updatedReactions
+                    }
+                    return Transaction.success(data)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    data: DataSnapshot?,
+                ) {
+                }
+            },
+        )
     }
 
     private suspend fun getAudioDuration(file: File): Long =

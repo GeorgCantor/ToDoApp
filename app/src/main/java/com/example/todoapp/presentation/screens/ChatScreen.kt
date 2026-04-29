@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -200,14 +202,19 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 item {
                     EmptySearchState(
                         searchQuery = searchQuery,
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
                     )
                 }
             }
         }
 
         Row(
-            Modifier.fillMaxWidth().padding(bottom = 74.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 74.dp),
         ) {
             if (isRecording) {
                 Row(
@@ -310,7 +317,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
             ) {
                 Text(
                     text = stringResource(R.string.edit_message),
@@ -321,7 +331,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 TextField(
                     value = editText,
                     onValueChange = { editText = it },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                     placeholder = { Text(stringResource(R.string.enter_message)) },
                     singleLine = false,
                     maxLines = 4,
@@ -363,7 +376,10 @@ fun ChatScreen(viewModel: ChatViewModel) {
 @Composable
 fun DateHeader(header: String) {
     Box(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Surface(
@@ -565,6 +581,66 @@ fun AudioMessageItem(
             color = textColor,
             modifier = Modifier.padding(start = 8.dp),
         )
+    }
+}
+
+@Composable
+fun MessageReactions(
+    reactions: Map<String, List<String>>,
+    currentUserId: String,
+    onReactionClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val availableReactions = arrayOf("👍", "❤️", "😂", "😮", "😢", "🙏")
+    Row(modifier = modifier) {
+        availableReactions.forEach {
+            val count = reactions[it]?.size ?: 0
+            val isSelected = reactions[it]?.contains(currentUserId) == true
+            ReactionChip(
+                reaction = it,
+                count = count,
+                isSelected = isSelected,
+                onClick = { onReactionClick(it) },
+            )
+        }
+    }
+}
+
+@Composable
+fun ReactionChip(
+    reaction: String,
+    count: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier =
+            Modifier
+                .padding(end = 4.dp)
+                .clip((RoundedCornerShape(16.dp)))
+                .clickable(onClick = onClick),
+        color =
+            if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            },
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        ) {
+            Text(text = reaction, fontSize = 14.sp)
+            if (count > 0) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = count.toString(),
+                    fontSize = 12.sp,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 
