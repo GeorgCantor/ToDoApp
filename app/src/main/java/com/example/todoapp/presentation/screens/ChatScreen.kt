@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -333,7 +334,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End,
+                    horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
                         onClick = {
@@ -403,7 +404,8 @@ fun MessageBubble(
     searchQuery: String = "",
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val isOwnMessage = message.senderId == "1"
+    var showReactionPicker by remember { mutableStateOf(false) }
+    val isOwnMessage = message.senderId == currentUserId
     val bubbleColor =
         if (isOwnMessage) {
             MaterialTheme.colorScheme.primaryContainer
@@ -514,7 +516,7 @@ fun MessageBubble(
         }
 
         if (message.reactions.isNotEmpty()) {
-            MessageReactions(
+            MessageReactionsSummary(
                 reactions = message.reactions,
                 currentUserId = currentUserId,
                 onReactionClick = { reaction ->
@@ -554,6 +556,169 @@ fun MessageBubble(
                     onDeleteClick(message)
                 },
             )
+            DropdownMenuItem(
+                text = { Text("😊 Add reaction") },
+                onClick = {
+                    expanded = false
+                    showReactionPicker = true
+                },
+            )
+        }
+    }
+
+    if (showReactionPicker) {
+        ReactionPickerBottomSheet(
+            currentReaction = getCurrentUserReaction(message.reactions, currentUserId),
+            onReactionSelected = { reaction ->
+                val current = getCurrentUserReaction(message.reactions, currentUserId)
+                if (current == reaction) {
+                    onRemoveReaction(message.id, reaction)
+                } else {
+                    if (current != null) {
+                        onRemoveReaction(message.id, current)
+                    }
+                    onAddReaction(message.id, reaction)
+                }
+                showReactionPicker = false
+            },
+            onDismiss = { showReactionPicker = false },
+        )
+    }
+}
+
+private fun getCurrentUserReaction(
+    reactions: Map<String, List<String>>,
+    currentUserId: String,
+): String? = reactions.entries.find { it.value.contains(currentUserId) }?.key
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReactionPickerBottomSheet(
+    currentReaction: String?,
+    onReactionSelected: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+        ) {
+            Text(
+                text = "Choose reaction",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                val reactions = listOf("👍", "❤️", "😂", "😮", "😢", "🙏")
+                reactions.forEach { reaction ->
+                    ReactionButton(
+                        reaction = reaction,
+                        isSelected = reaction == currentReaction,
+                        onClick = { onReactionSelected(reaction) },
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun ReactionButton(
+    reaction: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier =
+            Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(28.dp))
+                .clickable(onClick = onClick),
+        color =
+            if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            },
+        shadowElevation = if (isSelected) 4.dp else 0.dp,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = reaction,
+                fontSize = 32.sp,
+            )
+        }
+    }
+}
+
+@Composable
+fun MessageReactionsSummary(
+    reactions: Map<String, List<String>>,
+    currentUserId: String,
+    onReactionClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
+        reactions.entries.take(3).forEach { (emoji, users) ->
+            val isSelected = users.contains(currentUserId)
+            Surface(
+                modifier =
+                    Modifier
+                        .padding(end = 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onReactionClick(emoji) },
+                color =
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                ) {
+                    Text(emoji, fontSize = 12.sp)
+                    Text(
+                        text = " ${users.size}",
+                        fontSize = 10.sp,
+                        color =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                    )
+                }
+            }
+        }
+        if (reactions.size > 3) {
+            Surface(
+                modifier =
+                    Modifier
+                        .padding(end = 4.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ) {
+                Text(
+                    text = "+${reactions.size - 3}",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                )
+            }
         }
     }
 }
@@ -588,66 +753,6 @@ fun AudioMessageItem(
             color = textColor,
             modifier = Modifier.padding(start = 8.dp),
         )
-    }
-}
-
-@Composable
-fun MessageReactions(
-    reactions: Map<String, List<String>>,
-    currentUserId: String,
-    onReactionClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val availableReactions = arrayOf("👍", "❤️", "😂", "😮", "😢", "🙏")
-    Row(modifier = modifier) {
-        availableReactions.forEach {
-            val count = reactions[it]?.size ?: 0
-            val isSelected = reactions[it]?.contains(currentUserId) == true
-            ReactionChip(
-                reaction = it,
-                count = count,
-                isSelected = isSelected,
-                onClick = { onReactionClick(it) },
-            )
-        }
-    }
-}
-
-@Composable
-fun ReactionChip(
-    reaction: String,
-    count: Int,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    Surface(
-        modifier =
-            Modifier
-                .padding(end = 4.dp)
-                .clip((RoundedCornerShape(16.dp)))
-                .clickable(onClick = onClick),
-        color =
-            if (isSelected) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            },
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        ) {
-            Text(text = reaction, fontSize = 14.sp)
-            if (count > 0) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = count.toString(),
-                    fontSize = 12.sp,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
     }
 }
 

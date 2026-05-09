@@ -104,17 +104,13 @@ class ChatRepositoryImpl : ChatRepository {
         messageRef.child("reactions").runTransaction(
             object : Transaction.Handler {
                 override fun doTransaction(data: MutableData): Transaction.Result {
-                    val reactions = data.getValue<Map<String, List<String>>>().orEmpty()
+                    val reactions = data.getValue<Map<String, List<String>>>()?.toMutableMap() ?: mutableMapOf()
                     val currentList = reactions[reaction]?.toMutableList() ?: mutableListOf()
-                    if (userId in currentList) {
-                        currentList.remove(userId)
-                        val updatedReactions = reactions.toMutableMap()
-                        if (currentList.isEmpty()) {
-                            updatedReactions.remove(reaction)
-                        } else {
-                            updatedReactions[reaction] = currentList
-                        }
-                        data.value = updatedReactions
+
+                    if (!currentList.contains(userId)) {
+                        currentList.add(userId)
+                        reactions[reaction] = currentList
+                        data.value = reactions
                     }
                     return Transaction.success(data)
                 }
@@ -138,17 +134,17 @@ class ChatRepositoryImpl : ChatRepository {
         messageRef.child("reactions").runTransaction(
             object : Transaction.Handler {
                 override fun doTransaction(data: MutableData): Transaction.Result {
-                    val reactions = data.getValue<Map<String, List<String>>>().orEmpty()
+                    val reactions = data.getValue<Map<String, List<String>>>()?.toMutableMap() ?: mutableMapOf()
                     val currentList = reactions[reaction]?.toMutableList() ?: mutableListOf()
+
                     if (currentList.contains(userId)) {
                         currentList.remove(userId)
-                        val updatedReactions = reactions.toMutableMap()
                         if (currentList.isEmpty()) {
-                            updatedReactions.remove(reaction)
+                            reactions.remove(reaction)
                         } else {
-                            updatedReactions[reaction] = currentList
+                            reactions[reaction] = currentList
                         }
-                        data.value = updatedReactions
+                        data.value = reactions
                     }
                     return Transaction.success(data)
                 }
