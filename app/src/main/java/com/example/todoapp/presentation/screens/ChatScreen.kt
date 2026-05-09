@@ -191,6 +191,8 @@ fun ChatScreen(viewModel: ChatViewModel) {
                                     currentPlayer = null
                                 }
                             },
+                            onAddReaction = { messageId, reaction -> viewModel.addReaction(messageId, reaction) },
+                            onRemoveReaction = { messageId, reaction -> viewModel.removeReaction(messageId, reaction) },
                             searchQuery = if (isSearching) searchQuery else "",
                         )
                     }
@@ -202,19 +204,14 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 item {
                     EmptySearchState(
                         searchQuery = searchQuery,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
                     )
                 }
             }
         }
 
         Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(bottom = 74.dp),
+            Modifier.fillMaxWidth().padding(bottom = 74.dp),
         ) {
             if (isRecording) {
                 Row(
@@ -317,10 +314,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
             ) {
                 Text(
                     text = stringResource(R.string.edit_message),
@@ -331,10 +325,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 TextField(
                     value = editText,
                     onValueChange = { editText = it },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     placeholder = { Text(stringResource(R.string.enter_message)) },
                     singleLine = false,
                     maxLines = 4,
@@ -376,10 +367,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
 @Composable
 fun DateHeader(header: String) {
     Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Surface(
@@ -409,6 +397,9 @@ fun MessageBubble(
     onEditClick: (ChatMessage) -> Unit,
     onDeleteClick: (ChatMessage) -> Unit,
     onPlayAudio: (String) -> Unit,
+    onAddReaction: (String, String) -> Unit,
+    onRemoveReaction: (String, String) -> Unit,
+    currentUserId: String = "1",
     searchQuery: String = "",
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -520,6 +511,22 @@ fun MessageBubble(
                     )
                 }
             }
+        }
+
+        if (message.reactions.isNotEmpty()) {
+            MessageReactions(
+                reactions = message.reactions,
+                currentUserId = currentUserId,
+                onReactionClick = { reaction ->
+                    val isSelected = message.reactions[reaction]?.contains(currentUserId) == true
+                    if (isSelected) {
+                        onRemoveReaction(message.id, reaction)
+                    } else {
+                        onAddReaction(message.id, reaction)
+                    }
+                },
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
 
         Text(
