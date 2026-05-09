@@ -24,4 +24,16 @@ interface ChatRepository {
         base64: String,
         cacheDir: File,
     ): File
+
+    suspend fun addReaction(
+        messageId: String,
+        reaction: String,
+        userId: String,
+    )
+
+    suspend fun removeReaction(
+        messageId: String,
+        reaction: String,
+        userId: String,
+    )
 }

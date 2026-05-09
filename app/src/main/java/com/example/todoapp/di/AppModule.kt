@@ -37,6 +37,7 @@ import com.example.todoapp.domain.repository.SensorRepository
 import com.example.todoapp.domain.repository.SpaceXRepository
 import com.example.todoapp.domain.repository.ThemeRepository
 import com.example.todoapp.domain.repository.UserProfileRepository
+import com.example.todoapp.domain.usecase.AddReactionUseCase
 import com.example.todoapp.domain.usecase.AudioToBase64UseCase
 import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
@@ -66,6 +67,7 @@ import com.example.todoapp.domain.usecase.ManagePlayerUseCase
 import com.example.todoapp.domain.usecase.ObserveMessagesUseCase
 import com.example.todoapp.domain.usecase.PlayMediaUseCase
 import com.example.todoapp.domain.usecase.RemoveFromCartUseCase
+import com.example.todoapp.domain.usecase.RemoveReactionUseCase
 import com.example.todoapp.domain.usecase.SaveMediaItemUseCase
 import com.example.todoapp.domain.usecase.SaveThemeColorUseCase
 import com.example.todoapp.domain.usecase.SaveUserProfileUseCase
@@ -166,6 +168,8 @@ val appModule =
         factory { ObserveMessagesUseCase(get()) }
         factory { EditMessageUseCase(get()) }
         factory { DeleteMessageUseCase(get()) }
+        factory { AddReactionUseCase(get()) }
+        factory { RemoveReactionUseCase(get()) }
         factory { AudioToBase64UseCase(get()) }
         factory { Base64ToAudioFileUseCase(get()) }
         factory { GetAvailableDocumentsUseCase(get()) }
@@ -215,6 +219,8 @@ val appModule =
                 audioToBase64UseCase = get(),
                 base64ToAudioFileUseCase = get(),
                 updateUserStatisticsUseCase = get(),
+                addReactionUseCase = get(),
+                removeReactionUseCase = get(),
             )
         }
         viewModel {
