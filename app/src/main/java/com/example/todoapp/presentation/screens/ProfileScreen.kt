@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -192,11 +191,11 @@ fun ProfileScreen(
                     }
 
                     IconButton(
-                        onClick = { navController.navigate(NavRoutes.MazeGame.route) },
+                        onClick = { navController.navigate(NavRoutes.Drawing.route) },
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Warning,
-                            contentDescription = stringResource(R.string.maze_game),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Рисовалка",
                         )
                     }
                 },

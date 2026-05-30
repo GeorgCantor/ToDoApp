@@ -80,6 +80,7 @@ import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
+import com.example.todoapp.presentation.viewmodel.DrawingViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -255,4 +256,5 @@ val appModule =
         viewModel { SyncViewModel(get(), get()) }
         viewModel { ThemeViewModel(get(), get()) }
         viewModel { MazeGameViewModel(get(), get()) }
+        viewModel { DrawingViewModel() }
     }

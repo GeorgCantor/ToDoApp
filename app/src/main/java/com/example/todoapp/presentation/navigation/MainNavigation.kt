@@ -30,6 +30,7 @@ import com.example.todoapp.presentation.screens.BiometricAuthScreen
 import com.example.todoapp.presentation.screens.CartScreen
 import com.example.todoapp.presentation.screens.ColorPickerScreen
 import com.example.todoapp.presentation.screens.CoroutineMonitorScreen
+import com.example.todoapp.presentation.screens.DrawingScreen
 import com.example.todoapp.presentation.screens.ForgotPasswordScreen
 import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
@@ -49,6 +50,7 @@ import com.example.todoapp.presentation.viewmodel.AuthViewModel
 import com.example.todoapp.presentation.viewmodel.CartViewModel
 import com.example.todoapp.presentation.viewmodel.ChatViewModel
 import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
+import com.example.todoapp.presentation.viewmodel.DrawingViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
@@ -84,6 +86,7 @@ fun MainNavigation(
     val syncViewModel: SyncViewModel = koinViewModel()
     val themeViewModel: ThemeViewModel = koinViewModel()
     val mazeGameViewModel: MazeGameViewModel = koinViewModel()
+    val drawingViewModel: DrawingViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -234,6 +237,7 @@ fun MainNavigation(
         composable(NavRoutes.Sync.route) { SyncScreen(syncViewModel) }
         composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
         composable(NavRoutes.MazeGame.route) { MazeGameScreen(mazeGameViewModel) }
+        composable(NavRoutes.Drawing.route) { DrawingScreen(drawingViewModel) }
 
         composable(
             route = NavRoutes.Search.route,
