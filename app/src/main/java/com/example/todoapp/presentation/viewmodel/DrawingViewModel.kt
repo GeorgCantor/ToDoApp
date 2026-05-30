@@ -17,7 +17,7 @@ class DrawingViewModel : ViewModel() {
     private val _currentColor = MutableStateFlow(Color.Black)
     val currentColor = _currentColor.asStateFlow()
 
-    private val _currentStrokeWidth = MutableStateFlow(10F)
+    private val _currentStrokeWidth = MutableStateFlow(10f)
     val currentStrokeWidth = _currentStrokeWidth.asStateFlow()
 
     private val _isEraserMode = MutableStateFlow(false)
@@ -39,6 +39,19 @@ class DrawingViewModel : ViewModel() {
     }
 
     fun addStroke(points: List<Offset>) {
+        if (points.size < 2) return
+        val stroke =
+            Stroke(
+                points = points,
+                color = if (_isEraserMode.value) backgroundColor else _currentColor.value,
+                strokeWidth = _currentStrokeWidth.value,
+            )
+        viewModelScope.launch {
+            _strokes.update { it + stroke }
+        }
+    }
+
+    fun addStrokeSegment(points: List<Offset>) {
         if (points.size < 2) return
         val stroke =
             Stroke(
