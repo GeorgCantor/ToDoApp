@@ -62,4 +62,6 @@ sealed class NavRoutes(
     object Theme : NavRoutes("theme_screen")
 
     object MazeGame : NavRoutes("maze_game_screen")
+
+    object Drawing : NavRoutes("drawing_screen")
 }
