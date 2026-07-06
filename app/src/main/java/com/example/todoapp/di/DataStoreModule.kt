@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
 import com.example.todoapp.data.datastore.UserProfileSerializer
+import com.example.todoapp.data.datastore.networkMetricsDataStore
+import com.example.todoapp.domain.model.NetworkMetricsList
 import com.example.todoapp.domain.model.UserProfile
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -24,5 +26,8 @@ val dataStoreModule =
     module {
         single<DataStore<UserProfile>> {
             androidContext().userProfileDataStore
+        }
+        single<DataStore<NetworkMetricsList>> {
+            androidContext().networkMetricsDataStore
         }
     }

@@ -7,6 +7,7 @@ import com.example.todoapp.TodoApp
 import com.example.todoapp.data.objectinspector.core.ObjectAnalyzer
 import com.example.todoapp.data.remote.ApolloGraphQLClient
 import com.example.todoapp.data.remote.GraphQLClient
+import com.example.todoapp.data.remote.MetricsEventListener
 import com.example.todoapp.data.remote.api.NewsApiService
 import com.example.todoapp.data.repository.AuthRepositoryImpl
 import com.example.todoapp.data.repository.CalculatorRepositoryImpl
@@ -14,6 +15,7 @@ import com.example.todoapp.data.repository.CartRepositoryImpl
 import com.example.todoapp.data.repository.ChatRepositoryImpl
 import com.example.todoapp.data.repository.CoroutineMonitorRepositoryImpl
 import com.example.todoapp.data.repository.DocumentRepositoryImpl
+import com.example.todoapp.data.repository.NetworkMetricsRepositoryImpl
 import com.example.todoapp.data.repository.NewsRepositoryImpl
 import com.example.todoapp.data.repository.ObjectInspectorRepositoryImpl
 import com.example.todoapp.data.repository.PlayerRepositoryImpl
@@ -23,6 +25,7 @@ import com.example.todoapp.data.repository.ThemeRepositoryImpl
 import com.example.todoapp.data.repository.UserProfileRepositoryImpl
 import com.example.todoapp.domain.manager.BiometricAuthManager
 import com.example.todoapp.domain.manager.BiometricAuthManagerImpl
+import com.example.todoapp.domain.model.NetworkMetricsList
 import com.example.todoapp.domain.model.UserProfile
 import com.example.todoapp.domain.repository.AuthRepository
 import com.example.todoapp.domain.repository.CalculatorRepository
@@ -30,6 +33,7 @@ import com.example.todoapp.domain.repository.CartRepository
 import com.example.todoapp.domain.repository.ChatRepository
 import com.example.todoapp.domain.repository.CoroutineMonitorRepository
 import com.example.todoapp.domain.repository.DocumentRepository
+import com.example.todoapp.domain.repository.NetworkMetricsRepository
 import com.example.todoapp.domain.repository.NewsRepository
 import com.example.todoapp.domain.repository.ObjectInspectorRepository
 import com.example.todoapp.domain.repository.PlayerRepository
@@ -43,6 +47,7 @@ import com.example.todoapp.domain.usecase.Base64ToAudioFileUseCase
 import com.example.todoapp.domain.usecase.CalculateExpressionUseCase
 import com.example.todoapp.domain.usecase.CalculateTotalUseCase
 import com.example.todoapp.domain.usecase.ClearCalculatorUseCase
+import com.example.todoapp.domain.usecase.ClearNetworkMetricsUseCase
 import com.example.todoapp.domain.usecase.DeleteMediaItemUseCase
 import com.example.todoapp.domain.usecase.DeleteMessageUseCase
 import com.example.todoapp.domain.usecase.DownloadDocumentUseCase
@@ -55,6 +60,7 @@ import com.example.todoapp.domain.usecase.GetLaunchDetailUseCase
 import com.example.todoapp.domain.usecase.GetLaunchStatisticsUseCase
 import com.example.todoapp.domain.usecase.GetLocalMediaUseCase
 import com.example.todoapp.domain.usecase.GetMediaItemsUseCase
+import com.example.todoapp.domain.usecase.GetNetworkMetricsUseCase
 import com.example.todoapp.domain.usecase.GetNodeByIdUseCase
 import com.example.todoapp.domain.usecase.GetRecentMediaUseCase
 import com.example.todoapp.domain.usecase.GetSpaceXLaunchesUseCase
@@ -83,6 +89,7 @@ import com.example.todoapp.presentation.viewmodel.DocumentsViewModel
 import com.example.todoapp.presentation.viewmodel.DrawingViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
+import com.example.todoapp.presentation.viewmodel.NetworkStatsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
@@ -94,6 +101,9 @@ import com.example.todoapp.presentation.viewmodel.ThemeViewModel
 import com.example.todoapp.presentation.visualization.SpaceXVisualizerFactory
 import com.example.todoapp.presentation.visualization.VisualizerFactory
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
@@ -105,6 +115,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule =
     module {
+        single<CoroutineScope> {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        }
+
         single<OkHttpClient> {
             val loggingInterceptor =
                 HttpLoggingInterceptor().apply {
@@ -120,11 +134,19 @@ val appModule =
                     .alwaysReadResponseBody(false)
                     .build()
 
+            val metricsRepository = get<NetworkMetricsRepository>()
+            val scope = get<CoroutineScope>()
+
             OkHttpClient
                 .Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(chuckerInterceptor)
-                .build()
+                .eventListenerFactory {
+                    MetricsEventListener(
+                        repository = metricsRepository,
+                        externalScope = scope,
+                    )
+                }.build()
         }
 
         single<Retrofit> {
@@ -162,6 +184,7 @@ val appModule =
         single<ObjectInspectorRepository> { ObjectInspectorRepositoryImpl(get()) }
         single<ThemeRepository> { ThemeRepositoryImpl(androidContext()) }
         single<SensorRepository> { SensorRepositoryImpl(androidContext()) }
+        single<NetworkMetricsRepository> { NetworkMetricsRepositoryImpl(get<DataStore<NetworkMetricsList>>()) }
 
         factory { GetTopHeadlinesUseCase(get()) }
         factory { SendMessageUseCase(get()) }
@@ -199,6 +222,8 @@ val appModule =
         factory { GetThemeColorUseCase(get()) }
         factory { SaveThemeColorUseCase(get()) }
         factory { GameUseCase() }
+        factory { GetNetworkMetricsUseCase(get()) }
+        factory { ClearNetworkMetricsUseCase(get()) }
 
         factory<PlayMediaUseCase> {
             val app = androidApplication() as TodoApp
@@ -257,4 +282,5 @@ val appModule =
         viewModel { ThemeViewModel(get(), get()) }
         viewModel { MazeGameViewModel(get(), get()) }
         viewModel { DrawingViewModel() }
+        viewModel { NetworkStatsViewModel(get(), get()) }
     }
