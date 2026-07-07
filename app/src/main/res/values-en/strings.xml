@@ -271,7 +271,10 @@
     <string name="player">Player</string>
 
     <!-- MazeGame -->
-    <string name="maze_game">MazeGame</string>
+    <string name="maze_game">Maze Game</string>
+
+    <!-- Network stats -->
+    <string name="network_stats">Network Stats</string>
 
     <!-- Color picker -->
     <string name="color_picker">Color picker</string>

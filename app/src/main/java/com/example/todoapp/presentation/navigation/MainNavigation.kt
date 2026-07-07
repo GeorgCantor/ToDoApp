@@ -89,7 +89,7 @@ fun MainNavigation(
     val themeViewModel: ThemeViewModel = koinViewModel()
     val mazeGameViewModel: MazeGameViewModel = koinViewModel()
     val drawingViewModel: DrawingViewModel = koinViewModel()
-    val drawingViewModel: NetworkStatsViewModel = koinViewModel()
+    val networkStatsViewModel: NetworkStatsViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -241,7 +241,7 @@ fun MainNavigation(
         composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
         composable(NavRoutes.MazeGame.route) { MazeGameScreen(mazeGameViewModel) }
         composable(NavRoutes.Drawing.route) { DrawingScreen(drawingViewModel) }
-        composable(NavRoutes.NetworkStats.route) { NetworkStatsScreen(drawingViewModel) }
+        composable(NavRoutes.NetworkStats.route) { NetworkStatsScreen(networkStatsViewModel) }
 
         composable(
             route = NavRoutes.Search.route,

@@ -273,6 +273,9 @@
     <!-- MazeGame -->
     <string name="maze_game">Игра лабиринт</string>
 
+    <!-- Network stats -->
+    <string name="network_stats">Статистика запросов</string>
+
     <!-- Color picker -->
     <string name="color_picker">Смена темы</string>
     <string name="select_theme_color">Выберите цвет темы</string>
