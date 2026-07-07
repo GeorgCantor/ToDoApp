@@ -36,6 +36,7 @@ import com.example.todoapp.presentation.screens.LoginScreen
 import com.example.todoapp.presentation.screens.MainScreen
 import com.example.todoapp.presentation.screens.MapScreen
 import com.example.todoapp.presentation.screens.MazeGameScreen
+import com.example.todoapp.presentation.screens.NetworkStatsScreen
 import com.example.todoapp.presentation.screens.NewsDetailScreen
 import com.example.todoapp.presentation.screens.ObjectInspectorScreen
 import com.example.todoapp.presentation.screens.ProfileScreen
@@ -53,6 +54,7 @@ import com.example.todoapp.presentation.viewmodel.CoroutineMonitorViewModel
 import com.example.todoapp.presentation.viewmodel.DrawingViewModel
 import com.example.todoapp.presentation.viewmodel.MapViewModel
 import com.example.todoapp.presentation.viewmodel.MazeGameViewModel
+import com.example.todoapp.presentation.viewmodel.NetworkStatsViewModel
 import com.example.todoapp.presentation.viewmodel.NewsViewModel
 import com.example.todoapp.presentation.viewmodel.ObjectInspectorViewModel
 import com.example.todoapp.presentation.viewmodel.PlayerViewModel
@@ -87,6 +89,7 @@ fun MainNavigation(
     val themeViewModel: ThemeViewModel = koinViewModel()
     val mazeGameViewModel: MazeGameViewModel = koinViewModel()
     val drawingViewModel: DrawingViewModel = koinViewModel()
+    val networkStatsViewModel: NetworkStatsViewModel = koinViewModel()
     val newsPagingItems = newsViewModel.news.collectAsLazyPagingItems()
     val isLoading =
         remember(newsPagingItems.loadState) {
@@ -238,6 +241,7 @@ fun MainNavigation(
         composable(NavRoutes.Theme.route) { ColorPickerScreen(navController = navController, viewModel = themeViewModel) }
         composable(NavRoutes.MazeGame.route) { MazeGameScreen(mazeGameViewModel) }
         composable(NavRoutes.Drawing.route) { DrawingScreen(drawingViewModel) }
+        composable(NavRoutes.NetworkStats.route) { NetworkStatsScreen(networkStatsViewModel) }
 
         composable(
             route = NavRoutes.Search.route,
