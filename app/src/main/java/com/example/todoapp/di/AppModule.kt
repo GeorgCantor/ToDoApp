@@ -168,13 +168,12 @@ val appModule =
         }
         single<NewsApiService> { get<Retrofit>().create(NewsApiService::class.java) }
         single<BiometricAuthManager> { BiometricAuthManagerImpl(androidContext()) }
-        single<DataStore<UserProfile>> { androidContext().userProfileDataStore }
         single<NewsRepository> { NewsRepositoryImpl(get()) }
         single<ChatRepository> { ChatRepositoryImpl() }
         single<DocumentRepository> { DocumentRepositoryImpl() }
         single<CalculatorRepository> { CalculatorRepositoryImpl() }
         single<AuthRepository> { AuthRepositoryImpl(get()) }
-        single<UserProfileRepository> { UserProfileRepositoryImpl(get()) }
+        single<UserProfileRepository> { UserProfileRepositoryImpl(get<DataStore<UserProfile>>()) }
         single<GraphQLClient> { ApolloGraphQLClient(get()) }
         single<SpaceXRepository> { SpaceXRepositoryImpl(get()) }
         single<VisualizerFactory> { SpaceXVisualizerFactory() }
@@ -200,8 +199,8 @@ val appModule =
         factory { DownloadDocumentUseCase(get()) }
         factory { CalculateExpressionUseCase(get()) }
         factory { ClearCalculatorUseCase(get()) }
-        factory { GetUserProfileUseCase(get()) }
-        factory { SaveUserProfileUseCase(get()) }
+        factory { GetUserProfileUseCase(get<UserProfileRepository>()) }
+        factory { SaveUserProfileUseCase(get<UserProfileRepository>()) }
         factory { UpdateUserStatisticsUseCase(get()) }
         factory { InitializeUserProfileUseCase(get()) }
         factory { GetSpaceXLaunchesUseCase(get()) }
@@ -222,8 +221,8 @@ val appModule =
         factory { GetThemeColorUseCase(get()) }
         factory { SaveThemeColorUseCase(get()) }
         factory { GameUseCase() }
-        factory { GetNetworkMetricsUseCase(get()) }
-        factory { ClearNetworkMetricsUseCase(get()) }
+        factory { GetNetworkMetricsUseCase(get<NetworkMetricsRepository>()) }
+        factory { ClearNetworkMetricsUseCase(get<NetworkMetricsRepository>()) }
 
         factory<PlayMediaUseCase> {
             val app = androidApplication() as TodoApp
